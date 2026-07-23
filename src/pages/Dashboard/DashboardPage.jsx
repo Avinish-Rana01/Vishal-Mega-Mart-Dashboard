@@ -6,7 +6,7 @@ import DataTableCard from '../../components/common/DataTableCard';
 import CycleCountModal from '../../components/modals/CycleCountModal';
 import { fetchLiveStockData } from '../../services/api';
 import { formatNumber, formatDate, formatCoverage } from '../../utils/formatters';
-import '../../components/Dashboard.css';
+import './Dashboard.css';
 
 export default function DashboardPage({ username = 'Admin User', onLogout }) {
   const [activeNav, setActiveNav] = useState('home');
