@@ -3,6 +3,9 @@
  * Handles API calls to C# ASP.NET WebMethod / Web API backend endpoints
  */
 
+import { parseXmlDataSet } from '../utils/xmlParser';
+import { API_DEFAULTS } from '../config/constants';
+
 const BASE_URL = import.meta.env.VITE_USE_DIRECT_URL === 'true' ? (import.meta.env.VITE_API_BASE_URL || '') : '';
 
 /**
@@ -42,49 +45,16 @@ export async function callBackendApi(endpoint, params = {}) {
 }
 
 /**
- * Robust XML parser for C# DataSet.GetXml() XML output
- */
-function parseXmlDataSet(xmlString) {
-  const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
-  const result = { tables: {} };
-
-  if (!xmlDoc.documentElement) return result;
-
-  Array.from(xmlDoc.documentElement.children).forEach((node) => {
-    const rawTableName = node.nodeName;
-    const lowerName = rawTableName.toLowerCase();
-
-    if (!result.tables[rawTableName]) result.tables[rawTableName] = [];
-    if (!result.tables[lowerName]) result.tables[lowerName] = [];
-
-    const rowObj = {};
-    Array.from(node.children).forEach((child) => {
-      rowObj[child.nodeName] = child.textContent;
-      rowObj[child.nodeName.toUpperCase()] = child.textContent;
-      rowObj[child.nodeName.toLowerCase()] = child.textContent;
-    });
-
-    result.tables[rawTableName].push(rowObj);
-    if (lowerName !== rawTableName) {
-      result.tables[lowerName].push(rowObj);
-    }
-  });
-
-  return result;
-}
-
-/**
- * 1. Live Stock Data API call
+ * 1. Live Stock Data API call matching GetLiveStockDetails in C# Dashboard.aspx.cs
  */
 export async function fetchLiveStockData(params = {}) {
   return await callBackendApi('/Dashboard.aspx/GetLiveStockDetails', {
     searchTerm: params.searchTerm || '',
-    pageIndex: params.pageIndex || 1,
-    pageSize: params.pageSize || 100,
-    user_id: String(params.userId ?? '0'),
-    sortColumn: params.sortColumn || 'STORE',
-    sortDirection: params.sortDirection || 'asc',
+    pageIndex: params.pageIndex || API_DEFAULTS.PAGE_INDEX,
+    pageSize: params.pageSize || API_DEFAULTS.PAGE_SIZE,
+    user_id: String(params.userId ?? API_DEFAULTS.USER_ID),
+    sortColumn: params.sortColumn || API_DEFAULTS.SORT_COLUMN,
+    sortDirection: params.sortDirection || API_DEFAULTS.SORT_DIRECTION,
     sortType: params.sortType || 'string'
   });
 }
@@ -95,86 +65,11 @@ export async function fetchLiveStockData(params = {}) {
 export async function fetchCycleCountData(params = {}) {
   return await callBackendApi('/Dashboard.aspx/GetCCDetails', {
     searchTerm: params.searchTerm || '',
-    pageIndex: params.pageIndex || 1,
-    pageSize: params.pageSize || 100,
-    user_id: String(params.userId ?? '0'),
+    pageIndex: params.pageIndex || API_DEFAULTS.PAGE_INDEX,
+    pageSize: params.pageSize || API_DEFAULTS.PAGE_SIZE,
+    user_id: String(params.userId ?? API_DEFAULTS.USER_ID),
     sortColumn: params.sortColumn || 'STORE CODE',
-    sortDirection: params.sortDirection || 'asc',
-    sortType: params.sortType || 'string'
-  });
-}
-
-/**
- * 3. Store Validation Data API call
- */
-export async function fetchStoreValidationData(params = {}) {
-  return await callBackendApi('/Dashboard.aspx/GetStoreDetails', {
-    searchTerm: params.searchTerm || '',
-    pageIndex: params.pageIndex || 1,
-    pageSize: params.pageSize || 100,
-    user_id: String(params.userId ?? '0'),
-    sortColumn: params.sortColumn || 'Store',
-    sortDirection: params.sortDirection || 'asc',
-    sortType: params.sortType || 'string'
-  });
-}
-
-/**
- * 4. Sale Data API call
- */
-export async function fetchSaleData(params = {}) {
-  return await callBackendApi('/Dashboard.aspx/GetSaleDetails', {
-    searchTerm: params.searchTerm || '',
-    pageIndex: params.pageIndex || 1,
-    pageSize: params.pageSize || 100,
-    user_id: String(params.userId ?? '0'),
-    sortColumn: params.sortColumn || 'STORE',
-    sortDirection: params.sortDirection || 'asc',
-    sortType: params.sortType || 'string'
-  });
-}
-
-/**
- * 5. Void Data API call
- */
-export async function fetchVoidData(params = {}) {
-  return await callBackendApi('/Dashboard.aspx/GetVoidDetails', {
-    searchTerm: params.searchTerm || '',
-    pageIndex: params.pageIndex || 1,
-    pageSize: params.pageSize || 100,
-    user_id: String(params.userId ?? '0'),
-    sortColumn: params.sortColumn || 'STORE',
-    sortDirection: params.sortDirection || 'asc',
-    sortType: params.sortType || 'string'
-  });
-}
-
-/**
- * 6. Return Data API call
- */
-export async function fetchReturnData(params = {}) {
-  return await callBackendApi('/Dashboard.aspx/GetReturnDetails', {
-    searchTerm: params.searchTerm || '',
-    pageIndex: params.pageIndex || 1,
-    pageSize: params.pageSize || 100,
-    user_id: String(params.userId ?? '0'),
-    sortColumn: params.sortColumn || 'STORE',
-    sortDirection: params.sortDirection || 'asc',
-    sortType: params.sortType || 'string'
-  });
-}
-
-/**
- * 7. DC Validation Data API call
- */
-export async function fetchDcValidationData(params = {}) {
-  return await callBackendApi('/Dashboard.aspx/GetDCDetails', {
-    searchTerm: params.searchTerm || '',
-    pageIndex: params.pageIndex || 1,
-    pageSize: params.pageSize || 100,
-    user_id: String(params.userId ?? '0'),
-    sortColumn: params.sortColumn || 'Store',
-    sortDirection: params.sortDirection || 'asc',
+    sortDirection: params.sortDirection || API_DEFAULTS.SORT_DIRECTION,
     sortType: params.sortType || 'string'
   });
 }
