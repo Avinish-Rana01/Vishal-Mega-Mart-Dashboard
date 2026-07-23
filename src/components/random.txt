@@ -1,0 +1,436 @@
+{/* 2. CYCLE COUNT CARD */}
+            {isCardVisible('cyclecount') && (
+              <div className="vmm-card">
+                <div className="vmm-card-header">
+                  <span className="vmm-card-title">CYCLE COUNT</span>
+                  <div className="vmm-card-meta">
+                    <span className="vmm-meta-btn">THURSDAY</span>
+                    <span className="vmm-meta-btn">2026-07-23</span>
+                  </div>
+                </div>
+                <div className="vmm-card-body">
+                  <div className="vmm-table-toolbar">
+                    <div className="vmm-search-input">
+                      <span>Search:</span>
+                      <input
+                        type="text"
+                        placeholder="Search Records"
+                        value={searchTerms.cycleCount}
+                        onChange={(e) => handleSearchChange('cycleCount', e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="vmm-table-container">
+                    <table className="vmm-table">
+                      <thead>
+                        <tr>
+                          <th>STORE</th>
+                          <th>CC TYPE</th>
+                          <th>REF NO</th>
+                          <th>DATE</th>
+                          <th>STARTED ON</th>
+                          <th>TIME TAKEN</th>
+                          <th>ACTION</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filterRows(cycleCountData, 'cycleCount', ['store', 'type', 'refNo']).map((row, idx) => (
+                          <tr key={idx}>
+                            <td><strong>{row.store}</strong></td>
+                            <td>{row.type}</td>
+                            <td>{row.refNo}</td>
+                            <td>{row.date}</td>
+                            <td>{row.startedOn}</td>
+                            <td>{row.timeTaken}</td>
+                            <td>
+                              <button
+                                className="vmm-btn-action"
+                                onClick={() => setSelectedModalData(row)}
+                              >
+                                View Details
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td>TOTAL</td>
+                          <td>3 CYCLES</td>
+                          <td>-</td>
+                          <td>-</td>
+                          <td>-</td>
+                          <td>5h 15m</td>
+                          <td></td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 3. STORE VALIDATION CARD */}
+            {isCardVisible('storevalidation') && (
+              <div className="vmm-card">
+                <div className="vmm-card-header">
+                  <span className="vmm-card-title">STORE VALIDATION</span>
+                  <div className="vmm-card-meta">
+                    <span className="vmm-meta-btn">THURSDAY</span>
+                    <span className="vmm-meta-btn">2026-07-23</span>
+                  </div>
+                </div>
+                <div className="vmm-card-body">
+                  <div className="vmm-table-toolbar">
+                    <div className="vmm-search-input">
+                      <span>Search:</span>
+                      <input
+                        type="text"
+                        placeholder="Search Records"
+                        value={searchTerms.storeValidation}
+                        onChange={(e) => handleSearchChange('storeValidation', e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="vmm-table-container">
+                    <table className="vmm-table">
+                      <thead>
+                        <tr>
+                          <th>STORE</th>
+                          <th>LAST GRC DATE</th>
+                          <th>HU RCV QTY</th>
+                          <th>WH VAL QTY</th>
+                          <th>STORE VAL QTY</th>
+                          <th>PENDING VAL</th>
+                          <th>WRONG HU</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filterRows(storeValidationData, 'storeValidation', ['store']).map((row, idx) => (
+                          <tr key={idx}>
+                            <td><strong>{row.store}</strong></td>
+                            <td>{row.grcDate}</td>
+                            <td>{row.huReceived}</td>
+                            <td>{row.whValidated}</td>
+                            <td>{row.storeValidated}</td>
+                            <td>{row.pendingValidation}</td>
+                            <td><span style={{ color: '#dc2626', fontWeight: 600 }}>{row.wrongHU}</span></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td>TOTAL</td>
+                          <td>-</td>
+                          <td>28,550</td>
+                          <td>28,480</td>
+                          <td>27,750</td>
+                          <td>730</td>
+                          <td>19</td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 4. SALE REPORT CARD */}
+            {isCardVisible('sale') && (
+              <div className="vmm-card">
+                <div className="vmm-card-header">
+                  <span className="vmm-card-title">SALE</span>
+                  <div className="vmm-card-meta">
+                    <span className="vmm-meta-btn">THURSDAY</span>
+                    <span className="vmm-meta-btn">2026-07-23</span>
+                  </div>
+                </div>
+                <div className="vmm-card-body">
+                  <div className="vmm-table-toolbar">
+                    <div className="vmm-search-input">
+                      <span>Search:</span>
+                      <input
+                        type="text"
+                        placeholder="Search Records"
+                        value={searchTerms.sale}
+                        onChange={(e) => handleSearchChange('sale', e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="vmm-table-container">
+                    <table className="vmm-table">
+                      <thead>
+                        <tr>
+                          <th>STORE</th>
+                          <th>DATE</th>
+                          <th>TOTAL SALE QTY</th>
+                          <th>RFID CHECKOUT</th>
+                          <th>TAFFETA SALE</th>
+                          <th>MANUAL SALE</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filterRows(saleData, 'sale', ['store']).map((row, idx) => (
+                          <tr key={idx}>
+                            <td><strong>{row.store}</strong></td>
+                            <td>{row.date}</td>
+                            <td><strong>{row.totalSale}</strong></td>
+                            <td>{row.rfidCheckout}</td>
+                            <td>{row.taffetaSale}</td>
+                            <td>{row.manualSale}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td>TOTAL</td>
+                          <td>-</td>
+                          <td>11,050</td>
+                          <td>10,450</td>
+                          <td>420</td>
+                          <td>180</td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 5. VOID REPORT CARD */}
+            {isCardVisible('sale') && (
+              <div className="vmm-card">
+                <div className="vmm-card-header">
+                  <span className="vmm-card-title">VOID</span>
+                  <div className="vmm-card-meta">
+                    <span className="vmm-meta-btn">THURSDAY</span>
+                    <span className="vmm-meta-btn">2026-07-23</span>
+                  </div>
+                </div>
+                <div className="vmm-card-body">
+                  <div className="vmm-table-container">
+                    <table className="vmm-table">
+                      <thead>
+                        <tr>
+                          <th>STORE</th>
+                          <th>VOID QTY</th>
+                          <th>ENCODED VS VOID</th>
+                          <th>PENDING QTY</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filterRows(voidData, 'void', ['store']).map((row, idx) => (
+                          <tr key={idx}>
+                            <td><strong>{row.store}</strong></td>
+                            <td>{row.voidQty}</td>
+                            <td>{row.encodedVsVoid}</td>
+                            <td><span style={{ color: row.pendingQty !== '0' ? '#eab308' : 'inherit' }}>{row.pendingQty}</span></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td>TOTAL</td>
+                          <td>282</td>
+                          <td>273</td>
+                          <td>9</td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 6. DC VALIDATION CARD */}
+            {isCardVisible('dc') && (
+              <div className="vmm-card">
+                <div className="vmm-card-header">
+                  <span className="vmm-card-title">DC VALIDATION</span>
+                  <div className="vmm-card-meta">
+                    <span className="vmm-meta-btn">THURSDAY</span>
+                    <span className="vmm-meta-btn">2026-07-23</span>
+                  </div>
+                </div>
+                <div className="vmm-card-body">
+                  <div className="vmm-summary-actions">
+                    <button className="vmm-btn-summary">WH Encode Summary</button>
+                    <button className="vmm-btn-summary">HU Summary</button>
+                  </div>
+
+                  <div className="vmm-table-container">
+                    <table className="vmm-table">
+                      <thead>
+                        <tr>
+                          <th>STORE</th>
+                          <th>PROCESSED HU QTY</th>
+                          <th>UNPROCESSED HU QTY</th>
+                          <th>VALIDATED HU ARTICLES</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filterRows(dcValidationData, 'dcValidation', ['store']).map((row, idx) => (
+                          <tr key={idx}>
+                            <td><strong>{row.store}</strong></td>
+                            <td>{row.processedHU}</td>
+                            <td>{row.unprocessedHU}</td>
+                            <td>{row.validatedArticles}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td>TOTAL</td>
+                          <td>82,600</td>
+                          <td>2,450</td>
+                          <td>80,150</td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 7. TAG MANAGEMENT CARD */}
+            {isCardVisible('dc') && (
+              <div className="vmm-card vmm-card-full-width">
+                <div className="vmm-card-header">
+                  <span className="vmm-card-title">TAG MANAGEMENT</span>
+                  <div className="vmm-card-meta">
+                    <span className="vmm-meta-btn">THURSDAY</span>
+                    <span className="vmm-meta-btn">2026-07-23</span>
+                  </div>
+                </div>
+                <div className="vmm-card-body">
+                  <div className="vmm-tag-widget">
+                    <div className="vmm-widget-box">
+                      <div className="vmm-widget-title">Inventory Breakdown</div>
+                      <div className="vmm-widget-subtitle">Tag distribution across major retail sites</div>
+                      <div className="vmm-bar-group">
+                        <div className="vmm-bar-item">
+                          <div className="vmm-bar-info">
+                            <span>HD44 Main Hub</span>
+                            <span>76,983 Tags (45%)</span>
+                          </div>
+                          <div className="vmm-bar-bg">
+                            <div className="vmm-bar-fill" style={{ width: '45%' }}></div>
+                          </div>
+                        </div>
+                        <div className="vmm-bar-item">
+                          <div className="vmm-bar-info">
+                            <span>HD55 Superstore</span>
+                            <span>88,968 Tags (38%)</span>
+                          </div>
+                          <div className="vmm-bar-bg">
+                            <div className="vmm-bar-fill" style={{ width: '38%', background: 'linear-gradient(90deg, #10b981, #34d399)' }}></div>
+                          </div>
+                        </div>
+                        <div className="vmm-bar-item">
+                          <div className="vmm-bar-info">
+                            <span>HH15 Express Outlet</span>
+                            <span>55,614 Tags (17%)</span>
+                          </div>
+                          <div className="vmm-bar-bg">
+                            <div className="vmm-bar-fill" style={{ width: '17%', background: 'linear-gradient(90deg, #f59e0b, #fbbf24)' }}></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="vmm-widget-box">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                        <div className="vmm-widget-title">RFID Tag Recycle Distribution</div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: '#16a34a', display: 'flex', alignItems: 'center', gap: 4 }}>
+                          <TrendingUp size={14} /> Avg Recycle: <strong>4.2x</strong>
+                        </div>
+                      </div>
+                      <div className="vmm-widget-subtitle">Distribution of tags based on total reuse cycles</div>
+                      <div className="vmm-bar-group">
+                        <div className="vmm-bar-item">
+                          <div className="vmm-bar-info">
+                            <span>1 - 3 Cycles</span>
+                            <span>1,24,500 Tags</span>
+                          </div>
+                          <div className="vmm-bar-bg">
+                            <div className="vmm-bar-fill" style={{ width: '65%', background: '#6366f1' }}></div>
+                          </div>
+                        </div>
+                        <div className="vmm-bar-item">
+                          <div className="vmm-bar-info">
+                            <span>4 - 7 Cycles</span>
+                            <span>78,200 Tags</span>
+                          </div>
+                          <div className="vmm-bar-bg">
+                            <div className="vmm-bar-fill" style={{ width: '40%', background: '#06b6d4' }}></div>
+                          </div>
+                        </div>
+                        <div className="vmm-bar-item">
+                          <div className="vmm-bar-info">
+                            <span>8+ Cycles</span>
+                            <span>18,865 Tags</span>
+                          </div>
+                          <div className="vmm-bar-bg">
+                            <div className="vmm-bar-fill" style={{ width: '15%', background: '#ec4899' }}></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 8. VENDOR DISCREPANCY CARD */}
+            {isCardVisible('all') && (
+              <div className="vmm-card vmm-card-full-width">
+                <div className="vmm-card-header">
+                  <span className="vmm-card-title">VENDOR DISCREPANCY</span>
+                  <div className="vmm-card-meta">
+                    <span className="vmm-meta-btn">THURSDAY</span>
+                    <span className="vmm-meta-btn">2026-07-23</span>
+                  </div>
+                </div>
+                <div className="vmm-card-body">
+                  <div className="vmm-table-container">
+                    <table className="vmm-table">
+                      <thead>
+                        <tr>
+                          <th>VENDOR CODE</th>
+                          <th>VENDOR NAME</th>
+                          <th>EXPECTED QTY</th>
+                          <th>ACTUAL QTY</th>
+                          <th>DIFF QTY</th>
+                          <th>DIFF QTY (FROM 27-06-2026)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filterRows(vendorDiscrepancyData, 'vendorDiscrepancy', ['code', 'name']).map((row, idx) => (
+                          <tr key={idx}>
+                            <td><strong>{row.code}</strong></td>
+                            <td>{row.name}</td>
+                            <td>{row.expected}</td>
+                            <td>{row.actual}</td>
+                            <td><span style={{ color: '#dc2626', fontWeight: 600 }}>{row.diff}</span></td>
+                            <td><span style={{ color: '#dc2626', fontWeight: 600 }}>{row.diffSince}</span></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td>TOTAL</td>
+                          <td>3 VENDORS</td>
+                          <td>46,300</td>
+                          <td>45,750</td>
+                          <td style={{ color: '#dc2626' }}>-550</td>
+                          <td style={{ color: '#dc2626' }}>-1,800</td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
