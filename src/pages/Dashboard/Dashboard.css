@@ -277,7 +277,7 @@
 
 /* Header BG matching image: Dark Blue gradient/color */
 .vmm-card-header {
-  background: linear-gradient(135deg, #245882 0%, #1e4566 100%);
+  background: linear-gradient(to right, #1F4E79, #2F6DA3, #3C7DB8);
   color: #ffffff;
   padding: 10px 16px;
   display: flex;
@@ -400,7 +400,7 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 11px;
-  text-align: left;
+  text-align: center;
 }
 
 .vmm-table th {

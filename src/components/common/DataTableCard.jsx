@@ -24,7 +24,7 @@ export default function DataTableCard({
   onRowClick = null,
   striped = true,
   enablePagination = false,
-  pageSize = 10
+  pageSize = 2
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortColumnKey, setSortColumnKey] = useState(null);
@@ -262,7 +262,7 @@ export default function DataTableCard({
         </div>
 
         {/* Optional Pagination Footer */}
-        {enablePagination && totalPages > 0 && (
+        {enablePagination && totalPages > 1 && (
           <div className="vmm-pagination-container">
             <span className="vmm-pagination-info">
               Showing {sortedData.length === 0 ? 0 : (currentPage - 1) * pageSize + 1} to{' '}

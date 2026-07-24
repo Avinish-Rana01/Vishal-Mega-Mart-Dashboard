@@ -13,6 +13,13 @@ export default function DashboardPage({ username = 'Admin User', onLogout, onNav
   const [error, setError] = useState(null);
   const [currentSearch, setCurrentSearch] = useState('');
 
+  // Cycle Count Data State
+  const [cycleCountData, setCycleCountData] = useState([]);
+  const [cycleCountTotals, setCycleCountTotals] = useState(null);
+  const [isCycleCountLoading, setIsCycleCountLoading] = useState(true);
+  const [cycleCountError, setCycleCountError] = useState(null);
+  const [currentCycleSearch, setCurrentCycleSearch] = useState('');
+
   const fetchLiveStockData = async (searchQuery = '') => {
     setIsLoading(true);
     setError(null);
@@ -48,12 +55,45 @@ export default function DashboardPage({ username = 'Admin User', onLogout, onNav
     }
   };
 
+  const fetchCycleCountData = async (searchQuery = '') => {
+    setIsCycleCountLoading(true);
+    setCycleCountError(null);
+    try {
+      const response = await fetch(`http://localhost:5000/api/stock/cycle-count-dashboard?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&sortColumn=STORE%20CODE&sortDirection=ASC&userId=26`, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      if (!response.ok) throw new Error(`Failed to fetch cycle count data: ${response.statusText}`);
+      const data = await response.json();
+      setCycleCountData(data.items || []);
+      if (data.summary) {
+        setCycleCountTotals({
+          STORE_CODE: 'TOTAL',
+          REF_NO: data.summary.refNo,
+        });
+      }
+    } catch (err) {
+      console.error("Error fetching cycle count data:", err);
+      setCycleCountError("Unable to load cycle count data.");
+    } finally {
+      setIsCycleCountLoading(false);
+    }
+  };
+
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       fetchLiveStockData(currentSearch);
     }, 300);
     return () => clearTimeout(delayDebounceFn);
   }, [currentSearch]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      fetchCycleCountData(currentCycleSearch);
+    }, 300);
+    return () => clearTimeout(delayDebounceFn);
+  }, [currentCycleSearch]);
 
   // Columns for the Live Stock Table Headers based on API response
   const liveStockColumns = [
@@ -62,7 +102,47 @@ export default function DashboardPage({ username = 'Admin User', onLogout, onNav
     { key: 'RFID_STOCK', label: 'RFID STOCK QTY', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
     { key: 'DIFFERENCE', label: 'DIFFERENCE QTY', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
     { key: 'DATE', label: 'SYNC DATE' },
-    { key: 'PERCENTAGE', label: 'COVERAGE(%)', render: (val) => <span className="vmm-badge-coverage">{val}%</span> }
+    { 
+      key: 'PERCENTAGE', 
+      label: 'COVERAGE(%)', 
+      render: (val) => {
+        const percent = parseFloat(val) || 0;
+        const opacity = Math.max(0.15, percent / 100);
+        return (
+          <span 
+            className="vmm-badge-coverage"
+            style={{
+              backgroundColor: `rgba(46, 125, 50, ${opacity})`,
+              color: opacity > 0.6 ? '#ffffff' : '#083a1c'
+            }}
+          >
+            {val}%
+          </span>
+        );
+      } 
+    }
+  ];
+
+  // Columns for Cycle Count Dashboard
+  const cycleCountColumns = [
+    { key: 'DATE', label: 'DATE' },
+    { key: 'STORE_CODE', label: 'STORE', render: (val) => <span className="vmm-link-num">{val}</span> },
+    { key: 'STORE_NAME', label: 'STORE NAME' },
+    { key: 'CYCLE_COUNT_TYPE', label: 'TYPE' },
+    { key: 'REF_NO', label: 'REF NO', render: (val) => <span className="vmm-link-num">{val}</span> },
+    { key: 'Start_DateTime', label: 'START TIME' },
+    { key: 'END_DateTime', label: 'END TIME' },
+    { key: 'Time_Taken', label: 'TIME TAKEN' }
+  ];
+
+  // Columns for Vendor Discrepancy
+  const vendorDiscrepancyColumns = [
+    { key: 'vendorCode', label: 'Vendor Code' },
+    { key: 'vendorName', label: 'Vendor Name' },
+    { key: 'expectedQty', label: 'Expected Qty', render: (val) => <span className="vmm-link-num">{val}</span> },
+    { key: 'actualQty', label: 'Actual Qty', render: (val) => <span className="vmm-link-num">{val}</span> },
+    { key: 'diffQty', label: 'Diff Qty', render: (val) => <span className="vmm-link-num">{val}</span> },
+    { key: 'diffQtyDate', label: 'Diff Qty (From 27-06-2026)', render: (val) => <span className="vmm-link-num">{val}</span> }
   ];
 
   return (
@@ -84,6 +164,36 @@ export default function DashboardPage({ username = 'Admin User', onLogout, onNav
               onRefresh={() => fetchLiveStockData(currentSearch)}
               onSearch={(term) => setCurrentSearch(term)}
               onRowClick={(row) => onNavigate('liveStockReport', { store: row.STORE_CODE, date: row.DATE })}
+              enablePagination={true}
+              pageSize={3}
+            />
+            <DataTableCard
+              title="CYCLE COUNT DASHBOARD"
+              columns={cycleCountColumns}
+              data={cycleCountData}
+              totals={cycleCountTotals}
+              isLoading={isCycleCountLoading}
+              error={cycleCountError}
+              onRefresh={() => fetchCycleCountData(currentCycleSearch)}
+              onSearch={(term) => setCurrentCycleSearch(term)}
+              enablePagination={true}
+              pageSize={3}
+            />
+            <DataTableCard
+              title="VENDOR DISCREPANCY"
+              columns={vendorDiscrepancyColumns}
+              data={[
+                { vendorCode: 'V001', vendorName: 'Acme Corp', expectedQty: 500, actualQty: 480, diffQty: -20, diffQtyDate: -15 },
+                { vendorCode: 'V002', vendorName: 'Global Logistics', expectedQty: 1000, actualQty: 1000, diffQty: 0, diffQtyDate: 0 },
+                { vendorCode: 'V003', vendorName: 'Speedy Supply', expectedQty: 250, actualQty: 260, diffQty: 10, diffQtyDate: 5 },
+                { vendorCode: 'V004', vendorName: 'Prime Vendors', expectedQty: 1500, actualQty: 1400, diffQty: -100, diffQtyDate: -90 },
+                { vendorCode: 'V005', vendorName: 'Apex Distributors', expectedQty: 300, actualQty: 305, diffQty: 5, diffQtyDate: 0 }
+              ]}
+              totals={{ vendorCode: 'TOTAL', expectedQty: 3550, actualQty: 3445, diffQty: -105, diffQtyDate: -100 }}
+              isLoading={false}
+              enablePagination={true}
+              pageSize={10}
+              fullWidth={true}
             />
           </div>
         </main>
