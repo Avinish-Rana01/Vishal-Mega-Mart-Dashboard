@@ -26,7 +26,7 @@
 /* Left Sidebar */
 .vmm-sidebar {
   width: 70px;
-  background-color: #e2e8f0;
+  background-color: #a3a3a6;
   border-right: 1px solid #cbd5e1;
   display: flex;
   flex-direction: column;
@@ -318,10 +318,23 @@
 
 .vmm-table-toolbar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
   gap: 8px;
+}
+
+.vmm-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vmm-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
 }
 
 .vmm-search-input {
@@ -346,10 +359,41 @@
   border-color: #2563eb;
 }
 
+/* Table Shimmer Skeleton Loader */
+@keyframes vmmShimmer {
+  0% {
+    background-position: -250px 0;
+  }
+  100% {
+    background-position: 250px 0;
+  }
+}
+
+.vmm-shimmer {
+  background: #f1f5f9;
+  background-image: linear-gradient(
+    90deg,
+    #f1f5f9 0px,
+    #cbd5e1 50px,
+    #f1f5f9 100px
+  );
+  background-size: 500px 100%;
+  animation: vmmShimmer 1.4s infinite ease-in-out;
+  border-radius: 4px;
+  display: inline-block;
+  height: 14px;
+  vertical-align: middle;
+}
+
+.vmm-skeleton-row td {
+  padding: 10px 8px !important;
+}
+
 /* Data Table Styling matching DataTable in screenshot */
 .vmm-table-container {
   overflow-x: auto;
   width: 100%;
+  min-height: 180px;
 }
 
 .vmm-table {
@@ -360,7 +404,7 @@
 }
 
 .vmm-table th {
-  background-color: #f8fafc;
+  background-color: #dfdddd;
   color: #334155;
   font-weight: 700;
   padding: 8px 6px;
@@ -374,7 +418,7 @@
 }
 
 .vmm-table th.sortable:hover {
-  background-color: #f1f5f9;
+  background-color: #d8d8d8;
 }
 
 .vmm-table td {
@@ -384,7 +428,7 @@
   white-space: nowrap;
 }
 
-.vmm-table tbody tr:nth-child(even) {
+.vmm-table-striped tbody tr:nth-child(even) {
   background-color: #f8fafc;
 }
 
@@ -399,6 +443,60 @@
   border-bottom: 1px solid #cbd5e1;
   color: #0f172a;
   padding: 8px 6px;
+}
+
+/* Pagination Styling */
+.vmm-pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  margin-top: 8px;
+  border-top: 1px solid #e2e8f0;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.vmm-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.vmm-page-btn {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  transition: all 0.15s ease;
+}
+
+.vmm-page-btn:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.vmm-page-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  font-weight: 600;
+}
+
+.vmm-page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.vmm-page-ellipsis {
+  padding: 0 4px;
+  color: #94a3b8;
 }
 
 /* Badges & Accents */

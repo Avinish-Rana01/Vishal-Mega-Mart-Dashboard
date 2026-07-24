@@ -1,0 +1,238 @@
+.vmm-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.vmm-page-title {
+  margin: 0;
+  font-size: 16px;
+  color: #334155;
+  font-weight: 700;
+}
+
+.vmm-breadcrumb {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.vmm-breadcrumb .active {
+  color: #0ea5e9;
+}
+
+.btn-back {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.ml-4 {
+  margin-left: 1rem;
+}
+
+.report-search-card {
+  background: white;
+  margin: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.report-search-header {
+  background-color: #3b82f6;
+  color: white;
+  padding: 10px 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.report-search-body {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  padding: 20px;
+}
+
+.search-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.search-field label {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #475569;
+}
+
+.text-danger {
+  color: #ef4444;
+}
+
+.input-group {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.input-group input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  outline: none;
+}
+
+.btn-input-clear, .input-group-text {
+  background: #e2e8f0;
+  border: none;
+  border-left: 1px solid #cbd5e1;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.search-field select {
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  background: #f8fafc;
+  width: 100%;
+}
+
+.search-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-search {
+  background: #0ea5e9;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-clear {
+  background: #94a3b8;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.report-stats-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  font-weight: bold;
+  color: #334155;
+  background: #e2e8f0;
+  margin: 0 20px;
+  border-radius: 4px;
+}
+
+.report-curved-cards {
+  display: flex;
+  gap: 20px;
+  margin: 20px;
+}
+
+.curve-card {
+  flex: 1;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  z-index: 1;
+}
+
+.card-content p {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.card-content h3 {
+  margin: 10px 0 0 0;
+  font-size: 24px;
+  color: #0f172a;
+}
+
+.card-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sap-icon {
+  background: #dcfce7;
+}
+
+.rfid-icon {
+  background: #e0e7ff;
+}
+
+.diff-icon {
+  background: #fce7f3;
+}
+
+/* Add custom wavy curves using pseudo-elements */
+.curve-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.card-sap::after {
+  background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg"><path fill="%2386efac" fill-opacity="1" d="M0,192L48,202.7C96,213,192,235,288,218.7C384,203,480,149,576,144C672,139,768,181,864,202.7C960,224,1056,224,1152,192C1248,160,1344,96,1392,64L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+}
+
+.card-rfid::after {
+  background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg"><path fill="%23a5b4fc" fill-opacity="1" d="M0,192L48,202.7C96,213,192,235,288,218.7C384,203,480,149,576,144C672,139,768,181,864,202.7C960,224,1056,224,1152,192C1248,160,1344,96,1392,64L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+}
+
+.card-diff::after {
+  background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg"><path fill="%23f9a8d4" fill-opacity="1" d="M0,192L48,202.7C96,213,192,235,288,218.7C384,203,480,149,576,144C672,139,768,181,864,202.7C960,224,1056,224,1152,192C1248,160,1344,96,1392,64L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+}
+
+.mt-4 { margin-top: 1rem; }

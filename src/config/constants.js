@@ -17,3 +17,4 @@ export const API_DEFAULTS = {
   SORT_COLUMN: 'STORE',
   SORT_DIRECTION: 'asc'
 };
+  

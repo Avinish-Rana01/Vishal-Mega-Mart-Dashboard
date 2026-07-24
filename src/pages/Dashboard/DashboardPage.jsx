@@ -3,122 +3,66 @@ import Sidebar from '../../components/layout/Sidebar';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import DataTableCard from '../../components/common/DataTableCard';
-import CycleCountModal from '../../components/modals/CycleCountModal';
-import { fetchLiveStockData } from '../../services/api';
-import { formatNumber, formatDate, formatCoverage } from '../../utils/formatters';
 import './Dashboard.css';
 
-export default function DashboardPage({ username = 'Admin User', onLogout }) {
+export default function DashboardPage({ username = 'Admin User', onLogout, onNavigate }) {
   const [activeNav, setActiveNav] = useState('home');
-  const [selectedModalData, setSelectedModalData] = useState(null);
+  const [liveStockData, setLiveStockData] = useState([]);
+  const [liveTotals, setLiveTotals] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentSearch, setCurrentSearch] = useState('');
 
-  // Live Stock Data State
-  const [liveStockData, setLiveStockData] = useState([
-    { store: 'HD44', sapQty: '1,03,803', rfidQty: '76,983', diffQty: '26,820', syncDate: '2026-07-20', coverage: '74.16%' },
-    { store: 'HD55', sapQty: '89,838', rfidQty: '88,968', diffQty: '870', syncDate: '2026-07-20', coverage: '99.03%' },
-    { store: 'HH15', sapQty: '62,274', rfidQty: '55,614', diffQty: '6,660', syncDate: '2026-07-20', coverage: '89.31%' },
-  ]);
-
-  const [liveTotals, setLiveTotals] = useState({
-    store: 'TOTAL',
-    sapQty: '2,55,915',
-    rfidQty: '2,21,565',
-    diffQty: '34,350'
-  });
-
-  const [isLoadingLiveStock, setIsLoadingLiveStock] = useState(false);
-  const [apiError, setApiError] = useState(null);
-
-  // Cycle Count Data
-  const cycleCountData = [
-    { store: 'HD44', type: 'FULL CYCLE', refNo: 'CC-2026-001', date: '2026-07-23', startedOn: '09:00 AM', endedOn: '11:30 AM', timeTaken: '2h 30m', articles: 1240, sysStock: 15400, scannedQty: 14850, diffQty: -550 },
-    { store: 'HD55', type: 'PARTIAL CYCLE', refNo: 'CC-2026-002', date: '2026-07-22', startedOn: '02:15 PM', endedOn: '03:45 PM', timeTaken: '1h 30m', articles: 850, sysStock: 9200, scannedQty: 9150, diffQty: -50 },
-    { store: 'HH15', type: 'HIGH VALUE', refNo: 'CC-2026-003', date: '2026-07-21', startedOn: '10:00 AM', endedOn: '11:15 AM', timeTaken: '1h 15m', articles: 430, sysStock: 4800, scannedQty: 4780, diffQty: -20 },
-  ];
-
-  const loadLiveStock = async () => {
-    setIsLoadingLiveStock(true);
-    setApiError(null);
+  const fetchLiveStockData = async (searchQuery = '') => {
+    setIsLoading(true);
+    setError(null);
     try {
-      const response = await fetchLiveStockData({
-        searchTerm: '',
-        pageIndex: 1,
-        pageSize: 100,
-        userId: '0'
+      // Using the exact API endpoint provided, with dynamic searchTerm
+      const response = await fetch(`http://localhost:5000/api/stock/live-details?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&userId=26`, {
+        headers: {
+          'Accept': 'application/json'
+        }
       });
-
-      if (response && response.tables) {
-        const rows = response.tables.livestockdata || response.tables.LiveStockData || response.tables.stockdata || response.tables.StockData || [];
-        const pager = (response.tables.pager || response.tables.Pager)?.[0] || null;
-
-        if (rows.length > 0) {
-          const mappedRows = rows.map((row) => {
-            const storeCode = row.STORE_CODE || row.store_code || row.STORE || row.store || '';
-            const sap = row.SAP_STOCK || row.sap_stock || row.SAP_QTY || row.QTY || '0';
-            const rfid = row.RFID_STOCK || row.rfid_stock || row.RFID_QTY || row.ENCODED_QTY || '0';
-            const diff = row.DIFFERENCE || row.difference || row.DIFF_QTY || (parseInt(sap, 10) - parseInt(rfid, 10)).toString();
-            const cov = formatCoverage(sap, rfid, row.PERCENTAGE || row.percentage || row.COVERAGE);
-            const dateStr = formatDate(row.DATE || row.date || row.SYNC_DATE);
-
-            return {
-              store: storeCode,
-              sapQty: formatNumber(sap),
-              rfidQty: formatNumber(rfid),
-              diffQty: formatNumber(diff),
-              syncDate: dateStr,
-              coverage: cov
-            };
-          });
-          setLiveStockData(mappedRows);
-        }
-
-        if (pager) {
-          setLiveTotals({
-            store: 'TOTAL',
-            sapQty: formatNumber(pager.QTY || pager.qty),
-            rfidQty: formatNumber(pager.ENCODED_QTY || pager.encoded_qty),
-            diffQty: formatNumber(pager.DIFF_QTY || pager.diff_qty)
-          });
-        }
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      setLiveStockData(data.items || []);
+      
+      if (data.summary) {
+        setLiveTotals({
+          STORE_CODE: 'TOTAL',
+          SAP_STOCK: data.summary.sapQty?.toLocaleString('en-IN') || 0,
+          RFID_STOCK: data.summary.rfidQty?.toLocaleString('en-IN') || 0,
+          DIFFERENCE: data.summary.diffQty?.toLocaleString('en-IN') || 0
+        });
       }
     } catch (err) {
-      console.warn('Live Backend call failed, keeping offline reference data:', err.message);
-      setApiError('Connected to offline demo mode (Backend WebMethod endpoint offline)');
+      console.error("Error fetching live stock data:", err);
+      setError("Unable to load live stock data. Please check your connection.");
     } finally {
-      setIsLoadingLiveStock(false);
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    loadLiveStock();
-  }, []);
+    const delayDebounceFn = setTimeout(() => {
+      fetchLiveStockData(currentSearch);
+    }, 300);
+    return () => clearTimeout(delayDebounceFn);
+  }, [currentSearch]);
 
+  // Columns for the Live Stock Table Headers based on API response
   const liveStockColumns = [
-    { key: 'store', label: 'STORE', render: (val) => <span className="vmm-link-num">{val}</span> },
-    { key: 'sapQty', label: 'SAP STOCK QTY', render: (val) => <span className="vmm-link-num">{val}</span> },
-    { key: 'rfidQty', label: 'RFID STOCK QTY', render: (val) => <span className="vmm-link-num">{val}</span> },
-    { key: 'diffQty', label: 'DIFFERENCE QTY', render: (val) => <span className="vmm-link-num">{val}</span> },
-    { key: 'syncDate', label: 'SYNC DATE' },
-    { key: 'coverage', label: 'COVERAGE(%)', render: (val) => <span className="vmm-badge-coverage">{val}</span> }
-  ];
-
-  const cycleCountColumns = [
-    { key: 'store', label: 'STORE', render: (val) => <strong>{val}</strong> },
-    { key: 'type', label: 'CC TYPE' },
-    { key: 'refNo', label: 'REF NO' },
-    { key: 'date', label: 'DATE' },
-    { key: 'startedOn', label: 'STARTED ON' },
-    { key: 'timeTaken', label: 'TIME TAKEN' },
-    { 
-      key: 'action', 
-      label: 'ACTION', 
-      sortable: false, 
-      render: (_, row) => (
-        <button className="vmm-btn-action" onClick={() => setSelectedModalData(row)}>
-          View Details
-        </button>
-      ) 
-    }
+    { key: 'STORE_CODE', label: 'STORE', render: (val) => <span className="vmm-link-num">{val}</span> },
+    { key: 'SAP_STOCK', label: 'SAP STOCK QTY', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
+    { key: 'RFID_STOCK', label: 'RFID STOCK QTY', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
+    { key: 'DIFFERENCE', label: 'DIFFERENCE QTY', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
+    { key: 'DATE', label: 'SYNC DATE' },
+    { key: 'PERCENTAGE', label: 'COVERAGE(%)', render: (val) => <span className="vmm-badge-coverage">{val}%</span> }
   ];
 
   return (
@@ -135,27 +79,17 @@ export default function DashboardPage({ username = 'Admin User', onLogout }) {
               columns={liveStockColumns}
               data={liveStockData}
               totals={liveTotals}
-              isLoading={isLoadingLiveStock}
-              error={apiError}
-              onRefresh={loadLiveStock}
-            />
-
-            <DataTableCard
-              title="CYCLE COUNT"
-              columns={cycleCountColumns}
-              data={cycleCountData}
-              totals={{ store: 'TOTAL', type: '3 CYCLES', timeTaken: '5h 15m' }}
+              isLoading={isLoading}
+              error={error}
+              onRefresh={() => fetchLiveStockData(currentSearch)}
+              onSearch={(term) => setCurrentSearch(term)}
+              onRowClick={(row) => onNavigate('liveStockReport', { store: row.STORE_CODE, date: row.DATE })}
             />
           </div>
         </main>
 
         <Footer />
       </div>
-
-      <CycleCountModal
-        modalData={selectedModalData}
-        onClose={() => setSelectedModalData(null)}
-      />
     </div>
   );
 }
