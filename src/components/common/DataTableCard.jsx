@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ArrowUpDown, RefreshCw, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
 /**
@@ -41,42 +41,48 @@ export default function DataTableCard({
   };
 
   // Filter Data
-  const filteredData = data.filter((row) => {
-    // If onSearch is provided, assume server-side filtering
-    if (onSearch || !searchTerm.trim()) return true;
-    const term = searchTerm.toLowerCase();
-    return columns.some((col) => {
-      const val = row[col.key];
-      return val !== undefined && val !== null && String(val).toLowerCase().includes(term);
+  const filteredData = useMemo(() => {
+    return data.filter((row) => {
+      // If onSearch is provided, assume server-side filtering
+      if (onSearch || !searchTerm.trim()) return true;
+      const term = searchTerm.toLowerCase();
+      return columns.some((col) => {
+        const val = row[col.key];
+        return val !== undefined && val !== null && String(val).toLowerCase().includes(term);
+      });
     });
-  });
+  }, [data, onSearch, searchTerm, columns]);
 
   // Sort Data
-  const sortedData = [...filteredData].sort((a, b) => {
-    if (!sortColumnKey) return 0;
-    const aVal = a[sortColumnKey] ?? '';
-    const bVal = b[sortColumnKey] ?? '';
+  const sortedData = useMemo(() => {
+    return [...filteredData].sort((a, b) => {
+      if (!sortColumnKey) return 0;
+      const aVal = a[sortColumnKey] ?? '';
+      const bVal = b[sortColumnKey] ?? '';
 
-    const numA = parseFloat(String(aVal).replace(/,/g, ''));
-    const numB = parseFloat(String(bVal).replace(/,/g, ''));
+      const numA = parseFloat(String(aVal).replace(/,/g, ''));
+      const numB = parseFloat(String(bVal).replace(/,/g, ''));
 
-    if (!isNaN(numA) && !isNaN(numB)) {
-      return sortDirection === 'asc' ? numA - numB : numB - numA;
-    }
+      if (!isNaN(numA) && !isNaN(numB)) {
+        return sortDirection === 'asc' ? numA - numB : numB - numA;
+      }
 
-    const strA = String(aVal).toLowerCase();
-    const strB = String(bVal).toLowerCase();
+      const strA = String(aVal).toLowerCase();
+      const strB = String(bVal).toLowerCase();
 
-    if (strA < strB) return sortDirection === 'asc' ? -1 : 1;
-    if (strA > strB) return sortDirection === 'asc' ? 1 : -1;
-    return 0;
-  });
+      if (strA < strB) return sortDirection === 'asc' ? -1 : 1;
+      if (strA > strB) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [filteredData, sortColumnKey, sortDirection]);
 
   // Pagination calculation
   const totalPages = enablePagination ? Math.ceil(sortedData.length / pageSize) || 1 : 1;
-  const paginatedData = enablePagination
-    ? sortedData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-    : sortedData;
+  const paginatedData = useMemo(() => {
+    return enablePagination
+      ? sortedData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+      : sortedData;
+  }, [sortedData, enablePagination, currentPage, pageSize]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {

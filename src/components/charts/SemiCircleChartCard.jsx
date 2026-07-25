@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { Recycle } from 'lucide-react';
 import ProgressBar from '../common/ProgressBar';
 import './Charts.css';
 
-export default function SemiCircleChartCard({
-  title = "RFID Tag Recycle Distribution",
-  subtitle = "Distribution of tags based on the number of recycle cycles.",
+export default memo(function SemiCircleChartCard({
+  title = "TAG CYCLE COUNT",
+  subtitle = "Distribution of Cycle Count ranges.",
   data = [],
   totalLabel = "Total Tag Count",
   totalValue = "0",
@@ -78,4 +78,4 @@ export default function SemiCircleChartCard({
       </div>
     </div>
   );
-}
+});

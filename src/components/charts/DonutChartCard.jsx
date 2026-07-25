@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import ProgressBar from '../common/ProgressBar';
 import './Charts.css';
 
-export default function DonutChartCard({ 
+export default memo(function DonutChartCard({ 
   title = "Inventory Breakdown", 
   subtitle = "Tag distribution across sites",
   data = [],
@@ -68,4 +68,4 @@ export default function DonutChartCard({
       </div>
     </div>
   );
-}
+});
