@@ -250,7 +250,7 @@ export default function DashboardPage() {
                   <span className="vmm-meta-btn">2026-07-25</span>
                 </div>
               </div>
-              <div className="vmm-card-body" style={{ background: '#f8fafc', padding: '20px' }}>
+              <div className="vmm-card-body" style={{ background: '#f8fafc', padding: '12px 16px' }}>
                 <div className="vmm-tag-actions">
                   <button className="vmm-btn-primary">View Summary</button>
                 </div>

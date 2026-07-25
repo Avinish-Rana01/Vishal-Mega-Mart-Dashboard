@@ -22,8 +22,8 @@
 .vmm-charts-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 30px;
+  gap: 16px;
+  margin-bottom: 12px;
 }
 
 .vmm-date-badge {

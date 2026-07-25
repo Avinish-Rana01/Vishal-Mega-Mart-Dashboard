@@ -14,12 +14,12 @@ export default function DonutChartCard({
     <div className="vmm-chart-card">
       <div className="vmm-chart-container">
         <div className="vmm-chart-graphic">
-          <ResponsiveContainer width="100%" height={240}>
+          <ResponsiveContainer width="100%" height={200}>
             <PieChart>
               <Pie
                 data={data}
-                innerRadius={70}
-                outerRadius={100}
+                innerRadius={60}
+                outerRadius={85}
                 paddingAngle={0}
                 dataKey="value"
                 stroke="none"

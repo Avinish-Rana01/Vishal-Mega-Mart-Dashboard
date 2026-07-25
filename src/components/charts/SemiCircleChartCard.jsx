@@ -26,7 +26,7 @@ export default function SemiCircleChartCard({
       <div className="vmm-chart-container">
         {/* Left Side: Graphic */}
         <div className="vmm-chart-graphic vmm-semi-circle-wrapper">
-          <ResponsiveContainer width="100%" height={180}>
+          <ResponsiveContainer width="100%" height={150}>
             <PieChart>
               <Pie
                 data={data}
@@ -34,8 +34,8 @@ export default function SemiCircleChartCard({
                 cy="100%"
                 startAngle={180}
                 endAngle={0}
-                innerRadius={80}
-                outerRadius={110}
+                innerRadius={70}
+                outerRadius={95}
                 paddingAngle={2}
                 dataKey="value"
                 stroke="none"
