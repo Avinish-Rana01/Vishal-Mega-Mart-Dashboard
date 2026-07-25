@@ -83,6 +83,7 @@ export default function DashboardPage() {
   const [tagCycleData, setTagCycleData] = useState([]);
   const [tagCycleTotal, setTagCycleTotal] = useState(0);
   const [avgRecycle, setAvgRecycle] = useState(0);
+  const [isTagChartsLoading, setIsTagChartsLoading] = useState(true);
 
   // Vendor Discrepancy Data State
   const [vendorData, setVendorData] = useState([]);
@@ -198,6 +199,7 @@ export default function DashboardPage() {
   // Fetch Tag Management Chart Data on mount
   useEffect(() => {
     const fetchTagCharts = async () => {
+      setIsTagChartsLoading(true);
       try {
         const [locResponse, cycleResponse] = await Promise.all([
           fetch('http://localhost:5000/api/stock/tag-management-location'),
@@ -236,6 +238,8 @@ export default function DashboardPage() {
         }
       } catch (err) {
         console.error("Error fetching tag management charts:", err);
+      } finally {
+        setIsTagChartsLoading(false);
       }
     };
     
@@ -300,11 +304,13 @@ export default function DashboardPage() {
                   <DonutChartCard
                     data={tagLocationData}
                     totalValue={tagLocationTotal.toLocaleString('en-IN')}
+                    isLoading={isTagChartsLoading}
                   />
                   <SemiCircleChartCard
                     data={tagCycleData}
                     totalValue={tagCycleTotal.toLocaleString('en-IN')}
                     avgCount={avgRecycle.toString()}
+                    isLoading={isTagChartsLoading}
                   />
                 </div>
               </div>

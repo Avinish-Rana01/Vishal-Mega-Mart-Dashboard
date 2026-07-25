@@ -10,8 +10,27 @@ export default memo(function SemiCircleChartCard({
   data = [],
   totalLabel = "Total Tag Count",
   totalValue = "0",
-  avgCount = "0"
+  avgCount = "0",
+  isLoading = false
 }) {
+  if (isLoading) {
+    return (
+      <div className="vmm-chart-card">
+        <div className="vmm-chart-container">
+          <div className="vmm-chart-graphic vmm-semi-circle-wrapper" style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: '180px' }}>
+             <div className="vmm-shimmer" style={{ width: '220px', height: '110px', borderTopLeftRadius: '110px', borderTopRightRadius: '110px' }}></div>
+          </div>
+          <div className="vmm-chart-legend" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div className="vmm-shimmer" style={{ width: '60%', height: '24px', borderRadius: '4px' }}></div>
+            <div className="vmm-shimmer" style={{ width: '80%', height: '14px', borderRadius: '4px', marginBottom: '8px' }}></div>
+            <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
+            <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="vmm-chart-card vmm-flex-col">
       {/* Header spanning full width at top */}
