@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User, LogOut } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import { APP_INFO } from '../../config/constants';
 
-export default function Header({ username = 'Admin User', breadcrumb = 'HOME - PAGES - DASHBOARD', onLogout }) {
+export default function Header({ breadcrumb = 'HOME - PAGES - DASHBOARD' }) {
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const { loggedInUser, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    setShowUserMenu(false);
+    logout();
+    navigate('/login', { replace: true });
+  };
 
   return (
     <header className="vmm-top-header">
@@ -24,15 +34,12 @@ export default function Header({ username = 'Admin User', breadcrumb = 'HOME - P
         {showUserMenu && (
           <div className="vmm-user-dropdown">
             <div className="vmm-user-info">
-              <div className="vmm-user-name">{username}</div>
+              <div className="vmm-user-name">{loggedInUser || 'Admin User'}</div>
               <div className="vmm-user-role">Administrator</div>
             </div>
             <button
               className="vmm-dropdown-item"
-              onClick={() => {
-                setShowUserMenu(false);
-                if (onLogout) onLogout();
-              }}
+              onClick={handleLogout}
             >
               <LogOut size={16} /> Sign Out
             </button>

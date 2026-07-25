@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/layout/Sidebar';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import DataTableCard from '../../components/common/DataTableCard';
 import './LiveStockReport.css';
 
-export default function LiveStockReportPage({ username = 'Admin User', onLogout, onNavigate, params = {} }) {
+export default function LiveStockReportPage() {
   const [activeNav, setActiveNav] = useState('Report');
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const { store = 'HD44', date = '2026-07-20' } = params;
+  const { store = 'HD44', date = '2026-07-20' } = location.state || {};
 
   // Mock data for specific store details
   const articleData = [
@@ -35,10 +38,10 @@ export default function LiveStockReportPage({ username = 'Admin User', onLogout,
 
   return (
     <div className="vmm-dashboard-layout">
-      <Sidebar activeNav={activeNav} onNavChange={setActiveNav} />
+      <Sidebar />
 
       <div className="vmm-main-wrapper">
-        <Header username={username} onLogout={onLogout} />
+        <Header />
 
         <main className="vmm-dashboard-body">
           {/* Breadcrumb */}
@@ -46,7 +49,7 @@ export default function LiveStockReportPage({ username = 'Admin User', onLogout,
             <h2 className="vmm-page-title">REPORT - LIVE STOCK REPORT</h2>
             <div className="vmm-breadcrumb">
               HOME - PAGES - REPORT - <span className="active">LIVE STOCK REPORT</span>
-              <button className="btn-back ml-4" onClick={() => onNavigate('dashboard')}>
+              <button className="btn-back ml-4" onClick={() => navigate('/dashboard')}>
                 &larr; Back
               </button>
             </div>

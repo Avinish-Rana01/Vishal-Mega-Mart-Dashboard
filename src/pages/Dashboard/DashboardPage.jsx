@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/layout/Sidebar';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import DataTableCard from '../../components/common/DataTableCard';
 import './Dashboard.css';
 
-export default function DashboardPage({ username = 'Admin User', onLogout, onNavigate }) {
+export default function DashboardPage() {
+  const navigate = useNavigate();
   const [activeNav, setActiveNav] = useState('home');
   const [liveStockData, setLiveStockData] = useState([]);
   const [liveTotals, setLiveTotals] = useState(null);
@@ -147,10 +149,10 @@ export default function DashboardPage({ username = 'Admin User', onLogout, onNav
 
   return (
     <div className="vmm-dashboard-layout">
-      <Sidebar activeNav={activeNav} onNavChange={setActiveNav} />
+      <Sidebar />
 
       <div className="vmm-main-wrapper">
-        <Header username={username} onLogout={onLogout} />
+        <Header />
 
         <main className="vmm-dashboard-body">
           <div className="vmm-cards-grid">
@@ -163,7 +165,7 @@ export default function DashboardPage({ username = 'Admin User', onLogout, onNav
               error={error}
               onRefresh={() => fetchLiveStockData(currentSearch)}
               onSearch={(term) => setCurrentSearch(term)}
-              onRowClick={(row) => onNavigate('liveStockReport', { store: row.STORE_CODE, date: row.DATE })}
+              onRowClick={(row) => navigate('/reports/live-stock', { state: { store: row.STORE_CODE, date: row.DATE } })}
               enablePagination={true}
               pageSize={3}
             />
