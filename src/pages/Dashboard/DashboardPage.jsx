@@ -234,7 +234,7 @@ export default function DashboardPage() {
               onRefresh={() => fetchVendorDiscrepancyData(currentVendorSearch)}
               onSearch={(term) => setCurrentVendorSearch(term)}
               enablePagination={true}
-              pageSize={10}
+              pageSize={3}
               fullWidth={true}
             />
           </div>

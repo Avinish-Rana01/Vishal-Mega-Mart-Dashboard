@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import LoginPage from './pages/Login/LoginPage';
 import DashboardPage from './pages/Dashboard/DashboardPage';
 import LiveStockReportPage from './pages/Report/LiveStockReportPage';
+import TagManagementPage from './pages/TagManagement/TagManagementPage';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
@@ -28,6 +29,15 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <LiveStockReportPage />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/tags" 
+            element={
+              <ProtectedRoute>
+                <TagManagementPage />
               </ProtectedRoute>
             } 
           />
