@@ -8,36 +8,72 @@ import DonutChartCard from '../../components/charts/DonutChartCard';
 import SemiCircleChartCard from '../../components/charts/SemiCircleChartCard';
 import '../TagManagement/TagManagement.css';
 import './Dashboard.css';
+import '../TagManagement/TagManagement.css';
+import './Dashboard.css';// Tag Management Mock Data
+const inventoryData = [
+  { name: 'Inventory at Store', value: 244982, displayValue: '2,44,982', percent: 49.52, color: '#8b5cf6' },
+  { name: 'Inventory at Warehouse', value: 249744, displayValue: '2,49,744', percent: 50.48, color: '#2dd4bf' }
+];
+
+const recycleData = [
+  { name: '1', value: 55578, displayValue: '55,578', percent: 11.23, color: '#4ade80' },
+  { name: '2', value: 90487, displayValue: '90,487', percent: 18.29, color: '#fbbf24' },
+  { name: '3', value: 112114, displayValue: '1,12,114', percent: 22.66, color: '#2dd4bf' },
+  { name: '4', value: 106788, displayValue: '1,06,788', percent: 21.59, color: '#60a5fa' },
+  { name: '>=5', value: 129759, displayValue: '1,29,759', percent: 26.23, color: '#c084fc' }
+];
+
+// Columns for the Live Stock Table Headers based on API response
+const liveStockColumns = [
+  { key: 'STORE_CODE', label: 'STORE', render: (val) => <span className="vmm-link-num">{val}</span> },
+  { key: 'SAP_STOCK', label: 'SAP STOCK QTY', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
+  { key: 'RFID_STOCK', label: 'RFID STOCK QTY', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
+  { key: 'DIFFERENCE', label: 'DIFFERENCE QTY', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
+  { key: 'DATE', label: 'SYNC DATE' },
+  {
+    key: 'PERCENTAGE',
+    label: 'COVERAGE(%)',
+    render: (val) => {
+      const percent = parseFloat(val) || 0;
+      const opacity = Math.max(0.15, percent / 100);
+      return (
+        <span
+          className="vmm-badge-coverage"
+          style={{
+            backgroundColor: `rgba(46, 125, 50, ${opacity})`,
+            color: opacity > 0.6 ? '#ffffff' : '#083a1c'
+          }}
+        >
+          {val}%
+        </span>
+      );
+    }
+  }
+];
+
+// Columns for Cycle Count Dashboard
+const cycleCountColumns = [
+  { key: 'DATE', label: 'DATE' },
+  { key: 'STORE_CODE', label: 'STORE', render: (val) => <span className="vmm-link-num">{val}</span> },
+  { key: 'STORE_NAME', label: 'STORE NAME' },
+  { key: 'CYCLE_COUNT_TYPE', label: 'TYPE' },
+  { key: 'REF_NO', label: 'REF NO', render: (val) => <span className="vmm-link-num">{val}</span> },
+  { key: 'Start_DateTime', label: 'START TIME' },
+  { key: 'END_DateTime', label: 'END TIME' },
+  { key: 'Time_Taken', label: 'TIME TAKEN' }
+];
+
+// Columns for Vendor Discrepancy
+const vendorDiscrepancyColumns = [
+  { key: 'VENDOR_CODE', label: 'Vendor Code' },
+  { key: 'VENDOR_NAME', label: 'Vendor Name' },
+  { key: 'ACTUAL_QTY', label: 'Expected Qty', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
+  { key: 'SCANNED_QTY', label: 'Actual Qty', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
+  { key: 'DIFF_QTY', label: 'Diff Qty', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
+  { key: 'DIFF_TILL_DATE', label: 'Diff Qty (From 27-06-2026)', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> }
+];
 
 export default function DashboardPage() {
-  const navigate = useNavigate();
-  const [activeNav, setActiveNav] = useState('home');
-  const [liveStockData, setLiveStockData] = useState([]);
-  const [liveTotals, setLiveTotals] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [currentSearch, setCurrentSearch] = useState('');
-
-  // Cycle Count Data State
-  const [cycleCountData, setCycleCountData] = useState([]);
-  const [cycleCountTotals, setCycleCountTotals] = useState(null);
-  const [isCycleCountLoading, setIsCycleCountLoading] = useState(true);
-  const [cycleCountError, setCycleCountError] = useState(null);
-  const [currentCycleSearch, setCurrentCycleSearch] = useState('');
-
-  // Tag Management Mock Data
-  const inventoryData = [
-    { name: 'Inventory at Store', value: 244982, displayValue: '2,44,982', percent: 49.52, color: '#8b5cf6' },
-    { name: 'Inventory at Warehouse', value: 249744, displayValue: '2,49,744', percent: 50.48, color: '#2dd4bf' }
-  ];
-
-  const recycleData = [
-    { name: '1', value: 55578, displayValue: '55,578', percent: 11.23, color: '#4ade80' },
-    { name: '2', value: 90487, displayValue: '90,487', percent: 18.29, color: '#fbbf24' },
-    { name: '3', value: 112114, displayValue: '1,12,114', percent: 22.66, color: '#2dd4bf' },
-    { name: '4', value: 106788, displayValue: '1,06,788', percent: 21.59, color: '#60a5fa' },
-    { name: '>=5', value: 129759, displayValue: '1,29,759', percent: 26.23, color: '#c084fc' }
-  ];
 
   // Vendor Discrepancy Data State
   const [vendorData, setVendorData] = useState([]);
@@ -156,56 +192,6 @@ export default function DashboardPage() {
     }, 300);
     return () => clearTimeout(delayDebounceFn);
   }, [currentVendorSearch]);
-
-  // Columns for the Live Stock Table Headers based on API response
-  const liveStockColumns = [
-    { key: 'STORE_CODE', label: 'STORE', render: (val) => <span className="vmm-link-num">{val}</span> },
-    { key: 'SAP_STOCK', label: 'SAP STOCK QTY', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
-    { key: 'RFID_STOCK', label: 'RFID STOCK QTY', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
-    { key: 'DIFFERENCE', label: 'DIFFERENCE QTY', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
-    { key: 'DATE', label: 'SYNC DATE' },
-    {
-      key: 'PERCENTAGE',
-      label: 'COVERAGE(%)',
-      render: (val) => {
-        const percent = parseFloat(val) || 0;
-        const opacity = Math.max(0.15, percent / 100);
-        return (
-          <span
-            className="vmm-badge-coverage"
-            style={{
-              backgroundColor: `rgba(46, 125, 50, ${opacity})`,
-              color: opacity > 0.6 ? '#ffffff' : '#083a1c'
-            }}
-          >
-            {val}%
-          </span>
-        );
-      }
-    }
-  ];
-
-  // Columns for Cycle Count Dashboard
-  const cycleCountColumns = [
-    { key: 'DATE', label: 'DATE' },
-    { key: 'STORE_CODE', label: 'STORE', render: (val) => <span className="vmm-link-num">{val}</span> },
-    { key: 'STORE_NAME', label: 'STORE NAME' },
-    { key: 'CYCLE_COUNT_TYPE', label: 'TYPE' },
-    { key: 'REF_NO', label: 'REF NO', render: (val) => <span className="vmm-link-num">{val}</span> },
-    { key: 'Start_DateTime', label: 'START TIME' },
-    { key: 'END_DateTime', label: 'END TIME' },
-    { key: 'Time_Taken', label: 'TIME TAKEN' }
-  ];
-
-  // Columns for Vendor Discrepancy
-  const vendorDiscrepancyColumns = [
-    { key: 'VENDOR_CODE', label: 'Vendor Code' },
-    { key: 'VENDOR_NAME', label: 'Vendor Name' },
-    { key: 'ACTUAL_QTY', label: 'Expected Qty', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
-    { key: 'SCANNED_QTY', label: 'Actual Qty', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
-    { key: 'DIFF_QTY', label: 'Diff Qty', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
-    { key: 'DIFF_TILL_DATE', label: 'Diff Qty (From 27-06-2026)', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> }
-  ];
 
   return (
     <div className="vmm-dashboard-layout">
