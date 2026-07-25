@@ -26,11 +26,11 @@ export default memo(function SemiCircleChartCard({
           </div>
           <div className="vmm-chart-legend">
             <div className="vmm-chart-legend-items vmm-compact-items">
-              <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
-              <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
-              <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
-              <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
-              <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
+              <div className="vmm-shimmer" style={{ width: '100%', height: '33px', borderRadius: '6px' }}></div>
+              <div className="vmm-shimmer" style={{ width: '100%', height: '33px', borderRadius: '6px' }}></div>
+              <div className="vmm-shimmer" style={{ width: '100%', height: '33px', borderRadius: '6px' }}></div>
+              <div className="vmm-shimmer" style={{ width: '100%', height: '33px', borderRadius: '6px' }}></div>
+              <div className="vmm-shimmer" style={{ width: '100%', height: '33px', borderRadius: '6px' }}></div>
             </div>
           </div>
         </div>

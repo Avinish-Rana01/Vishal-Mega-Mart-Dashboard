@@ -26,8 +26,7 @@ export default memo(function DonutChartCard({
               <p>{subtitle}</p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div className="vmm-shimmer" style={{ width: '60%', height: '24px', borderRadius: '4px' }}></div>
-              <div className="vmm-shimmer" style={{ width: '80%', height: '14px', borderRadius: '4px', marginBottom: '8px' }}></div>
+              
               <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
               <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
             </div>

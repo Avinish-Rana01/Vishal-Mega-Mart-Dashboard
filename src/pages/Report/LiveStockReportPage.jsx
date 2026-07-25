@@ -13,27 +13,54 @@ export default function LiveStockReportPage() {
 
   const { store = 'HD44', date = '2026-07-20' } = location.state || {};
 
-  // Mock data for specific store details
-  const articleData = [
-    { srNo: 1, stockDate: date, articleNo: '1114111497020', sapStock: 1, rfidStock: 0, diff: 1 },
-    { srNo: 2, stockDate: date, articleNo: '111411575008', sapStock: 1, rfidStock: 0, diff: 1 },
-    { srNo: 3, stockDate: date, articleNo: '111411641010', sapStock: 3, rfidStock: 0, diff: 3 },
-    { srNo: 4, stockDate: date, articleNo: '111411648011', sapStock: 1, rfidStock: 0, diff: 1 },
-    { srNo: 5, stockDate: date, articleNo: '111411731011', sapStock: 1, rfidStock: 0, diff: 1 },
-    { srNo: 6, stockDate: date, articleNo: '111411737008', sapStock: 4, rfidStock: 0, diff: 4 },
-    { srNo: 7, stockDate: date, articleNo: '111411795016', sapStock: 1, rfidStock: 0, diff: 1 },
-    { srNo: 8, stockDate: date, articleNo: '111411796015', sapStock: 1, rfidStock: 0, diff: 1 },
-    { srNo: 9, stockDate: date, articleNo: '111411798005', sapStock: 1, rfidStock: 0, diff: 1 },
-    { srNo: 10, stockDate: date, articleNo: '111411833007', sapStock: 1, rfidStock: 0, diff: 1 },
-  ];
+  const [articleData, setArticleData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [reportSummary, setReportSummary] = useState(null);
+
+  React.useEffect(() => {
+    const fetchReport = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const queryUrl = `${import.meta.env.VITE_API_BASE_URL}/api/stock/report?StoreName=${encodeURIComponent(store)}&FromDate=${encodeURIComponent(date)}&ToDate=${encodeURIComponent(date)}&pageIndex=1&pageSize=100`;
+        const response = await fetch(queryUrl, {
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!response.ok) throw new Error(`Failed to fetch report data`);
+        const data = await response.json();
+        
+        // Map the API fields to the table columns expected
+        const mappedData = (data.items || []).map((item, index) => ({
+          srNo: index + 1,
+          stockDate: item.DATETIME,
+          articleNo: item.ARTICLE,
+          sapStock: item.SAP_STOCK,
+          rfidStock: item.RFID_STOCK,
+          diff: item.DIFFERENCE
+        }));
+        
+        setArticleData(mappedData);
+        if (data.summary) {
+          setReportSummary(data.summary);
+        }
+      } catch (err) {
+        console.error("Error fetching live stock report:", err);
+        setError("Unable to load report data.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchReport();
+  }, [store, date]);
 
   const columns = [
     { key: 'srNo', label: 'SR.NO' },
     { key: 'stockDate', label: 'STOCK DATE' },
     { key: 'articleNo', label: 'ARTICLE NO', render: (val) => <span className="vmm-link-num">{val}</span> },
-    { key: 'sapStock', label: 'SAP STOCK' },
-    { key: 'rfidStock', label: 'RFID STOCK' },
-    { key: 'diff', label: 'DIFFERENCE' }
+    { key: 'sapStock', label: 'SAP STOCK', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
+    { key: 'rfidStock', label: 'RFID STOCK', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
+    { key: 'diff', label: 'DIFFERENCE', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> }
   ];
 
   return (
@@ -100,7 +127,7 @@ export default function LiveStockReportPage() {
               <div className="card-top">
                 <div className="card-content">
                   <p>SAP STOCK COUNT</p>
-                  <h3>1,03,803</h3>
+                  <h3>{reportSummary?.sapQty?.toLocaleString('en-IN') || '0'}</h3>
                 </div>
                 <div className="card-icon sap-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-box"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
@@ -112,7 +139,7 @@ export default function LiveStockReportPage() {
               <div className="card-top">
                 <div className="card-content">
                   <p>RFID STOCK COUNT</p>
-                  <h3>76,983</h3>
+                  <h3>{reportSummary?.rfidQty?.toLocaleString('en-IN') || '0'}</h3>
                 </div>
                 <div className="card-icon rfid-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-tags"><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/><path d="M9.586 5.586A2 2 0 0 0 8.172 5H3v5.172a2 2 0 0 0 .586 1.414l8.204 8.204a2 2 0 0 0 2.828 0l4.242-4.242a2 2 0 0 0 0-2.828Z"/><circle cx="6.5" cy="8.5" r=".5" fill="currentColor"/></svg>
@@ -124,7 +151,7 @@ export default function LiveStockReportPage() {
               <div className="card-top">
                 <div className="card-content">
                   <p>DIFFERENCE COUNT</p>
-                  <h3>26,820</h3>
+                  <h3>{reportSummary?.diffQty?.toLocaleString('en-IN') || '0'}</h3>
                 </div>
                 <div className="card-icon diff-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right-left"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
@@ -140,6 +167,8 @@ export default function LiveStockReportPage() {
               columns={columns}
               data={articleData}
               searchPlaceholder="Search Records"
+              isLoading={isLoading}
+              error={error}
             />
           </div>
         </main>

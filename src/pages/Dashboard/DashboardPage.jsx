@@ -96,7 +96,7 @@ export default function DashboardPage() {
     setIsVendorLoading(true);
     setVendorError(null);
     try {
-      const response = await fetch(`http://localhost:5000/api/stock/vendor-hu-discrepancy?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&sortColumn=DIFF_TILL_DATE&sortDirection=asc&userId=26`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/vendor-hu-discrepancy?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&sortColumn=DIFF_TILL_DATE&sortDirection=asc&userId=26`, {
         headers: {
           'Accept': 'application/json'
         }
@@ -126,7 +126,7 @@ export default function DashboardPage() {
     setError(null);
     try {
       // Using the exact API endpoint provided, with dynamic searchTerm
-      const response = await fetch(`http://localhost:5000/api/stock/live-details?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&userId=26`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/live-details?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&userId=26`, {
         headers: {
           'Accept': 'application/json'
         }
@@ -160,7 +160,7 @@ export default function DashboardPage() {
     setIsCycleCountLoading(true);
     setCycleCountError(null);
     try {
-      const response = await fetch(`http://localhost:5000/api/stock/cycle-count-dashboard?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&sortColumn=STORE%20CODE&sortDirection=ASC&userId=26`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/cycle-count-dashboard?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&sortColumn=STORE%20CODE&sortDirection=ASC&userId=26`, {
         headers: {
           'Accept': 'application/json'
         }
@@ -202,8 +202,8 @@ export default function DashboardPage() {
       setIsTagChartsLoading(true);
       try {
         const [locResponse, cycleResponse] = await Promise.all([
-          fetch('http://localhost:5000/api/stock/tag-management-location'),
-          fetch('http://localhost:5000/api/stock/tag-cycle-count')
+          fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/tag-management-location`),
+          fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/tag-cycle-count`)
         ]);
 
         if (locResponse.ok) {
