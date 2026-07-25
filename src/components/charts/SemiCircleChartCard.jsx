@@ -16,18 +16,22 @@ export default memo(function SemiCircleChartCard({
   if (isLoading) {
     return (
       <div className="vmm-chart-card vmm-flex-col">
-        <div className="vmm-chart-header" style={{ marginBottom: '16px' }}>
+        <div className="vmm-chart-header vmm-mb-large" style={{ position: 'relative' }}>
           <h3 style={{ margin: 0, fontSize: '15px', color: '#1e293b' }}>{title}</h3>
           <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748b' }}>{subtitle}</p>
         </div>
-        <div className="vmm-chart-container" style={{ flex: 1, flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-          <div className="vmm-chart-graphic vmm-semi-circle-wrapper" style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: '180px', width: '100%' }}>
-             <div className="vmm-shimmer" style={{ width: '220px', height: '110px', borderTopLeftRadius: '110px', borderTopRightRadius: '110px' }}></div>
+        <div className="vmm-chart-container">
+          <div className="vmm-chart-graphic vmm-semi-circle-wrapper" style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: '150px' }}>
+             <div className="vmm-shimmer" style={{ width: '200px', height: '100px', borderTopLeftRadius: '100px', borderTopRightRadius: '100px' }}></div>
           </div>
-          <div className="vmm-chart-legend" style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
-            <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
-            <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
-            <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
+          <div className="vmm-chart-legend">
+            <div className="vmm-chart-legend-items vmm-compact-items">
+              <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
+              <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
+              <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
+              <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
+              <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
+            </div>
           </div>
         </div>
       </div>
