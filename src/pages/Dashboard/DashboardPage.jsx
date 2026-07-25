@@ -103,7 +103,17 @@ export default function DashboardPage() {
       });
       if (!response.ok) throw new Error(`Failed to fetch vendor data: ${response.statusText}`);
       const data = await response.json();
-      setVendorData(data.items || []);
+      
+      let items = data.items || [];
+      if (searchQuery.trim()) {
+        const term = searchQuery.toLowerCase();
+        items = items.filter(row => 
+          (row.VENDOR_NAME && row.VENDOR_NAME.toLowerCase().includes(term)) ||
+          (row.VENDOR_CODE && row.VENDOR_CODE.toLowerCase().includes(term))
+        );
+      }
+      setVendorData(items);
+      
       if (data.summary) {
         setVendorTotals({
           VENDOR_CODE: 'TOTAL',
@@ -138,7 +148,16 @@ export default function DashboardPage() {
 
       const data = await response.json();
 
-      setLiveStockData(data.items || []);
+      let items = data.items || [];
+      if (searchQuery.trim()) {
+        const term = searchQuery.toLowerCase();
+        items = items.filter(row => 
+          (row.STORE_CODE && row.STORE_CODE.toLowerCase().includes(term)) ||
+          (row.STORE_NAME && row.STORE_NAME.toLowerCase().includes(term)) ||
+          (row.DATE && row.DATE.toLowerCase().includes(term))
+        );
+      }
+      setLiveStockData(items);
 
       if (data.summary) {
         setLiveTotals({
@@ -167,7 +186,18 @@ export default function DashboardPage() {
       });
       if (!response.ok) throw new Error(`Failed to fetch cycle count data: ${response.statusText}`);
       const data = await response.json();
-      setCycleCountData(data.items || []);
+      
+      let items = data.items || [];
+      if (searchQuery.trim()) {
+        const term = searchQuery.toLowerCase();
+        items = items.filter(row => 
+          (row.STORE_CODE && row.STORE_CODE.toLowerCase().includes(term)) ||
+          (row.STORE_NAME && row.STORE_NAME.toLowerCase().includes(term)) ||
+          (row.DATE && row.DATE.toLowerCase().includes(term)) ||
+          (row.REF_NO && row.REF_NO.toLowerCase().includes(term))
+        );
+      }
+      setCycleCountData(items);
       if (data.summary) {
         setCycleCountTotals({
           STORE_CODE: 'TOTAL',

@@ -43,15 +43,15 @@ export default function DataTableCard({
   // Filter Data
   const filteredData = useMemo(() => {
     return data.filter((row) => {
-      // Always apply local filtering as a fallback for incomplete backend SPs
-      if (!searchTerm.trim()) return true;
+      // If onSearch is provided, assume server-side filtering
+      if (onSearch || !searchTerm.trim()) return true;
       const term = searchTerm.toLowerCase();
       return columns.some((col) => {
         const val = row[col.key];
         return val !== undefined && val !== null && String(val).toLowerCase().includes(term);
       });
     });
-  }, [data, searchTerm, columns]);
+  }, [data, onSearch, searchTerm, columns]);
 
   // Sort Data
   const sortedData = useMemo(() => {
