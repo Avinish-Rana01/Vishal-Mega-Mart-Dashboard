@@ -39,6 +39,7 @@ export default memo(function SemiCircleChartCard({
                 paddingAngle={2}
                 dataKey="value"
                 stroke="none"
+                isAnimationActive={false}
               >
                 {data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />

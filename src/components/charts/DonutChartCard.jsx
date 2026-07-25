@@ -23,6 +23,7 @@ export default memo(function DonutChartCard({
                 paddingAngle={0}
                 dataKey="value"
                 stroke="none"
+                isAnimationActive={false}
               >
                 {data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
