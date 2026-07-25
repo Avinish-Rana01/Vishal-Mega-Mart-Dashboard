@@ -16,13 +16,21 @@ export default memo(function DonutChartCard({
       <div className="vmm-chart-card">
         <div className="vmm-chart-container">
           <div className="vmm-chart-graphic" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
-            <div className="vmm-shimmer" style={{ width: '170px', height: '170px', borderRadius: '50%' }}></div>
+            <div className="vmm-shimmer" style={{ width: '170px', height: '170px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: '120px', height: '120px', borderRadius: '50%', backgroundColor: 'white' }}></div>
+            </div>
           </div>
-          <div className="vmm-chart-legend" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div className="vmm-shimmer" style={{ width: '60%', height: '24px', borderRadius: '4px' }}></div>
-            <div className="vmm-shimmer" style={{ width: '80%', height: '14px', borderRadius: '4px', marginBottom: '8px' }}></div>
-            <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
-            <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
+          <div className="vmm-chart-legend">
+            <div className="vmm-chart-header" style={{ marginBottom: '16px' }}>
+              <h3>{title}</h3>
+              <p>{subtitle}</p>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div className="vmm-shimmer" style={{ width: '60%', height: '24px', borderRadius: '4px' }}></div>
+              <div className="vmm-shimmer" style={{ width: '80%', height: '14px', borderRadius: '4px', marginBottom: '8px' }}></div>
+              <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
+              <div className="vmm-shimmer" style={{ width: '100%', height: '36px', borderRadius: '6px' }}></div>
+            </div>
           </div>
         </div>
       </div>
