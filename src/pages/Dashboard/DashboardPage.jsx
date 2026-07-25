@@ -8,8 +8,8 @@ import DonutChartCard from '../../components/charts/DonutChartCard';
 import SemiCircleChartCard from '../../components/charts/SemiCircleChartCard';
 import '../TagManagement/TagManagement.css';
 import './Dashboard.css';
-import '../TagManagement/TagManagement.css';
-import './Dashboard.css';// Tag Management Mock Data
+
+// Tag Management Mock Data
 const inventoryData = [
   { name: 'Inventory at Store', value: 244982, displayValue: '2,44,982', percent: 49.52, color: '#8b5cf6' },
   { name: 'Inventory at Warehouse', value: 249744, displayValue: '2,49,744', percent: 50.48, color: '#2dd4bf' }
@@ -74,6 +74,20 @@ const vendorDiscrepancyColumns = [
 ];
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
+  const [activeNav, setActiveNav] = useState('home');
+  const [liveStockData, setLiveStockData] = useState([]);
+  const [liveTotals, setLiveTotals] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentSearch, setCurrentSearch] = useState('');
+
+  // Cycle Count Data State
+  const [cycleCountData, setCycleCountData] = useState([]);
+  const [cycleCountTotals, setCycleCountTotals] = useState(null);
+  const [isCycleCountLoading, setIsCycleCountLoading] = useState(true);
+  const [cycleCountError, setCycleCountError] = useState(null);
+  const [currentCycleSearch, setCurrentCycleSearch] = useState('');
 
   // Vendor Discrepancy Data State
   const [vendorData, setVendorData] = useState([]);
