@@ -85,15 +85,15 @@ export default function DashboardPage() {
           'Accept': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch data: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
-      
+
       setLiveStockData(data.items || []);
-      
+
       if (data.summary) {
         setLiveTotals({
           STORE_CODE: 'TOTAL',
@@ -164,14 +164,14 @@ export default function DashboardPage() {
     { key: 'RFID_STOCK', label: 'RFID STOCK QTY', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
     { key: 'DIFFERENCE', label: 'DIFFERENCE QTY', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
     { key: 'DATE', label: 'SYNC DATE' },
-    { 
-      key: 'PERCENTAGE', 
-      label: 'COVERAGE(%)', 
+    {
+      key: 'PERCENTAGE',
+      label: 'COVERAGE(%)',
       render: (val) => {
         const percent = parseFloat(val) || 0;
         const opacity = Math.max(0.15, percent / 100);
         return (
-          <span 
+          <span
             className="vmm-badge-coverage"
             style={{
               backgroundColor: `rgba(46, 125, 50, ${opacity})`,
@@ -181,7 +181,7 @@ export default function DashboardPage() {
             {val}%
           </span>
         );
-      } 
+      }
     }
   ];
 
@@ -241,20 +241,6 @@ export default function DashboardPage() {
               enablePagination={true}
               pageSize={3}
             />
-            <DataTableCard
-              title="VENDOR DISCREPANCY"
-              columns={vendorDiscrepancyColumns}
-              data={vendorData}
-              totals={vendorTotals}
-              isLoading={isVendorLoading}
-              error={vendorError}
-              onRefresh={() => fetchVendorDiscrepancyData(currentVendorSearch)}
-              onSearch={(term) => setCurrentVendorSearch(term)}
-              enablePagination={true}
-              pageSize={3}
-              fullWidth={true}
-            />
-
             {/* Tag Management Charts in Full-Width Card */}
             <div className="vmm-card vmm-card-full-width">
               <div className="vmm-card-header">
@@ -269,18 +255,33 @@ export default function DashboardPage() {
                   <button className="vmm-btn-primary">View Summary</button>
                 </div>
                 <div className="vmm-charts-grid">
-                  <DonutChartCard 
-                    data={inventoryData} 
-                    totalValue="4,94,726" 
+                  <DonutChartCard
+                    data={inventoryData}
+                    totalValue="4,94,726"
                   />
-                  <SemiCircleChartCard 
-                    data={recycleData} 
-                    totalValue="4,94,726" 
+                  <SemiCircleChartCard
+                    data={recycleData}
+                    totalValue="4,94,726"
                     avgCount="3"
                   />
                 </div>
               </div>
             </div>
+            <DataTableCard
+              title="VENDOR DISCREPANCY"
+              columns={vendorDiscrepancyColumns}
+              data={vendorData}
+              totals={vendorTotals}
+              isLoading={isVendorLoading}
+              error={vendorError}
+              onRefresh={() => fetchVendorDiscrepancyData(currentVendorSearch)}
+              onSearch={(term) => setCurrentVendorSearch(term)}
+              enablePagination={true}
+              pageSize={3}
+              fullWidth={true}
+            />
+
+
 
           </div>
         </main>
