@@ -4,6 +4,9 @@ import Sidebar from '../../components/layout/Sidebar';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import DataTableCard from '../../components/common/DataTableCard';
+import DonutChartCard from '../../components/charts/DonutChartCard';
+import SemiCircleChartCard from '../../components/charts/SemiCircleChartCard';
+import '../TagManagement/TagManagement.css';
 import './Dashboard.css';
 
 export default function DashboardPage() {
@@ -21,6 +24,20 @@ export default function DashboardPage() {
   const [isCycleCountLoading, setIsCycleCountLoading] = useState(true);
   const [cycleCountError, setCycleCountError] = useState(null);
   const [currentCycleSearch, setCurrentCycleSearch] = useState('');
+
+  // Tag Management Mock Data
+  const inventoryData = [
+    { name: 'Inventory at Store', value: 244982, displayValue: '2,44,982', percent: 49.52, color: '#8b5cf6' },
+    { name: 'Inventory at Warehouse', value: 249744, displayValue: '2,49,744', percent: 50.48, color: '#2dd4bf' }
+  ];
+
+  const recycleData = [
+    { name: '1', value: 55578, displayValue: '55,578', percent: 11.23, color: '#4ade80' },
+    { name: '2', value: 90487, displayValue: '90,487', percent: 18.29, color: '#fbbf24' },
+    { name: '3', value: 112114, displayValue: '1,12,114', percent: 22.66, color: '#2dd4bf' },
+    { name: '4', value: 106788, displayValue: '1,06,788', percent: 21.59, color: '#60a5fa' },
+    { name: '>=5', value: 129759, displayValue: '1,29,759', percent: 26.23, color: '#c084fc' }
+  ];
 
   // Vendor Discrepancy Data State
   const [vendorData, setVendorData] = useState([]);
@@ -237,6 +254,34 @@ export default function DashboardPage() {
               pageSize={3}
               fullWidth={true}
             />
+
+            {/* Tag Management Charts in Full-Width Card */}
+            <div className="vmm-card vmm-card-full-width">
+              <div className="vmm-card-header">
+                <span className="vmm-card-title">TAG MANAGEMENT</span>
+                <div className="vmm-card-meta">
+                  <span className="vmm-meta-btn">SATURDAY</span>
+                  <span className="vmm-meta-btn">2026-07-25</span>
+                </div>
+              </div>
+              <div className="vmm-card-body" style={{ background: '#f8fafc', padding: '20px' }}>
+                <div className="vmm-tag-actions">
+                  <button className="vmm-btn-primary">View Summary</button>
+                </div>
+                <div className="vmm-charts-grid">
+                  <DonutChartCard 
+                    data={inventoryData} 
+                    totalValue="4,94,726" 
+                  />
+                  <SemiCircleChartCard 
+                    data={recycleData} 
+                    totalValue="4,94,726" 
+                    avgCount="3"
+                  />
+                </div>
+              </div>
+            </div>
+
           </div>
         </main>
 
