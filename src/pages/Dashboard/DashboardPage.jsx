@@ -9,19 +9,7 @@ import SemiCircleChartCard from '../../components/charts/SemiCircleChartCard';
 import '../TagManagement/TagManagement.css';
 import './Dashboard.css';
 
-// Tag Management Mock Data
-const inventoryData = [
-  { name: 'Inventory at Store', value: 244982, displayValue: '2,44,982', percent: 49.52, color: '#8b5cf6' },
-  { name: 'Inventory at Warehouse', value: 249744, displayValue: '2,49,744', percent: 50.48, color: '#2dd4bf' }
-];
-
-const recycleData = [
-  { name: '1', value: 55578, displayValue: '55,578', percent: 11.23, color: '#4ade80' },
-  { name: '2', value: 90487, displayValue: '90,487', percent: 18.29, color: '#fbbf24' },
-  { name: '3', value: 112114, displayValue: '1,12,114', percent: 22.66, color: '#2dd4bf' },
-  { name: '4', value: 106788, displayValue: '1,06,788', percent: 21.59, color: '#60a5fa' },
-  { name: '>=5', value: 129759, displayValue: '1,29,759', percent: 26.23, color: '#c084fc' }
-];
+// Tag Management Mock Data (Removed as it is now fetched via API)
 
 // Columns for the Live Stock Table Headers based on API response
 const liveStockColumns = [
@@ -88,6 +76,13 @@ export default function DashboardPage() {
   const [isCycleCountLoading, setIsCycleCountLoading] = useState(true);
   const [cycleCountError, setCycleCountError] = useState(null);
   const [currentCycleSearch, setCurrentCycleSearch] = useState('');
+
+  // Tag Management Charts State
+  const [tagLocationData, setTagLocationData] = useState([]);
+  const [tagLocationTotal, setTagLocationTotal] = useState(0);
+  const [tagCycleData, setTagCycleData] = useState([]);
+  const [tagCycleTotal, setTagCycleTotal] = useState(0);
+  const [avgRecycle, setAvgRecycle] = useState(0);
 
   // Vendor Discrepancy Data State
   const [vendorData, setVendorData] = useState([]);
@@ -200,6 +195,53 @@ export default function DashboardPage() {
     return () => clearTimeout(delayDebounceFn);
   }, [currentCycleSearch]);
 
+  // Fetch Tag Management Chart Data on mount
+  useEffect(() => {
+    const fetchTagCharts = async () => {
+      try {
+        const [locResponse, cycleResponse] = await Promise.all([
+          fetch('http://localhost:5000/api/stock/tag-management-location'),
+          fetch('http://localhost:5000/api/stock/tag-cycle-count')
+        ]);
+
+        if (locResponse.ok) {
+          const locData = await locResponse.json();
+          const total = locData.summary?.recordCount || 0;
+          const storeVal = locData.summary?.storeCount || 0;
+          const whVal = locData.summary?.warehouseCount || 0;
+          setTagLocationTotal(total);
+          setTagLocationData([
+            { name: 'Inventory at Store', value: storeVal, displayValue: storeVal.toLocaleString('en-IN'), percent: ((storeVal / (total || 1)) * 100).toFixed(2), color: '#8b5cf6' },
+            { name: 'Inventory at Warehouse', value: whVal, displayValue: whVal.toLocaleString('en-IN'), percent: ((whVal / (total || 1)) * 100).toFixed(2), color: '#2dd4bf' }
+          ]);
+        }
+
+        if (cycleResponse.ok) {
+          const cycData = await cycleResponse.json();
+          const total = cycData.summary?.recordCount || 0;
+          setTagCycleTotal(total);
+          setAvgRecycle(cycData.summary?.avgTagPercentage || 0);
+
+          const colors = ['#4ade80', '#fbbf24', '#2dd4bf', '#60a5fa', '#c084fc'];
+          if (cycData.distribution) {
+            const chartData = cycData.distribution.map((item, idx) => ({
+              name: item.Count_Range,
+              value: item.EPC_Count,
+              displayValue: item.EPC_Count.toLocaleString('en-IN'),
+              percent: ((item.EPC_Count / (total || 1)) * 100).toFixed(2),
+              color: colors[idx % colors.length]
+            }));
+            setTagCycleData(chartData);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching tag management charts:", err);
+      }
+    };
+    
+    fetchTagCharts();
+  }, []);
+
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       fetchVendorDiscrepancyData(currentVendorSearch);
@@ -256,13 +298,13 @@ export default function DashboardPage() {
                 </div>
                 <div className="vmm-charts-grid">
                   <DonutChartCard
-                    data={inventoryData}
-                    totalValue="4,94,726"
+                    data={tagLocationData}
+                    totalValue={tagLocationTotal.toLocaleString('en-IN')}
                   />
                   <SemiCircleChartCard
-                    data={recycleData}
-                    totalValue="4,94,726"
-                    avgCount="3"
+                    data={tagCycleData}
+                    totalValue={tagCycleTotal.toLocaleString('en-IN')}
+                    avgCount={avgRecycle.toString()}
                   />
                 </div>
               </div>
