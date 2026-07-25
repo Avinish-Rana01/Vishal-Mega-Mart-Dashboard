@@ -22,6 +22,42 @@ export default function DashboardPage() {
   const [cycleCountError, setCycleCountError] = useState(null);
   const [currentCycleSearch, setCurrentCycleSearch] = useState('');
 
+  // Vendor Discrepancy Data State
+  const [vendorData, setVendorData] = useState([]);
+  const [vendorTotals, setVendorTotals] = useState(null);
+  const [isVendorLoading, setIsVendorLoading] = useState(true);
+  const [vendorError, setVendorError] = useState(null);
+  const [currentVendorSearch, setCurrentVendorSearch] = useState('');
+
+  const fetchVendorDiscrepancyData = async (searchQuery = '') => {
+    setIsVendorLoading(true);
+    setVendorError(null);
+    try {
+      const response = await fetch(`http://localhost:5000/api/stock/vendor-hu-discrepancy?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&sortColumn=DIFF_TILL_DATE&sortDirection=asc&userId=26`, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      if (!response.ok) throw new Error(`Failed to fetch vendor data: ${response.statusText}`);
+      const data = await response.json();
+      setVendorData(data.items || []);
+      if (data.summary) {
+        setVendorTotals({
+          VENDOR_CODE: 'TOTAL',
+          ACTUAL_QTY: data.summary.actualQty?.toLocaleString('en-IN') || 0,
+          SCANNED_QTY: data.summary.scannedQty?.toLocaleString('en-IN') || 0,
+          DIFF_QTY: data.summary.differenceQty?.toLocaleString('en-IN') || 0,
+          DIFF_TILL_DATE: data.summary.differenceQtyTillDate?.toLocaleString('en-IN') || 0
+        });
+      }
+    } catch (err) {
+      console.error("Error fetching vendor data:", err);
+      setVendorError("Unable to load vendor discrepancy data.");
+    } finally {
+      setIsVendorLoading(false);
+    }
+  };
+
   const fetchLiveStockData = async (searchQuery = '') => {
     setIsLoading(true);
     setError(null);
@@ -97,6 +133,13 @@ export default function DashboardPage() {
     return () => clearTimeout(delayDebounceFn);
   }, [currentCycleSearch]);
 
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      fetchVendorDiscrepancyData(currentVendorSearch);
+    }, 300);
+    return () => clearTimeout(delayDebounceFn);
+  }, [currentVendorSearch]);
+
   // Columns for the Live Stock Table Headers based on API response
   const liveStockColumns = [
     { key: 'STORE_CODE', label: 'STORE', render: (val) => <span className="vmm-link-num">{val}</span> },
@@ -139,12 +182,12 @@ export default function DashboardPage() {
 
   // Columns for Vendor Discrepancy
   const vendorDiscrepancyColumns = [
-    { key: 'vendorCode', label: 'Vendor Code' },
-    { key: 'vendorName', label: 'Vendor Name' },
-    { key: 'expectedQty', label: 'Expected Qty', render: (val) => <span className="vmm-link-num">{val}</span> },
-    { key: 'actualQty', label: 'Actual Qty', render: (val) => <span className="vmm-link-num">{val}</span> },
-    { key: 'diffQty', label: 'Diff Qty', render: (val) => <span className="vmm-link-num">{val}</span> },
-    { key: 'diffQtyDate', label: 'Diff Qty (From 27-06-2026)', render: (val) => <span className="vmm-link-num">{val}</span> }
+    { key: 'VENDOR_CODE', label: 'Vendor Code' },
+    { key: 'VENDOR_NAME', label: 'Vendor Name' },
+    { key: 'ACTUAL_QTY', label: 'Expected Qty', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
+    { key: 'SCANNED_QTY', label: 'Actual Qty', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
+    { key: 'DIFF_QTY', label: 'Diff Qty', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
+    { key: 'DIFF_TILL_DATE', label: 'Diff Qty (From 27-06-2026)', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> }
   ];
 
   return (
@@ -184,15 +227,12 @@ export default function DashboardPage() {
             <DataTableCard
               title="VENDOR DISCREPANCY"
               columns={vendorDiscrepancyColumns}
-              data={[
-                { vendorCode: 'V001', vendorName: 'Acme Corp', expectedQty: 500, actualQty: 480, diffQty: -20, diffQtyDate: -15 },
-                { vendorCode: 'V002', vendorName: 'Global Logistics', expectedQty: 1000, actualQty: 1000, diffQty: 0, diffQtyDate: 0 },
-                { vendorCode: 'V003', vendorName: 'Speedy Supply', expectedQty: 250, actualQty: 260, diffQty: 10, diffQtyDate: 5 },
-                { vendorCode: 'V004', vendorName: 'Prime Vendors', expectedQty: 1500, actualQty: 1400, diffQty: -100, diffQtyDate: -90 },
-                { vendorCode: 'V005', vendorName: 'Apex Distributors', expectedQty: 300, actualQty: 305, diffQty: 5, diffQtyDate: 0 }
-              ]}
-              totals={{ vendorCode: 'TOTAL', expectedQty: 3550, actualQty: 3445, diffQty: -105, diffQtyDate: -100 }}
-              isLoading={false}
+              data={vendorData}
+              totals={vendorTotals}
+              isLoading={isVendorLoading}
+              error={vendorError}
+              onRefresh={() => fetchVendorDiscrepancyData(currentVendorSearch)}
+              onSearch={(term) => setCurrentVendorSearch(term)}
               enablePagination={true}
               pageSize={10}
               fullWidth={true}
