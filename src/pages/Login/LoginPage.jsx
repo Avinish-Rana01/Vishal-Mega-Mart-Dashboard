@@ -12,9 +12,16 @@ export default function LoginPage() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
+  const { login, isLoggedIn } = useAuth();
 
   const from = location.state?.from?.pathname || '/dashboard';
+
+  // Redirect if they are already logged in
+  React.useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isLoggedIn, navigate]);
 
   const validateForm = () => {
     let valid = true;
