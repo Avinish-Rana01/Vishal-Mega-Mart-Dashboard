@@ -1,5 +1,3 @@
-import React from 'react';
-
 // Columns for the Live Stock Table Headers based on API response
 export const liveStockColumns = [
   { key: 'STORE_CODE', label: 'STORE', render: (val) => <span className="vmm-link-num">{val}</span> },

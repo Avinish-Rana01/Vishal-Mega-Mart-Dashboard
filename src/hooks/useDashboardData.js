@@ -13,6 +13,7 @@ export const useLiveStock = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,9 +54,9 @@ export const useLiveStock = () => {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery]);
+  }, [searchQuery, refreshTrigger]);
 
-  const refresh = () => setSearchQuery(prev => prev);
+  const refresh = () => setRefreshTrigger(prev => prev + 1);
 
   return { data, totals, isLoading, error, searchQuery, setSearchQuery, refresh };
 };
@@ -66,6 +67,7 @@ export const useCycleCount = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -104,9 +106,9 @@ export const useCycleCount = () => {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery]);
+  }, [searchQuery, refreshTrigger]);
 
-  const refresh = () => setSearchQuery(prev => prev);
+  const refresh = () => setRefreshTrigger(prev => prev + 1);
 
   return { data, totals, isLoading, error, searchQuery, setSearchQuery, refresh };
 };
@@ -117,6 +119,7 @@ export const useVendorDiscrepancy = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -157,9 +160,9 @@ export const useVendorDiscrepancy = () => {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery]);
+  }, [searchQuery, refreshTrigger]);
 
-  const refresh = () => setSearchQuery(prev => prev);
+  const refresh = () => setRefreshTrigger(prev => prev + 1);
 
   return { data, totals, isLoading, error, searchQuery, setSearchQuery, refresh };
 };
