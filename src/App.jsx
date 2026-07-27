@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import LoginPage from './pages/Login/LoginPage';
 import DashboardPage from './pages/Dashboard/DashboardPage';
 import LiveStockReportPage from './pages/Report/LiveStockReportPage';
+import NotFoundPage from './pages/NotFound/NotFoundPage';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
@@ -39,7 +40,7 @@ export default function App() {
           
           <Route 
             path="*" 
-            element={<Navigate to="/dashboard" replace />} 
+            element={<NotFoundPage />} 
           />
         </Routes>
       </Router>
