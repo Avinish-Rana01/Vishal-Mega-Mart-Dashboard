@@ -9,8 +9,6 @@ import SemiCircleChartCard from '../../components/charts/SemiCircleChartCard';
 import '../TagManagement/TagManagement.css';
 import './Dashboard.css';
 
-// Tag Management Mock Data (Removed as it is now fetched via API)
-
 // Columns for the Live Stock Table Headers based on API response
 const liveStockColumns = [
   { key: 'STORE_CODE', label: 'STORE', render: (val) => <span className="vmm-link-num">{val}</span> },
@@ -50,7 +48,6 @@ const cycleCountColumns = [
   { key: 'END_DateTime', label: 'END TIME' },
   { key: 'Time_Taken', label: 'TIME TAKEN' }
 ];
-console.log("hi");
 
 // Columns for Vendor Discrepancy
 const vendorDiscrepancyColumns = [
