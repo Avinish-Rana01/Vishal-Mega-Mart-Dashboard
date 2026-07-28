@@ -57,3 +57,75 @@ export const getTagCycleCount = async () => {
   }
   return response.json();
 };
+
+export const getStoreDashboard = async (searchQuery = '') => {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/store-dashboard?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&userId=26`, {
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch store dashboard data: ${response.statusText}`);
+  }
+  return response.json();
+};
+
+export const getSaleDashboard = async (searchQuery = '') => {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/sale-dashboard?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&userId=26`, {
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch sale dashboard data: ${response.statusText}`);
+  }
+  return response.json();
+};
+
+export const getVoidDashboard = async (searchQuery = '') => {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/void-dashboard?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&userId=26`, {
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch void dashboard data: ${response.statusText}`);
+  }
+  return response.json();
+};
+
+export const getReturnDashboard = async (searchQuery = '') => {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/return-dashboard?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&userId=26`, {
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch return dashboard data: ${response.statusText}`);
+  }
+  return response.json();
+};
+
+export const getWarehouseEncoding = async (fromDate, toDate) => {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/warehouse-encoding?fromDate=${fromDate}&toDate=${toDate}`, {
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch warehouse encoding data: ${response.statusText}`);
+  }
+  return response.json();
+};
+
+export const getDcValidation = async (pageIndex = 1, pageSize = 100, userId = 26) => {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/dc-validate-dashboard?pageIndex=${pageIndex}&pageSize=${pageSize}&userId=${userId}`, {
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch DC validation data: ${response.statusText}`);
+  }
+  return response.json();
+};

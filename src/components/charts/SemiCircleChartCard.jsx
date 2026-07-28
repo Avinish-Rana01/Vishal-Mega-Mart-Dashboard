@@ -1,5 +1,7 @@
 import React, { memo } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import Highcharts from 'highcharts';
+import HighchartsReactWrapper from 'highcharts-react-official';
+const HighchartsReact = HighchartsReactWrapper.default || HighchartsReactWrapper;
 import { Recycle } from 'lucide-react';
 import ProgressBar from '../common/ProgressBar';
 import './Charts.css';
@@ -38,6 +40,72 @@ export default memo(function SemiCircleChartCard({
     );
   }
 
+  const chartData = data.map(item => ({
+    name: item.name,
+    y: item.value,
+    color: item.color
+  }));
+
+  const options = {
+    chart: {
+      type: 'pie',
+      height: 150,
+      backgroundColor: 'transparent',
+      margin: [0, 0, 0, 0],
+      spacing: [0, 0, 0, 0]
+    },
+    title: {
+      text: null
+    },
+    credits: {
+      enabled: false
+    },
+    tooltip: {
+      enabled: true,
+      useHTML: true,
+      backgroundColor: '#ffffff',
+      borderColor: '#7cb5ec',
+      borderRadius: 2,
+      borderWidth: 1,
+      shadow: true,
+      padding: 8,
+      formatter: function() {
+        return `<div style="font-size: 12px; font-family: 'Inter', sans-serif; min-width: 120px;">
+                  <div style="color: #333333; margin-bottom: 4px;">${this.point.name}</div>
+                  <div style="color: #333333;">
+                    <strong>${this.point.y.toLocaleString('en-US').replace(/,/g, ' ')}</strong> Tags (${this.point.percentage.toFixed(2)}%)
+                  </div>
+                </div>`;
+      }
+    },
+    plotOptions: {
+      pie: {
+        innerSize: '70%',
+        startAngle: -90,
+        endAngle: 90,
+        center: ['50%', '100%'],
+        size: '190%',
+        borderWidth: 2,
+        borderColor: '#ffffff',
+        dataLabels: {
+          enabled: false
+        },
+        states: {
+          hover: {
+            enabled: true,
+            halo: {
+              size: 0
+            }
+          }
+        }
+      }
+    },
+    series: [{
+      name: 'Value',
+      data: chartData
+    }]
+  };
+
   return (
     <div className="vmm-chart-card vmm-flex-col">
       {/* Header spanning full width at top */}
@@ -52,27 +120,11 @@ export default memo(function SemiCircleChartCard({
       <div className="vmm-chart-container">
         {/* Left Side: Graphic */}
         <div className="vmm-chart-graphic vmm-semi-circle-wrapper">
-          <ResponsiveContainer width="100%" height={150}>
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="100%"
-                startAngle={180}
-                endAngle={0}
-                innerRadius={70}
-                outerRadius={95}
-                paddingAngle={2}
-                dataKey="value"
-                stroke="none"
-                isAnimationActive={false}
-              >
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+            containerProps={{ style: { height: '150px', width: '100%' } }}
+          />
 
           {/* Custom HTML overlay for the center text of the semi-circle */}
           <div className="vmm-semi-circle-center-text">

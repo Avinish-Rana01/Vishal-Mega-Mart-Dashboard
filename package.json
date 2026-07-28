@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "start": "npm run dev",
-    "start:online":"npm run dev -- --host",
+    "start:online": "npm run dev -- --host",
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview"
   },
   "dependencies": {
+    "highcharts": "^13.0.0",
+    "highcharts-react-official": "^3.2.3",
     "lucide-react": "^1.25.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",

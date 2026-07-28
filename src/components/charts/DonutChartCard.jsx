@@ -1,5 +1,7 @@
 import React, { memo } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import Highcharts from 'highcharts';
+import HighchartsReactWrapper from 'highcharts-react-official';
+const HighchartsReact = HighchartsReactWrapper.default || HighchartsReactWrapper;
 import ProgressBar from '../common/ProgressBar';
 import './Charts.css';
 
@@ -36,36 +38,82 @@ export default memo(function DonutChartCard({
     );
   }
 
+  const chartData = data.map(item => ({
+    name: item.name,
+    y: item.value,
+    color: item.color
+  }));
+
+  const options = {
+    chart: {
+      type: 'pie',
+      height: 200,
+      backgroundColor: 'transparent',
+      margin: [0, 0, 0, 0],
+      spacing: [0, 0, 0, 0]
+    },
+    title: {
+      text: `<div style="text-align:center;line-height:1.2;display:flex;flex-direction:column;align-items:center;justify-content:center;"><span style="font-size:22px;font-weight:700;color:#000000">${totalValue}</span><span style="font-size:13px;font-weight:500;color:#94a3b8">${totalLabel}</span></div>`,
+      align: 'center',
+      verticalAlign: 'middle',
+      useHTML: true,
+      y: 0
+    },
+    credits: {
+      enabled: false
+    },
+    tooltip: {
+      enabled: true,
+      useHTML: true,
+      backgroundColor: '#1e293b',
+      borderColor: '#1e293b',
+      borderRadius: 4,
+      borderWidth: 0,
+      shadow: true,
+      padding: 10,
+      formatter: function() {
+        return `<div style="font-size: 12px; font-family: 'Inter', sans-serif; color: #ffffff;">
+                  <div style="margin-bottom: 4px; font-weight: 500;">${this.point.name}</div>
+                  <div>
+                    <span style="font-size: 14px; font-weight: 700;">${this.point.y.toLocaleString('en-US').replace(/,/g, ' ')}</span> tags<br/>
+                    <span style="color: #e0f2fe;">${this.point.percentage.toFixed(2)}%</span>
+                  </div>
+                </div>`;
+      }
+    },
+    plotOptions: {
+      pie: {
+        innerSize: '75%',
+        borderWidth: 2,
+        borderColor: '#ffffff',
+        dataLabels: {
+          enabled: false
+        },
+        states: {
+          hover: {
+            enabled: true,
+            halo: {
+              size: 0
+            }
+          }
+        }
+      }
+    },
+    series: [{
+      name: 'Value',
+      data: chartData
+    }]
+  };
+
   return (
     <div className="vmm-chart-card">
       <div className="vmm-chart-container">
         <div className="vmm-chart-graphic">
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie
-                data={data}
-                innerRadius={60}
-                outerRadius={85}
-                paddingAngle={0}
-                dataKey="value"
-                stroke="none"
-                isAnimationActive={false}
-              >
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              {/* Custom SVG Text in the center of the donut */}
-              <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle">
-                <tspan x="50%" dy="-0.2em" fontSize="24" fontWeight="bold" fill="#1e293b">
-                  {totalValue}
-                </tspan>
-                <tspan x="50%" dy="1.5em" fontSize="13" fill="#64748b">
-                  {totalLabel}
-                </tspan>
-              </text>
-            </PieChart>
-          </ResponsiveContainer>
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+            containerProps={{ style: { height: '100%', width: '100%' } }}
+          />
         </div>
         
         <div className="vmm-chart-legend">
