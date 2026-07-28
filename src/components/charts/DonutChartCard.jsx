@@ -53,11 +53,11 @@ export default memo(function DonutChartCard({
       spacing: [0, 0, 0, 0]
     },
     title: {
-      text: `<div style="text-align:center;line-height:1.2;display:flex;flex-direction:column;align-items:center;justify-content:center;"><span style="font-size:22px;font-weight:700;color:#000000">${totalValue}</span><span style="font-size:13px;font-weight:500;color:#94a3b8">${totalLabel}</span></div>`,
+      text: `<div style="text-align:center;line-height:1.2"><span style="font-size:22px;font-weight:700;color:#000000">${totalValue}</span><br><span style="font-size:13px;font-weight:500;color:#94a3b8">${totalLabel}</span></div>`,
       align: 'center',
       verticalAlign: 'middle',
       useHTML: true,
-      y: 0
+      y: 16
     },
     credits: {
       enabled: false
