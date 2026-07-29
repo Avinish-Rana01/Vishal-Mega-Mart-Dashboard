@@ -6,6 +6,7 @@ import LiveStockReportPage from './pages/Report/LiveStockReportPage';
 import NotFoundPage from './pages/NotFound/NotFoundPage';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
+import DevelopmentInProgressPage from './pages/DevelopmentInProgress/DevelopmentInProgressPage';
 import './App.css';
 
 export default function App() {
@@ -29,6 +30,33 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <LiveStockReportPage />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/stores" 
+            element={
+              <ProtectedRoute>
+                <DevelopmentInProgressPage title="Store Reports" />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/tags" 
+            element={
+              <ProtectedRoute>
+                <DevelopmentInProgressPage title="Tag Management" />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/settings" 
+            element={
+              <ProtectedRoute>
+                <DevelopmentInProgressPage title="Settings" />
               </ProtectedRoute>
             } 
           />
