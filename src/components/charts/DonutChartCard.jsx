@@ -5,6 +5,8 @@ const HighchartsReact = HighchartsReactWrapper.default || HighchartsReactWrapper
 import ProgressBar from '../common/ProgressBar';
 import './Charts.css';
 
+import { useIsInViewport } from '../../hooks/useIsInViewport';
+
 export default memo(function DonutChartCard({ 
   title = "Inventory Breakdown", 
   subtitle = "Tag distribution across sites",
@@ -13,6 +15,7 @@ export default memo(function DonutChartCard({
   totalValue = "0",
   isLoading = false
 }) {
+  const [containerRef, hasBeenVisible] = useIsInViewport({ threshold: 0.1 });
   if (isLoading) {
     return (
       <div className="vmm-chart-card">
@@ -108,12 +111,16 @@ export default memo(function DonutChartCard({
   return (
     <div className="vmm-chart-card">
       <div className="vmm-chart-container">
-        <div className="vmm-chart-graphic">
-          <HighchartsReact
-            highcharts={Highcharts}
-            options={options}
-            containerProps={{ style: { height: '100%', width: '100%' } }}
-          />
+        <div ref={containerRef} className="vmm-chart-graphic" style={{ minHeight: '170px' }}>
+          {hasBeenVisible ? (
+            <HighchartsReact
+              highcharts={Highcharts}
+              options={options}
+              containerProps={{ style: { height: '100%', width: '100%' } }}
+            />
+          ) : (
+            <div className="vmm-shimmer" style={{ width: '170px', height: '170px', borderRadius: '50%', margin: '0 auto' }}></div>
+          )}
         </div>
         
         <div className="vmm-chart-legend">

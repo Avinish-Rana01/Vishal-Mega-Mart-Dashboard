@@ -5,10 +5,16 @@ import { ArrowUpDown, RefreshCw, AlertCircle, ChevronLeft, ChevronRight } from '
  * Reusable DataTableCard Component
  * Renders a card container with header, meta pills, left/right toolbar, sortable table, total footer, and pagination.
  */
+
+// This function is for adding the live date from the browser. If the date is not passed then it will take the current date from the browser.
+const now = new Date();
+const defaultDay = now.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
+const defaultDate = now.toISOString().split('T')[0];
+
 export default function DataTableCard({
   title,
-  day = 'THURSDAY',
-  date = '2026-07-23',
+  day = defaultDay,
+  date = defaultDate,
   columns = [],
   data = [],
   totals = null,

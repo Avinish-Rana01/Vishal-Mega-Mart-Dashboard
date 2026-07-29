@@ -6,6 +6,8 @@ import { Recycle } from 'lucide-react';
 import ProgressBar from '../common/ProgressBar';
 import './Charts.css';
 
+import { useIsInViewport } from '../../hooks/useIsInViewport';
+
 export default memo(function SemiCircleChartCard({
   title = "TAG CYCLE COUNT",
   subtitle = "Distribution of Cycle Count ranges.",
@@ -15,6 +17,7 @@ export default memo(function SemiCircleChartCard({
   avgCount = "0",
   isLoading = false
 }) {
+  const [containerRef, hasBeenVisible] = useIsInViewport({ threshold: 0.1 });
   if (isLoading) {
     return (
       <div className="vmm-chart-card vmm-flex-col">
@@ -119,19 +122,25 @@ export default memo(function SemiCircleChartCard({
 
       <div className="vmm-chart-container">
         {/* Left Side: Graphic */}
-        <div className="vmm-chart-graphic vmm-semi-circle-wrapper">
-          <HighchartsReact
-            highcharts={Highcharts}
-            options={options}
-            containerProps={{ style: { height: '150px', width: '100%' } }}
-          />
-
+        <div ref={containerRef} className="vmm-chart-graphic vmm-semi-circle-wrapper" style={{ minHeight: '150px' }}>
+          {hasBeenVisible ? (
+            <HighchartsReact
+              highcharts={Highcharts}
+              options={options}
+              containerProps={{ style: { height: '100%', width: '100%' } }}
+            />
+          ) : (
+            <div className="vmm-shimmer" style={{ width: '200px', height: '100px', borderTopLeftRadius: '100px', borderTopRightRadius: '100px', margin: '0 auto' }}></div>
+          )}
+          
           {/* Custom HTML overlay for the center text of the semi-circle */}
-          <div className="vmm-semi-circle-center-text">
-            <Recycle size={20} color="#22c55e" className="vmm-recycle-icon" />
-            <div className="vmm-semi-circle-label">{totalLabel}</div>
-            <div className="vmm-semi-circle-value">{totalValue}</div>
-          </div>
+          {hasBeenVisible && (
+            <div className="vmm-semi-circle-center-text">
+              <Recycle size={20} color="#22c55e" className="vmm-recycle-icon" />
+              <div className="vmm-semi-circle-label">{totalLabel}</div>
+              <div className="vmm-semi-circle-value">{totalValue}</div>
+            </div>
+          )}
         </div>
 
         {/* Right Side: Legend */}

@@ -13,13 +13,17 @@ export default function TagManagementSection() {
     isLoading
   } = useTagCharts();
 
+  const now = new Date();
+  const dayName = now.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
+  const dateString = now.toISOString().split('T')[0];
+
   return (
     <div className="vmm-card vmm-card-full-width">
       <div className="vmm-card-header">
         <span className="vmm-card-title">TAG MANAGEMENT</span>
         <div className="vmm-card-meta">
-          <span className="vmm-meta-btn">SATURDAY</span>
-          <span className="vmm-meta-btn">2026-07-25</span>
+          <span className="vmm-meta-btn">{dayName}</span>
+          <span className="vmm-meta-btn">{dateString}</span>
         </div>
       </div>
       <div className="vmm-card-body" style={{ background: '#f8fafc', padding: '12px 16px' }}>

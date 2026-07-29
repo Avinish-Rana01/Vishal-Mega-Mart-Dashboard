@@ -1,5 +1,6 @@
-export const getLiveStock = async (searchQuery) => {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/live-details?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&userId=26`, {
+export const getLiveStock = async (searchQuery = '') => {
+  const term = encodeURIComponent(searchQuery || '');
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/live-details?pageIndex=1&pageSize=100&searchTerm=${term}&userId=26`, {
     headers: {
       'Accept': 'application/json'
     }
@@ -10,8 +11,9 @@ export const getLiveStock = async (searchQuery) => {
   return response.json();
 };
 
-export const getCycleCount = async (searchQuery) => {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/cycle-count-dashboard?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&sortColumn=STORE%20CODE&sortDirection=ASC&userId=26`, {
+export const getCycleCount = async (searchQuery = '') => {
+  const term = encodeURIComponent(searchQuery || '');
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/cycle-count-dashboard?pageIndex=1&pageSize=100&searchTerm=${term}&sortColumn=STORE%20CODE&sortDirection=ASC&userId=26`, {
     headers: {
       'Accept': 'application/json'
     }
@@ -22,8 +24,9 @@ export const getCycleCount = async (searchQuery) => {
   return response.json();
 };
 
-export const getVendorDiscrepancy = async (searchQuery) => {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/vendor-hu-discrepancy?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&sortColumn=DIFF_TILL_DATE&sortDirection=asc&userId=26`, {
+export const getVendorDiscrepancy = async (searchQuery = '') => {
+  const term = encodeURIComponent(searchQuery || '');
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/vendor-hu-discrepancy?pageIndex=1&pageSize=100&searchTerm=${term}&sortColumn=DIFF_TILL_DATE&sortDirection=asc&userId=26`, {
     headers: {
       'Accept': 'application/json'
     }
@@ -59,7 +62,8 @@ export const getTagCycleCount = async () => {
 };
 
 export const getStoreDashboard = async (searchQuery = '') => {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/store-dashboard?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&userId=26`, {
+  const term = encodeURIComponent(searchQuery || '');
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/store-dashboard?pageIndex=1&pageSize=100&searchTerm=${term}&sortColumn=Store&sortDirection=asc&userId=26`, {
     headers: {
       'Accept': 'application/json'
     }
@@ -71,7 +75,8 @@ export const getStoreDashboard = async (searchQuery = '') => {
 };
 
 export const getSaleDashboard = async (searchQuery = '') => {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/sale-dashboard?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&userId=26`, {
+  const term = encodeURIComponent(searchQuery || '');
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/sale-dashboard?pageIndex=1&pageSize=100&searchTerm=${term}&sortColumn=Store&sortDirection=asc&userId=26`, {
     headers: {
       'Accept': 'application/json'
     }
@@ -83,7 +88,8 @@ export const getSaleDashboard = async (searchQuery = '') => {
 };
 
 export const getVoidDashboard = async (searchQuery = '') => {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/void-dashboard?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&userId=26`, {
+  const term = encodeURIComponent(searchQuery || '');
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/void-dashboard?pageIndex=1&pageSize=100&searchTerm=${term}&sortColumn=Store&sortDirection=asc&userId=26`, {
     headers: {
       'Accept': 'application/json'
     }
@@ -95,7 +101,8 @@ export const getVoidDashboard = async (searchQuery = '') => {
 };
 
 export const getReturnDashboard = async (searchQuery = '') => {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/return-dashboard?pageIndex=1&pageSize=100&searchTerm=${encodeURIComponent(searchQuery)}&userId=26`, {
+  const term = encodeURIComponent(searchQuery || '');
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/return-dashboard?pageIndex=1&pageSize=100&searchTerm=${term}&sortColumn=Store&sortDirection=asc&userId=26`, {
     headers: {
       'Accept': 'application/json'
     }
@@ -107,7 +114,10 @@ export const getReturnDashboard = async (searchQuery = '') => {
 };
 
 export const getWarehouseEncoding = async (fromDate, toDate) => {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/warehouse-encoding?fromDate=${fromDate}&toDate=${toDate}`, {
+  const defaultDate = new Date().toISOString().split('T')[0];
+  const fDate = fromDate || defaultDate;
+  const tDate = toDate || defaultDate;
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/warehouse-encoding?fromDate=${fDate}&toDate=${tDate}`, {
     headers: {
       'Accept': 'application/json'
     }
@@ -119,7 +129,8 @@ export const getWarehouseEncoding = async (fromDate, toDate) => {
 };
 
 export const getDcValidation = async (pageIndex = 1, pageSize = 100, userId = 26) => {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/dc-validate-dashboard?pageIndex=${pageIndex}&pageSize=${pageSize}&userId=${userId}`, {
+  const uId = userId || 26;
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/stock/dc-validate-dashboard?pageIndex=${pageIndex}&pageSize=${pageSize}&userId=${uId}`, {
     headers: {
       'Accept': 'application/json'
     }

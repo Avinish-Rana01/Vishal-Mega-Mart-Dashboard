@@ -4,11 +4,15 @@ import HighchartsReactWrapper from 'highcharts-react-official';
 const HighchartsReact = HighchartsReactWrapper.default || HighchartsReactWrapper;
 import './Charts.css';
 
+import { useIsInViewport } from '../../hooks/useIsInViewport';
+
 export default memo(function WarehouseEncodingBarChart({
   title = "WAREHOUSE ENCODING DASHBOARD",
   data = [],
   isLoading = false
 }) {
+  const [containerRef, hasBeenVisible] = useIsInViewport({ threshold: 0.1 });
+
   if (isLoading) {
     return (
       <div className="vmm-chart-card vmm-flex-col" style={{ height: '100%' }}>
@@ -49,8 +53,9 @@ export default memo(function WarehouseEncodingBarChart({
       labels: {
         rotation: -45,
         style: {
-          color: '#64748b',
-          fontSize: '12px'
+          fontSize: '11px',
+          fontWeight: '500',
+          color: '#475569'
         }
       },
       lineColor: '#e2e8f0',
@@ -61,10 +66,11 @@ export default memo(function WarehouseEncodingBarChart({
       title: {
         text: 'EPC Count',
         style: {
-          color: '#64748b',
-          fontSize: '12px'
+          fontSize: '11px',
+          color: '#64748b'
         }
       },
+      gridLineDashStyle: 'Dash',
       gridLineColor: '#f1f5f9',
       labels: {
         style: {
@@ -78,33 +84,25 @@ export default memo(function WarehouseEncodingBarChart({
         '<td style="padding:0"><b>{point.y}</b></td></tr>',
       footerFormat: '</table>',
       shared: true,
-      useHTML: true,
-      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-      borderColor: '#e2e8f0',
-      borderRadius: 6,
-      shadow: false
+      useHTML: true
     },
     plotOptions: {
       column: {
         pointPadding: 0.2,
         borderWidth: 0,
-        borderRadius: 0,
-        color: '#3b82f6', // Blue bars
+        borderRadius: 2,
+        color: '#3b82f6',
         dataLabels: {
           enabled: true,
           style: {
-            fontSize: '12px',
-            fontWeight: 'bold',
-            color: '#000',
-            textOutline: 'none'
+            fontSize: '11px',
+            fontWeight: '600',
+            color: '#1e293b'
           }
         }
       }
     },
     credits: {
-      enabled: false
-    },
-    legend: {
       enabled: false
     },
     series: [{
@@ -119,7 +117,7 @@ export default memo(function WarehouseEncodingBarChart({
   const dateString = now.toISOString().split('T')[0];
 
   return (
-    <div className="vmm-card vmm-flex-col" style={{ width: '100%', border: '1px solid #cbd5e1', borderRadius: '8px', overflow: 'hidden' }}>
+    <div ref={containerRef} className="vmm-card vmm-flex-col" style={{ width: '100%', border: '1px solid #cbd5e1', borderRadius: '8px', overflow: 'hidden' }}>
       <div className="vmm-table-header" style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#2f669a' }}>
         <h3 style={{ margin: 0, fontSize: '15px', fontWeight: '600', color: '#fff', textTransform: 'uppercase' }}>{title}</h3>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -138,12 +136,16 @@ export default memo(function WarehouseEncodingBarChart({
         </div>
       </div>
 
-      <div className="vmm-chart-container" style={{ padding: '0 16px 16px 16px', background: '#fff' }}>
-        <HighchartsReact
-          highcharts={Highcharts}
-          options={options}
-          containerProps={{ style: { height: '200px', width: '100%' } }}
-        />
+      <div className="vmm-chart-container" style={{ padding: '0 16px 16px 16px', background: '#fff', minHeight: '200px' }}>
+        {hasBeenVisible ? (
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+            containerProps={{ style: { height: '200px', width: '100%' } }}
+          />
+        ) : (
+          <div className="vmm-shimmer" style={{ width: '100%', height: '200px', borderRadius: '6px' }}></div>
+        )}
       </div>
     </div>
   );
