@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/layout/Sidebar';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
-import DataTableCard from '../../components/common/DataTableCard';
+import LiveStockDataTable from '../../components/common/LiveStockDataTable';
 import './LiveStockReport.css';
 
 export default function LiveStockReportPage() {
@@ -172,13 +172,10 @@ export default function LiveStockReportPage() {
 
           {/* Data Table */}
           <div className="report-table-container">
-            <DataTableCard
-              title="Export Data To Excel"
+            <LiveStockDataTable
               columns={columns}
               data={articleData}
-              searchPlaceholder="Search Records"
               isLoading={isLoading}
-              error={error}
             />
           </div>
         </main>

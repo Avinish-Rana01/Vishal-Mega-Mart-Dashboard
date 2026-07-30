@@ -1,0 +1,176 @@
+/* LiveStockDataTable.css - Strictly matches the provided flat reference image */
+
+.ls-table-wrapper {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #374151;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Top Toolbar */
+.ls-toolbar-top {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.ls-export-btn {
+  background: linear-gradient(to right, #1F4E79, #2F6DA3, #3C7DB8);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  align-self: flex-start;
+  margin-bottom: 12px;
+}
+
+.ls-export-btn:hover {
+  background: linear-gradient(to right, #4285c5, #2F6DA3, #224c72);
+}
+
+.ls-toolbar-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.ls-entries-select {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ls-entries-select select {
+  padding: 4px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  outline: none;
+}
+
+.ls-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ls-search-box input {
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  outline: none;
+  font-size: 13px;
+  width: 200px;
+}
+
+/* Table Styles */
+.ls-table-container {
+  overflow-x: auto;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.ls-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: center; /* Image shows centered text for all columns */
+}
+
+.ls-table th {
+  background-color: #e5e7eb; /* Light gray from image */
+  border: 1px solid #d1d5db;
+  padding: 12px 10px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.ls-table th .sort-arrows {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 4px;
+  font-size: 14px;
+}
+
+.ls-table th .sort-arrows span {
+  padding: 0 2px;
+  color: #6b7280;
+}
+
+.ls-table th .sort-arrows span.active {
+  color: #ef4444; /* Red arrow in the image for active sort */
+  font-weight: bold;
+}
+
+.ls-table td {
+  border: 1px solid #d1d5db;
+  padding: 10px;
+  color: #4b5563;
+}
+
+.ls-table tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.ls-table tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+/* Bottom Toolbar (Pagination) */
+.ls-toolbar-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.ls-pagination-info {
+  color: #374151;
+}
+
+.ls-pagination-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.ls-page-btn {
+  background: #e5e7eb;
+  border: 1px solid transparent;
+  padding: 6px 12px;
+  border-radius: 4px;
+  color: #374151;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.ls-page-btn:hover:not(:disabled) {
+  background: #d1d5db;
+}
+
+.ls-page-btn.active {
+  background: #3b82f6;
+  color: white;
+}
+
+.ls-page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ls-page-ellipsis {
+  padding: 6px 4px;
+  color: #6b7280;
+}
