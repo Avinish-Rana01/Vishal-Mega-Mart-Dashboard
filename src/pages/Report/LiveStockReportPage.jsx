@@ -125,7 +125,22 @@ export default function LiveStockReportPage() {
                   <h3>{reportSummary?.sapQty?.toLocaleString('en-IN') || '1,03,803'}</h3>
                 </div>
                 <div className="card-icon sap-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    {/* Top Clip */}
+                    <rect x="9" y="3" width="6" height="4" rx="1" />
+                    {/* Main Document Body */}
+                    <path d="M9 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" />
+                    <path d="M15 3h2a2 2 0 0 1 2 2v4" />
+                    {/* Side Tabs */}
+                    <path d="M5 8h2" />
+                    <path d="M17 8h2" />
+                    {/* Document Lines */}
+                    <path d="M9 11h6" />
+                    <path d="M9 15h3" />
+                    {/* Magnifying Glass */}
+                    <circle cx="16" cy="16" r="4" fill="#ffffff" />
+                    <path d="M18.8 18.8L22 22" />
+                  </svg>
                 </div>
               </div>
             </div>
