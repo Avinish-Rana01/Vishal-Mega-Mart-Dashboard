@@ -66,10 +66,15 @@
 .report-search-card {
   background: #ffffff;
   margin: 15px 15px 10px 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 0 3px rgba(0,0,0,0.02);
   overflow: hidden;
-  border: 1px solid #cbd5e1;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  transition: box-shadow 0.3s ease;
+}
+
+.report-search-card:hover {
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 0 4px rgba(0,0,0,0.03);
 }
 
 .report-search-header {
@@ -106,9 +111,16 @@
   align-items: center;
   border: 1px solid #cbd5e1;
   border-radius: 20px;
-  background: #ffffff;
+  background: #f8fafc;
   overflow: hidden;
   height: 38px;
+  transition: all 0.2s ease;
+}
+
+.input-group:focus-within {
+  border-color: #3b82f6;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .input-group input {
@@ -137,12 +149,25 @@
   padding: 0 15px;
   border: 1px solid #cbd5e1;
   border-radius: 20px;
-  background: #ffffff;
+  background: #f8fafc;
   width: 100%;
   height: 38px;
   font-size: 13px;
   color: #334155;
   outline: none;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.search-field select:focus {
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .search-buttons {
@@ -211,14 +236,26 @@
 .curve-card {
   flex: 1;
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 0 3px rgba(0,0,0,0.02);
   position: relative;
   overflow: hidden;
   min-height: 105px;
   display: flex;
   flex-direction: column;
-  border: 1px solid #e2e8f0;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: default;
+}
+
+.curve-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.08), 0 0 6px rgba(0,0,0,0.03);
+  border-color: #cbd5e1;
+}
+
+.curve-card:hover .card-icon {
+  transform: scale(1.1);
 }
 
 .card-top {
@@ -243,13 +280,15 @@
 }
 
 .card-icon {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 15px;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
 .sap-icon {
