@@ -4,7 +4,11 @@ import { User, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { APP_INFO } from '../../config/constants';
 
-export default function Header({ breadcrumb = 'HOME - PAGES - DASHBOARD' }) {
+export default function Header({ 
+  breadcrumb = 'HOME - PAGES - DASHBOARD',
+  showBackButton = false,
+  onBackClick 
+}) {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const { loggedInUser, logout } = useAuth();
   const navigate = useNavigate();
@@ -23,6 +27,15 @@ export default function Header({ breadcrumb = 'HOME - PAGES - DASHBOARD' }) {
       </div>
 
       <div className="vmm-header-user">
+        {showBackButton && (
+          <button
+            className="btn-back"
+            onClick={onBackClick || (() => navigate(-1))}
+            title="Go Back"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+          </button>
+        )}
         <button
           className="vmm-user-btn"
           onClick={() => setShowUserMenu(!showUserMenu)}

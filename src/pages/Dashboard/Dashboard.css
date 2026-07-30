@@ -136,6 +136,10 @@
   letter-spacing: 0.5px;
 }
 
+.vmm-breadcrumbs .active {
+  color: #334155;
+}
+
 .vmm-header-user {
   position: relative;
   display: flex;
@@ -159,6 +163,24 @@
 
 .vmm-user-btn:hover {
   background: #334155;
+}
+
+.btn-back {
+  background: #ef4444;
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+}
+
+.btn-back:hover {
+  opacity: 0.9;
 }
 
 .vmm-user-dropdown {

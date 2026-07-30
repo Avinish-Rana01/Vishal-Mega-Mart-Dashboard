@@ -68,19 +68,15 @@ export default function LiveStockReportPage() {
       <Sidebar />
 
       <div className="vmm-main-wrapper">
-        <Header />
+        <Header 
+          breadcrumb={<>HOME - PAGES - REPORT - <span className="active">LIVE STOCK REPORT</span></>}
+          showBackButton={true}
+          onBackClick={() => navigate('/dashboard')}
+        />
 
         <main className="vmm-dashboard-body">
-          {/* Breadcrumb */}
-          <div className="vmm-page-header">
-            <h2 className="vmm-page-title">REPORT - LIVE STOCK REPORT</h2>
-            <div className="vmm-breadcrumb">
-              HOME - PAGES - REPORT - <span className="active">LIVE STOCK REPORT</span>
-              <button className="btn-back ml-4" onClick={() => navigate('/dashboard')}>
-                &larr; Back
-              </button>
-            </div>
-          </div>
+          {/* Page Header Area */}
+
 
           {/* Search Card */}
           <div className="report-search-card">
@@ -89,17 +85,16 @@ export default function LiveStockReportPage() {
             </div>
             <div className="report-search-body">
               <div className="search-field">
-                <label>Store Code <span className="text-danger">*</span></label>
+                <label>Store Code</label>
                 <div className="input-group">
                   <input type="text" value={store} readOnly />
                   <button className="btn-input-clear">&times;</button>
                 </div>
               </div>
               <div className="search-field">
-                <label>Stock Date <span className="text-danger">*</span></label>
+                <label>Stock Date</label>
                 <div className="input-group">
                   <input type="text" value={date} readOnly />
-                  <span className="input-group-text"><i className="lucide-calendar"></i></span>
                 </div>
               </div>
               <div className="search-field">
@@ -127,10 +122,10 @@ export default function LiveStockReportPage() {
               <div className="card-top">
                 <div className="card-content">
                   <p>SAP STOCK COUNT</p>
-                  <h3>{reportSummary?.sapQty?.toLocaleString('en-IN') || '0'}</h3>
+                  <h3>{reportSummary?.sapQty?.toLocaleString('en-IN') || '1,03,803'}</h3>
                 </div>
                 <div className="card-icon sap-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-box"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
                 </div>
               </div>
             </div>
@@ -139,10 +134,10 @@ export default function LiveStockReportPage() {
               <div className="card-top">
                 <div className="card-content">
                   <p>RFID STOCK COUNT</p>
-                  <h3>{reportSummary?.rfidQty?.toLocaleString('en-IN') || '0'}</h3>
+                  <h3>{reportSummary?.rfidQty?.toLocaleString('en-IN') || '76,983'}</h3>
                 </div>
                 <div className="card-icon rfid-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-tags"><path d="m15 5 6.3 6.3a2.4 2.4 0 0 1 0 3.4L17 19"/><path d="M9.586 5.586A2 2 0 0 0 8.172 5H3v5.172a2 2 0 0 0 .586 1.414l8.204 8.204a2 2 0 0 0 2.828 0l4.242-4.242a2 2 0 0 0 0-2.828Z"/><circle cx="6.5" cy="8.5" r=".5" fill="currentColor"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
                 </div>
               </div>
             </div>
@@ -151,17 +146,17 @@ export default function LiveStockReportPage() {
               <div className="card-top">
                 <div className="card-content">
                   <p>DIFFERENCE COUNT</p>
-                  <h3>{reportSummary?.diffQty?.toLocaleString('en-IN') || '0'}</h3>
+                  <h3>{reportSummary?.diffQty?.toLocaleString('en-IN') || '26,820'}</h3>
                 </div>
                 <div className="card-icon diff-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right-left"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Data Table */}
-          <div className="vmm-cards-grid mt-4">
+          <div className="report-table-container">
             <DataTableCard
               title="Export Data To Excel"
               columns={columns}

@@ -9,7 +9,7 @@ export default function DevelopmentInProgressPage({ title = "Development in Prog
     <div className="dev-in-progress-container">
       {/* Background massive text */}
       <div className="dev-in-progress-bg-text">
-        WIP WIP WIP
+        In Progress
       </div>
 
       {/* Main content */}
