@@ -26,7 +26,7 @@
 /* Left Sidebar */
 .vmm-sidebar {
   width: 70px;
-  background-color: #a3a3a6;
+  background-color: #a3a3a661;
   border-right: 1px solid #cbd5e1;
   display: flex;
   flex-direction: column;
@@ -416,6 +416,25 @@
   overflow-x: auto;
   width: 100%;
   min-height: 180px;
+  
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #195e8a transparent;
+}
+
+/* Chrome, Edge, and Safari */
+.vmm-table-container::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.vmm-table-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.vmm-table-container::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 10px;
 }
 
 .vmm-table {
@@ -519,6 +538,62 @@
 .vmm-page-ellipsis {
   padding: 0 4px;
   color: #94a3b8;
+}
+
+/* DataTables jQuery Pagination Overrides (To match reference image) */
+div.dt-container .bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 8px;
+  padding-top: 10px;
+}
+
+div.dt-container .dt-info {
+  font-size: 11px;
+  color: #64748b;
+  padding-top: 0 !important;
+}
+
+div.dt-container .dt-paging {
+  display: flex;
+  align-items: center;
+  padding-top: 0 !important;
+}
+
+div.dt-container .dt-paging .dt-paging-button {
+  background: #d4d4d4 !important; /* Solid light gray */
+  color: #000000 !important; /* Deep blue text */
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 5px 12px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: none !important;
+  margin: 0 2px !important;
+}
+
+div.dt-container .dt-paging .dt-paging-button:hover:not(.disabled) {
+  background: #c4c4c4 !important; /* Slightly darker gray on hover */
+  color: #003d6a !important;
+}
+
+div.dt-container .dt-paging .dt-paging-button.current,
+div.dt-container .dt-paging .dt-paging-button.current:hover {
+  background: #4a8bca !important; /* Solid blue active background */
+  color: #ffffff !important; /* White text */
+  font-weight: 600 !important;
+}
+
+div.dt-container .dt-paging .dt-paging-button.disabled,
+div.dt-container .dt-paging .dt-paging-button.disabled:hover {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  background: #d4d4d4 !important;
+  color: #000000 !important;
 }
 
 /* Badges & Accents */

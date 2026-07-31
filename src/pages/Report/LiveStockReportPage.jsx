@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/layout/Sidebar';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
-import LiveStockDataTable from '../../components/common/LiveStockDataTable';
+import ReportDataTableCard from '../../components/common/ReportDataTableCard';
 import './LiveStockReport.css';
 
 export default function LiveStockReportPage() {
@@ -170,14 +170,11 @@ export default function LiveStockReportPage() {
             </div>
           </div>
 
-          {/* Data Table */}
-          <div className="report-table-container">
-            <LiveStockDataTable
-              columns={columns}
-              data={articleData}
-              isLoading={isLoading}
-            />
-          </div>
+          <ReportDataTableCard
+            columns={columns}
+            data={articleData}
+            isLoading={isLoading}
+          />
         </main>
 
         <Footer />

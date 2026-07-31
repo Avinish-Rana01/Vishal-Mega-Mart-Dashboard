@@ -1,12 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import { ArrowUpDown, RefreshCw, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { AlertCircle, RefreshCw } from 'lucide-react';
+import BaseDataTable from './BaseDataTable';
 
-/**
- * Reusable DataTableCard Component
- * Renders a card container with header, meta pills, left/right toolbar, sortable table, total footer, and pagination.
- */
-
-// This function is for adding the live date from the browser. If the date is not passed then it will take the current date from the browser.
 const now = new Date();
 const defaultDay = now.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
 const defaultDate = now.toISOString().split('T')[0];
@@ -30,90 +25,12 @@ export default function DataTableCard({
   onRowClick = null,
   striped = true,
   enablePagination = false,
-  pageSize = 2
+  pageSize = 10
 }) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortColumnKey, setSortColumnKey] = useState(null);
-  const [sortDirection, setSortDirection] = useState('asc');
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const handleSort = (key) => {
-    if (sortColumnKey === key) {
-      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-    } else {
-      setSortColumnKey(key);
-      setSortDirection('asc');
-    }
-  };
-
-  // Filter Data
-  const filteredData = useMemo(() => {
-    return data.filter((row) => {
-      // If onSearch is provided, assume server-side filtering
-      if (onSearch || !searchTerm.trim()) return true;
-      const term = searchTerm.toLowerCase();
-      return columns.some((col) => {
-        const val = row[col.key];
-        return val !== undefined && val !== null && String(val).toLowerCase().includes(term);
-      });
-    });
-  }, [data, onSearch, searchTerm, columns]);
-
-  // Sort Data
-  const sortedData = useMemo(() => {
-    return [...filteredData].sort((a, b) => {
-      if (!sortColumnKey) return 0;
-      const aVal = a[sortColumnKey] ?? '';
-      const bVal = b[sortColumnKey] ?? '';
-
-      const numA = parseFloat(String(aVal).replace(/,/g, ''));
-      const numB = parseFloat(String(bVal).replace(/,/g, ''));
-
-      if (!isNaN(numA) && !isNaN(numB)) {
-        return sortDirection === 'asc' ? numA - numB : numB - numA;
-      }
-
-      const strA = String(aVal).toLowerCase();
-      const strB = String(bVal).toLowerCase();
-
-      if (strA < strB) return sortDirection === 'asc' ? -1 : 1;
-      if (strA > strB) return sortDirection === 'asc' ? 1 : -1;
-      return 0;
-    });
-  }, [filteredData, sortColumnKey, sortDirection]);
-
-  // Pagination calculation
-  const totalPages = enablePagination ? Math.ceil(sortedData.length / pageSize) || 1 : 1;
-  const paginatedData = useMemo(() => {
-    return enablePagination
-      ? sortedData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-      : sortedData;
-  }, [sortedData, enablePagination, currentPage, pageSize]);
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-    }
-  };
-
-  // Generate page numbers array (e.g. 1 2 3 4 ...)
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxVisible = 5;
-    let start = Math.max(1, currentPage - 2);
-    let end = Math.min(totalPages, start + maxVisible - 1);
-    if (end - start < maxVisible - 1) {
-      start = Math.max(1, end - maxVisible + 1);
-    }
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-    return pages;
-  };
 
   return (
     <div className={`vmm-card ${fullWidth ? 'vmm-card-full-width' : ''}`}>
-      {/* Standardized Card Header */}
       <div className="vmm-card-header">
         <span className="vmm-card-title">{title}</span>
         <div className="vmm-card-meta">
@@ -139,7 +56,6 @@ export default function DataTableCard({
         </div>
       </div>
 
-      {/* Standardized Card Body */}
       <div className="vmm-card-body">
         {error && (
           <div
@@ -166,7 +82,6 @@ export default function DataTableCard({
           </div>
         )}
 
-        {/* Toolbar: Left actions & Right Search bar */}
         <div className="vmm-table-toolbar">
           <div className="vmm-toolbar-left">
             {toolbarLeft}
@@ -181,7 +96,6 @@ export default function DataTableCard({
                 onChange={(e) => {
                   const val = e.target.value;
                   setSearchTerm(val);
-                  setCurrentPage(1);
                   if (onSearch) {
                     onSearch(val);
                   }
@@ -191,133 +105,20 @@ export default function DataTableCard({
           </div>
         </div>
 
-        {/* Main Table Container */}
-        <div className="vmm-table-container">
-          <table className={`vmm-table ${striped ? 'vmm-table-striped' : ''}`}>
-            <thead>
-              <tr>
-                {columns.map((col) => (
-                  <th
-                    key={col.key}
-                    className={col.sortable !== false ? 'sortable' : ''}
-                    onClick={() => col.sortable !== false && handleSort(col.key)}
-                  >
-                    {col.label}{' '}
-                    {col.sortable !== false && (
-                      <ArrowUpDown size={10} style={{ opacity: sortColumnKey === col.key ? 1 : 0.4 }} />
-                    )}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                [...Array(skeletonRowsCount)].map((_, rIdx) => (
-                  <tr key={`skel-row-${rIdx}`} className="vmm-skeleton-row">
-                    {columns.map((col, cIdx) => (
-                      <td key={`skel-col-${cIdx}`}>
-                        <span
-                          className="vmm-shimmer"
-                          style={{
-                            width:
-                              cIdx === 0
-                                ? '50%'
-                                : col.key === 'coverage'
-                                ? '45px'
-                                : col.key === 'syncDate' || col.key === 'date'
-                                ? '70%'
-                                : '75%'
-                          }}
-                        />
-                      </td>
-                    ))}
-                  </tr>
-                ))
-              ) : paginatedData.length === 0 ? (
-                <tr>
-                  <td colSpan={columns.length} style={{ textAlign: 'center', padding: '20px', color: '#94a3b8' }}>
-                    No matching records found
-                  </td>
-                </tr>
-              ) : (
-                paginatedData.map((row, rowIdx) => (
-                  <tr 
-                    key={rowIdx} 
-                    onClick={() => onRowClick && onRowClick(row)}
-                    style={{ cursor: onRowClick ? 'pointer' : 'default' }}
-                  >
-                    {columns.map((col) => (
-                      <td key={col.key}>
-                        {col.render ? col.render(row[col.key], row, rowIdx) : row[col.key]}
-                      </td>
-                    ))}
-                  </tr>
-                ))
-              )}
-            </tbody>
-            {totals && (
-              <tfoot>
-                <tr>
-                  {columns.map((col, idx) => (
-                    <td key={col.key}>
-                      {idx === 0
-                        ? totals[col.key] || 'TOTAL'
-                        : totals[col.key] !== undefined
-                        ? totals[col.key]
-                        : ''}
-                    </td>
-                  ))}
-                </tr>
-              </tfoot>
-            )}
-          </table>
-        </div>
-
-        {/* Optional Pagination Footer */}
-        {enablePagination && totalPages > 1 && (
-          <div className="vmm-pagination-container">
-            <span className="vmm-pagination-info">
-              Showing {sortedData.length === 0 ? 0 : (currentPage - 1) * pageSize + 1} to{' '}
-              {Math.min(currentPage * pageSize, sortedData.length)} of {sortedData.length} entries
-            </span>
-            <div className="vmm-pagination-controls">
-              <button
-                className="vmm-page-btn"
-                disabled={currentPage === 1}
-                onClick={() => handlePageChange(currentPage - 1)}
-              >
-                <ChevronLeft size={13} /> Previous
-              </button>
-              {getPageNumbers().map((pg) => (
-                <button
-                  key={pg}
-                  className={`vmm-page-btn ${currentPage === pg ? 'active' : ''}`}
-                  onClick={() => handlePageChange(pg)}
-                >
-                  {pg}
-                </button>
-              ))}
-              {getPageNumbers()[getPageNumbers().length - 1] < totalPages && (
-                <>
-                  <span className="vmm-page-ellipsis">...</span>
-                  <button
-                    className={`vmm-page-btn ${currentPage === totalPages ? 'active' : ''}`}
-                    onClick={() => handlePageChange(totalPages)}
-                  >
-                    {totalPages}
-                  </button>
-                </>
-              )}
-              <button
-                className="vmm-page-btn"
-                disabled={currentPage === totalPages}
-                onClick={() => handlePageChange(currentPage + 1)}
-              >
-                Next <ChevronRight size={13} />
-              </button>
-            </div>
-          </div>
-        )}
+        <BaseDataTable
+          columns={columns}
+          data={data}
+          totals={totals}
+          isLoading={isLoading}
+          skeletonRowsCount={skeletonRowsCount}
+          onRowClick={onRowClick}
+          striped={striped}
+          enablePagination={enablePagination}
+          pageSize={pageSize}
+          domConfig='<"top">rt<"bottom"ip><"clear">'
+          searching={false}
+          lengthChange={false}
+        />
       </div>
     </div>
   );
