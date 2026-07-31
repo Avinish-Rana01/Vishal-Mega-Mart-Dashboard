@@ -408,7 +408,14 @@
 }
 
 .vmm-skeleton-row td {
-  padding: 10px 8px !important;
+  padding: 8px 8px !important;
+  text-align: center !important;
+}
+
+.vmm-skeleton-table .dt-column-order::before,
+.vmm-skeleton-table .dt-column-order::after,
+.vmm-skeleton-table .dt-column-order {
+  opacity: 0 !important;
 }
 
 /* Data Table Styling matching DataTable in screenshot */
@@ -441,7 +448,7 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 11px;
-  text-align: center;
+  text-align: center !important;
 }
 
 .vmm-table th {
@@ -452,6 +459,7 @@
   border: 1px solid #cbd5e1;
   white-space: nowrap;
   user-select: none;
+  text-align: center !important;
 }
 
 .vmm-table th.sortable {
@@ -467,6 +475,7 @@
   border: 1px solid #e2e8f0;
   color: #1e293b;
   white-space: nowrap;
+  text-align: center !important;
 }
 
 .vmm-table-striped tbody tr:nth-child(even) {

@@ -48,32 +48,70 @@
   gap: 6px;
 }
 
-.ls-entries-select select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  padding: 6px 28px 6px 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  outline: none;
+.custom-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px 6px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
   font-size: 13px;
-  color: #334155;
+  font-weight: 500;
+  color: #1e293b;
   background-color: #ffffff;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  background-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  min-width: 60px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.ls-entries-select select:hover {
+.custom-select-trigger:hover {
   border-color: #94a3b8;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
-.ls-entries-select select:focus {
+.custom-select-trigger.open {
   border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.custom-select-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 100;
+  overflow: hidden;
+  animation: dropdownSlideIn 0.15s ease-out;
+}
+
+@keyframes dropdownSlideIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.custom-select-option {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.custom-select-option:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.custom-select-option.selected {
+  background: #eff6ff;
+  color: #2563eb;
+  font-weight: 600;
 }
 
 .ls-search-box {
@@ -83,12 +121,31 @@
 }
 
 .ls-search-box input {
-  padding: 6px 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
+  padding: 6px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
   outline: none;
   font-size: 13px;
-  width: 200px;
+  font-weight: 500;
+  color: #1e293b;
+  width: 220px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ls-search-box input::placeholder {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.ls-search-box input:hover {
+  border-color: #94a3b8;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.ls-search-box input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* Table Styles */
@@ -97,24 +154,49 @@
   border: 1px solid #d1d5db;
   border-radius: 4px;
   margin-bottom: 12px;
-}
-
-.ls-table {
   width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-  text-align: center; /* Image shows centered text for all columns */
+  box-sizing: border-box;
+  position: relative;
 }
 
-.ls-table th {
-  background-color: #e5e7eb; /* Light gray from image */
+/* Force override DataTables default spacing which shifts the table */
+.ls-table-container .dt-container,
+.ls-table-container .dataTables_wrapper,
+.ls-table-container .dt-layout-row,
+.ls-table-container .dt-layout-cell,
+.ls-table-container .top,
+.ls-table-container .bottom {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.ls-table, 
+table.dataTable.ls-table,
+table.dataTable.no-footer {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 13px;
+  text-align: center;
+  box-sizing: border-box !important;
+  table-layout: auto !important;
+}
+
+.ls-table th,
+table.dataTable.ls-table th {
+  background-color: #e5e7eb;
   border: 1px solid #d1d5db;
-  padding: 12px 10px;
+  padding: 12px 10px !important;
   font-weight: 600;
   color: #374151;
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
+  box-sizing: border-box !important;
+  text-align: center !important;
 }
 
 .ls-table th .sort-arrows {
@@ -139,6 +221,7 @@
   border: 1px solid #d1d5db;
   padding: 10px;
   color: #4b5563;
+  text-align: center !important;
 }
 
 .ls-table tbody tr:nth-child(even) {

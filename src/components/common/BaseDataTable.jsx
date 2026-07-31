@@ -20,7 +20,9 @@ export default function BaseDataTable({
   pageSize = 10,
   domConfig = '<"top">rt<"bottom"ip><"clear">',
   searching = false,
-  lengthChange = false
+  lengthChange = false,
+  containerClassName = "vmm-table-container",
+  tableClassName = "vmm-table"
 }) {
   const tableRef = useRef(null);
   const dataTableInstance = useRef(null);
@@ -103,43 +105,48 @@ export default function BaseDataTable({
   }, [tableKey, onRowClick, data]);
 
   return (
-    <div className="vmm-table-container">
+    <div className={containerClassName}>
       {isLoading ? (
-        <table className={`vmm-table ${striped ? 'vmm-table-striped' : ''}`}>
-          <thead>
-            <tr>
-              {columns.map((col) => (
-                <th key={col.key}>{col.label}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {[...Array(skeletonRowsCount)].map((_, rIdx) => (
-              <tr key={`skel-row-${rIdx}`} className="vmm-skeleton-row">
-                {columns.map((col, cIdx) => (
-                  <td key={`skel-col-${cIdx}`}>
-                    <span
-                      className="vmm-shimmer"
-                      style={{
-                        width:
-                          cIdx === 0
-                            ? '50%'
-                            : col.key === 'coverage'
-                            ? '45px'
-                            : col.key === 'syncDate' || col.key === 'date'
-                            ? '70%'
-                            : '75%'
-                      }}
-                    />
-                  </td>
+        <div className="dt-container">
+          <table className={`${tableClassName} dataTable vmm-skeleton-table ${striped ? 'vmm-table-striped' : ''}`} style={{ width: '100%', borderCollapse: 'collapse', margin: 0 }}>
+            <thead>
+              <tr>
+                {columns.map((col) => (
+                  <th key={col.key} className="dt-orderable-asc dt-orderable-desc">
+                    <span className="dt-column-title">{col.label}</span>
+                    <span className="dt-column-order"></span>
+                  </th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {[...Array(skeletonRowsCount)].map((_, rIdx) => (
+                <tr key={`skel-row-${rIdx}`} className="vmm-skeleton-row">
+                  {columns.map((col, cIdx) => (
+                    <td key={`skel-col-${cIdx}`}>
+                      <span
+                        className="vmm-shimmer"
+                        style={{
+                          width:
+                            cIdx === 0
+                              ? '50%'
+                              : col.key === 'coverage'
+                              ? '45px'
+                              : col.key === 'syncDate' || col.key === 'date'
+                              ? '70%'
+                              : '75%'
+                        }}
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
         <div key={tableKey}>
-          <table ref={tableRef} className={`vmm-table ${striped ? 'vmm-table-striped' : ''}`} style={{ width: '100%' }}>
+          <table ref={tableRef} className={`${tableClassName} ${striped ? 'vmm-table-striped' : ''}`} style={{ width: '100%', borderCollapse: 'collapse', margin: 0 }}>
             <thead>
               <tr>
                 {columns.map((col) => (

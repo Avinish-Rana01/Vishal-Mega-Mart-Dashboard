@@ -11,38 +11,69 @@ export default function LiveStockReportPage() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { store = 'HD44', date = '2026-07-20' } = location.state || {};
+  const { store: initialStore = 'HD44', date: initialDate = '2026-07-20' } = location.state || {};
 
+  const [selectedStore, setSelectedStore] = useState(initialStore);
+  const [selectedDate, setSelectedDate] = useState(initialDate);
+  const [storeOptions, setStoreOptions] = useState([]);
+  const [isStoreDropdownOpen, setIsStoreDropdownOpen] = useState(false);
+  
   const [articleData, setArticleData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [reportSummary, setReportSummary] = useState(null);
+
+  // Fetch Store Dropdown Options
+  React.useEffect(() => {
+    const fetchStores = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/report/stores?userId=26&fromDate=2026-07-01&toDate=2026-07-31`, {
+          headers: { 'Accept': 'application/json' }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setStoreOptions(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch stores", err);
+      }
+    };
+    fetchStores();
+  }, []);
+
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   React.useEffect(() => {
     const fetchReport = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const queryUrl = `${import.meta.env.VITE_API_BASE_URL}/api/stock/report?StoreName=${encodeURIComponent(store)}&FromDate=${encodeURIComponent(date)}&ToDate=${encodeURIComponent(date)}&pageIndex=1&pageSize=100`;
+        const queryUrl = `${import.meta.env.VITE_API_BASE_URL}/api/report/live-stock?pageIndex=${pageIndex}&pageSize=${pageSize}&storeName=${encodeURIComponent(selectedStore)}&stockDate=${encodeURIComponent(selectedDate)}&sortColumn=STOCK_DATE&sortDirection=asc`;
         const response = await fetch(queryUrl, {
           headers: { 'Accept': 'application/json' }
         });
         if (!response.ok) throw new Error(`Failed to fetch report data`);
-        const data = await response.json();
+        const result = await response.json();
         
-        // Map the API fields to the table columns expected
-        const mappedData = (data.items || []).map((item, index) => ({
-          srNo: index + 1,
-          stockDate: item.DATETIME,
+        // Map the new API fields to the table columns expected
+        const mappedData = (result.data || []).map((item) => ({
+          srNo: item.RowNumber,
+          stockDate: item.STOCK_DATE ? item.STOCK_DATE.split('T')[0] : '',
           articleNo: item.ARTICLE,
           sapStock: item.SAP_STOCK,
           rfidStock: item.RFID_STOCK,
-          diff: item.DIFFERENCE
+          diff: item.DIFF
         }));
         
         setArticleData(mappedData);
-        if (data.summary) {
-          setReportSummary(data.summary);
+        if (result.summary) {
+          setReportSummary({
+            sapQty: result.summary.sapStockCount,
+            rfidQty: result.summary.rfidStockCount,
+            diffQty: result.summary.differenceCount,
+            totalRecords: result.summary.totalRecords
+          });
         }
       } catch (err) {
         console.error("Error fetching live stock report:", err);
@@ -52,7 +83,7 @@ export default function LiveStockReportPage() {
       }
     };
     fetchReport();
-  }, [store, date]);
+  }, [selectedStore, selectedDate, pageIndex, pageSize]);
 
   const columns = [
     { key: 'srNo', label: 'SR.NO' },
@@ -87,14 +118,48 @@ export default function LiveStockReportPage() {
               <div className="search-field">
                 <label>Store Code</label>
                 <div className="input-group">
-                  <input type="text" value={store} readOnly />
-                  <button className="btn-input-clear">&times;</button>
+                  <div className="custom-select-container" style={{ position: 'relative', width: '100%' }}>
+                    <div 
+                      className={`custom-select-trigger ${isStoreDropdownOpen ? 'open' : ''}`}
+                      onClick={() => setIsStoreDropdownOpen(!isStoreDropdownOpen)}
+                      style={{ padding: '6px 14px', width: '100%', height: '32px' }}
+                    >
+                      {storeOptions.find(opt => opt.value === selectedStore)?.text || selectedStore}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 0.2s', transform: isStoreDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </div>
+                    
+                    {isStoreDropdownOpen && (
+                      <>
+                        <div 
+                          className="custom-select-backdrop" 
+                          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99 }} 
+                          onClick={() => setIsStoreDropdownOpen(false)}
+                        />
+                        <div className="custom-select-menu">
+                          {storeOptions.map(opt => (
+                            <div 
+                              key={opt.value} 
+                              className={`custom-select-option ${selectedStore === opt.value ? 'selected' : ''}`}
+                              onClick={() => {
+                                setSelectedStore(opt.value);
+                                setIsStoreDropdownOpen(false);
+                              }}
+                            >
+                              {opt.text}
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="search-field">
                 <label>Stock Date</label>
                 <div className="input-group">
-                  <input type="text" value={date} readOnly />
+                  <input type="text" value={selectedDate} readOnly />
                 </div>
               </div>
               <div className="search-field">
@@ -112,8 +177,8 @@ export default function LiveStockReportPage() {
 
           {/* Stats Header */}
           <div className="report-stats-header">
-            <div className="store-info">SELECTED STORE : {store} - UTTAM NAGAR 2</div>
-            <div className="date-info">STOCK DATE : {date}</div>
+            <div className="store-info">SELECTED STORE : {selectedStore} - UTTAM NAGAR 2</div>
+            <div className="date-info">STOCK DATE : {selectedDate}</div>
           </div>
 
           {/* Curved Cards */}
@@ -170,11 +235,20 @@ export default function LiveStockReportPage() {
             </div>
           </div>
 
-          <ReportDataTableCard
-            columns={columns}
-            data={articleData}
-            isLoading={isLoading}
-          />
+          {/* Data Table */}
+          <div style={{ padding: '0 20px', marginBottom: '40px' }}>
+            <ReportDataTableCard 
+              columns={columns} 
+              data={articleData} 
+              isLoading={isLoading} 
+              striped={true}
+              pageIndex={pageIndex}
+              onPageChange={setPageIndex}
+              pageSize={pageSize}
+              onPageSizeChange={setPageSize}
+              totalRecords={reportSummary?.totalRecords || 0}
+            />
+          </div>
         </main>
 
         <Footer />
