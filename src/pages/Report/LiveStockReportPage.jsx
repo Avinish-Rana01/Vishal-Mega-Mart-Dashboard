@@ -4,6 +4,7 @@ import Sidebar from '../../components/layout/Sidebar';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import ReportDataTableCard from '../../components/common/ReportDataTableCard';
+import SearchableDropdown from '../../components/common/SearchableDropdown';
 import './LiveStockReport.css';
 
 export default function LiveStockReportPage() {
@@ -16,7 +17,6 @@ export default function LiveStockReportPage() {
   const [selectedStore, setSelectedStore] = useState(initialStore);
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [storeOptions, setStoreOptions] = useState([]);
-  const [isStoreDropdownOpen, setIsStoreDropdownOpen] = useState(false);
   
   const [articleData, setArticleData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,12 +44,44 @@ export default function LiveStockReportPage() {
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
+  // Article Autocomplete State
+  const [articleSearchTerm, setArticleSearchTerm] = useState('');
+  const [articleOptions, setArticleOptions] = useState([]);
+  const [isArticleSearching, setIsArticleSearching] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState('');
+
+  // Fetch Article Options based on search term
+  React.useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      setIsArticleSearching(true);
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/report/articles/search?searchTerm=${encodeURIComponent(articleSearchTerm)}&storeCode=${encodeURIComponent(selectedStore)}&fromDate=2026-07-01&toDate=2026-07-31`, {
+          headers: { 'Accept': 'application/json' }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setArticleOptions(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch articles", err);
+      } finally {
+        setIsArticleSearching(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [articleSearchTerm, selectedStore]);
+
   React.useEffect(() => {
     const fetchReport = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const queryUrl = `${import.meta.env.VITE_API_BASE_URL}/api/report/live-stock?pageIndex=${pageIndex}&pageSize=${pageSize}&storeName=${encodeURIComponent(selectedStore)}&stockDate=${encodeURIComponent(selectedDate)}&sortColumn=STOCK_DATE&sortDirection=asc`;
+        let queryUrl = `${import.meta.env.VITE_API_BASE_URL}/api/report/live-stock?pageIndex=${pageIndex}&pageSize=${pageSize}&storeName=${encodeURIComponent(selectedStore)}&stockDate=${encodeURIComponent(selectedDate)}&sortColumn=STOCK_DATE&sortDirection=asc`;
+        if (selectedArticle) {
+          queryUrl += `&articleNo=${encodeURIComponent(selectedArticle)}`;
+        }
+        
         const response = await fetch(queryUrl, {
           headers: { 'Accept': 'application/json' }
         });
@@ -83,7 +115,7 @@ export default function LiveStockReportPage() {
       }
     };
     fetchReport();
-  }, [selectedStore, selectedDate, pageIndex, pageSize]);
+  }, [selectedStore, selectedDate, pageIndex, pageSize, selectedArticle]);
 
   const columns = [
     { key: 'srNo', label: 'SR.NO' },
@@ -117,44 +149,12 @@ export default function LiveStockReportPage() {
             <div className="report-search-body">
               <div className="search-field">
                 <label>Store Code</label>
-                <div className="input-group">
-                  <div className="custom-select-container" style={{ position: 'relative', width: '100%' }}>
-                    <div 
-                      className={`custom-select-trigger ${isStoreDropdownOpen ? 'open' : ''}`}
-                      onClick={() => setIsStoreDropdownOpen(!isStoreDropdownOpen)}
-                      style={{ padding: '6px 14px', width: '100%', height: '32px' }}
-                    >
-                      {storeOptions.find(opt => opt.value === selectedStore)?.text || selectedStore}
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 0.2s', transform: isStoreDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                      </svg>
-                    </div>
-                    
-                    {isStoreDropdownOpen && (
-                      <>
-                        <div 
-                          className="custom-select-backdrop" 
-                          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99 }} 
-                          onClick={() => setIsStoreDropdownOpen(false)}
-                        />
-                        <div className="custom-select-menu">
-                          {storeOptions.map(opt => (
-                            <div 
-                              key={opt.value} 
-                              className={`custom-select-option ${selectedStore === opt.value ? 'selected' : ''}`}
-                              onClick={() => {
-                                setSelectedStore(opt.value);
-                                setIsStoreDropdownOpen(false);
-                              }}
-                            >
-                              {opt.text}
-                            </div>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
+                <SearchableDropdown
+                  value={selectedStore}
+                  onChange={(val) => setSelectedStore(val)}
+                  options={storeOptions}
+                  placeholder="Select Store Code"
+                />
               </div>
               <div className="search-field">
                 <label>Stock Date</label>
@@ -164,9 +164,19 @@ export default function LiveStockReportPage() {
               </div>
               <div className="search-field">
                 <label>Article No</label>
-                <select>
-                  <option>Select Article No</option>
-                </select>
+                <SearchableDropdown
+                  value={selectedArticle}
+                  onChange={(val) => {
+                    setSelectedArticle(val);
+                    setArticleSearchTerm(val);
+                  }}
+                  options={articleOptions}
+                  placeholder="Select Article No"
+                  searchPlaceholder="Search Article No"
+                  isAsync={true}
+                  onSearchChange={setArticleSearchTerm}
+                  isLoading={isArticleSearching}
+                />
               </div>
               <div className="search-buttons">
                 <button className="btn-search">Search</button>
