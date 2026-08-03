@@ -88,27 +88,25 @@ export default function CycleCountModal({ modalData, onClose }) {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td><strong>8907831002341</strong></td>
-                  <td>MEN'S DENIM SLIM FIT BLUE 32</td>
-                  <td>4,200</td>
-                  <td>4,100</td>
-                  <td style={{ color: '#dc2626' }}>-100</td>
-                </tr>
-                <tr>
-                  <td><strong>8907831005612</strong></td>
-                  <td>WOMEN'S COTTON TOP FLORAL M</td>
-                  <td>3,500</td>
-                  <td>3,480</td>
-                  <td style={{ color: '#dc2626' }}>-20</td>
-                </tr>
-                <tr>
-                  <td><strong>8907831009988</strong></td>
-                  <td>BOYS TEESHIRT GRAPHIC YOUTH L</td>
-                  <td>2,800</td>
-                  <td>2,770</td>
-                  <td style={{ color: '#dc2626' }}>-30</td>
-                </tr>
+                {modalData.articleList && modalData.articleList.length > 0 ? (
+                  modalData.articleList.map((article, idx) => (
+                    <tr key={idx}>
+                      <td><strong>{article.ean}</strong></td>
+                      <td>{article.description}</td>
+                      <td>{formatNumber(article.sysQty)}</td>
+                      <td>{formatNumber(article.scannedQty)}</td>
+                      <td style={{ color: article.diffQty < 0 ? '#dc2626' : (article.diffQty > 0 ? '#16a34a' : 'inherit') }}>
+                        {formatNumber(article.diffQty)}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" style={{ textAlign: 'center', padding: '20px', color: '#64748b' }}>
+                      No article breakdown available.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

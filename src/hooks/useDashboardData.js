@@ -12,6 +12,7 @@ import {
   getWarehouseEncoding,
   getDcValidation
 } from '../services/stockService';
+import { API_DEFAULTS } from '../config/constants';
 
 /**
  * Generic hook for dashboard table endpoints.
@@ -210,8 +211,7 @@ const dcValidationTotals = (summary) => ({
 });
 
 export const useDcValidation = () => {
-  // Hardcoded to user 26 for now, as was originally. Will fix in Phase 3.
-  const apiCall = useCallback((_sq, signal) => getDcValidation(1, 100, 26, signal), []);
+  const apiCall = useCallback((_sq, signal) => getDcValidation(API_DEFAULTS.PAGE_INDEX, API_DEFAULTS.PAGE_SIZE, API_DEFAULTS.USER_ID, signal), []);
   return useDashboardFetch(apiCall, dcValidationFilter, dcValidationTotals);
 };
 
