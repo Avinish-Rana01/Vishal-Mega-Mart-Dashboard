@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   getLiveStock,
   getCycleCount,
@@ -13,7 +13,11 @@ import {
   getDcValidation
 } from '../services/stockService';
 
-export const useLiveStock = () => {
+/**
+ * Generic hook for dashboard table endpoints.
+ * Handles state management, debouncing, and API fetching with AbortController.
+ */
+const useDashboardFetch = (apiFn, filterFn, totalsMapper) => {
   const [data, setData] = useState([]);
   const [totals, setTotals] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -22,36 +26,34 @@ export const useLiveStock = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
+    const controller = new AbortController();
+    
     const fetchData = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await getLiveStock(searchQuery);
+        const response = await apiFn(searchQuery, controller.signal);
         
+        if (controller.signal.aborted) return;
+
         let items = response.items || [];
-        if (searchQuery.trim()) {
+        if (searchQuery.trim() && filterFn) {
           const term = searchQuery.toLowerCase();
-          items = items.filter(row =>
-            (row.STORE_CODE && row.STORE_CODE.toLowerCase().includes(term)) ||
-            (row.STORE_NAME && row.STORE_NAME.toLowerCase().includes(term)) ||
-            (row.DATE && row.DATE.toLowerCase().includes(term))
-          );
+          items = items.filter(row => filterFn(row, term));
         }
         setData(items);
 
-        if (response.summary) {
-          setTotals({
-            STORE_CODE: 'TOTAL',
-            SAP_STOCK: response.summary.sapQty?.toLocaleString('en-IN') || 0,
-            RFID_STOCK: response.summary.rfidQty?.toLocaleString('en-IN') || 0,
-            DIFFERENCE: response.summary.diffQty?.toLocaleString('en-IN') || 0
-          });
+        if (response.summary && totalsMapper) {
+          setTotals(totalsMapper(response.summary));
         }
       } catch (err) {
-        console.error("Error fetching live stock data:", err);
-        setError("Unable to load live stock data. Please check your connection.");
+        if (err.name === 'AbortError') return;
+        console.error("Error fetching data:", err);
+        setError("Unable to load data. Please check your connection.");
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -59,120 +61,163 @@ export const useLiveStock = () => {
       fetchData();
     }, 300);
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery, refreshTrigger]);
-
-  const refresh = () => setRefreshTrigger(prev => prev + 1);
-
-  return { data, totals, isLoading, error, searchQuery, setSearchQuery, refresh };
-};
-
-export const useCycleCount = () => {
-  const [data, setData] = useState([]);
-  const [totals, setTotals] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await getCycleCount(searchQuery);
-        
-        let items = response.items || [];
-        if (searchQuery.trim()) {
-          const term = searchQuery.toLowerCase();
-          items = items.filter(row =>
-            (row.STORE_CODE && row.STORE_CODE.toLowerCase().includes(term)) ||
-            (row.STORE_NAME && row.STORE_NAME.toLowerCase().includes(term)) ||
-            (row.DATE && row.DATE.toLowerCase().includes(term)) ||
-            (row.REF_NO && row.REF_NO.toLowerCase().includes(term))
-          );
-        }
-        setData(items);
-        if (response.summary) {
-          setTotals({
-            STORE_CODE: 'TOTAL',
-            REF_NO: response.summary.refNo,
-          });
-        }
-      } catch (err) {
-        console.error("Error fetching cycle count data:", err);
-        setError("Unable to load cycle count data.");
-      } finally {
-        setIsLoading(false);
-      }
+    return () => {
+      clearTimeout(delayDebounceFn);
+      controller.abort();
     };
+  }, [searchQuery, refreshTrigger, apiFn, filterFn, totalsMapper]);
 
-    const delayDebounceFn = setTimeout(() => {
-      fetchData();
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery, refreshTrigger]);
-
-  const refresh = () => setRefreshTrigger(prev => prev + 1);
+  const refresh = useCallback(() => setRefreshTrigger(prev => prev + 1), []);
 
   return { data, totals, isLoading, error, searchQuery, setSearchQuery, refresh };
 };
 
-export const useVendorDiscrepancy = () => {
-  const [data, setData] = useState([]);
-  const [totals, setTotals] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
+// ==========================================
+// 1. Live Stock
+// ==========================================
+const liveStockFilter = (row, term) => 
+  (row.STORE_CODE && row.STORE_CODE.toLowerCase().includes(term)) ||
+  (row.STORE_NAME && row.STORE_NAME.toLowerCase().includes(term)) ||
+  (row.DATE && row.DATE.toLowerCase().includes(term));
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await getVendorDiscrepancy(searchQuery);
-        
-        let items = response.items || [];
-        if (searchQuery.trim()) {
-          const term = searchQuery.toLowerCase();
-          items = items.filter(row =>
-            (row.VENDOR_NAME && row.VENDOR_NAME.toLowerCase().includes(term)) ||
-            (row.VENDOR_CODE && row.VENDOR_CODE.toLowerCase().includes(term))
-          );
-        }
-        setData(items);
+const liveStockTotals = (summary) => ({
+  STORE_CODE: 'TOTAL',
+  SAP_STOCK: summary.sapQty?.toLocaleString('en-IN') || 0,
+  RFID_STOCK: summary.rfidQty?.toLocaleString('en-IN') || 0,
+  DIFFERENCE: summary.diffQty?.toLocaleString('en-IN') || 0
+});
 
-        if (response.summary) {
-          setTotals({
-            VENDOR_CODE: 'TOTAL',
-            ACTUAL_QTY: response.summary.actualQty?.toLocaleString('en-IN') || 0,
-            SCANNED_QTY: response.summary.scannedQty?.toLocaleString('en-IN') || 0,
-            DIFF_QTY: response.summary.differenceQty?.toLocaleString('en-IN') || 0,
-            DIFF_TILL_DATE: response.summary.differenceQtyTillDate?.toLocaleString('en-IN') || 0
-          });
-        }
-      } catch (err) {
-        console.error("Error fetching vendor data:", err);
-        setError("Unable to load vendor discrepancy data.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+export const useLiveStock = () => useDashboardFetch(getLiveStock, liveStockFilter, liveStockTotals);
 
-    const delayDebounceFn = setTimeout(() => {
-      fetchData();
-    }, 300);
+// ==========================================
+// 2. Cycle Count
+// ==========================================
+const cycleCountFilter = (row, term) => 
+  (row.STORE_CODE && row.STORE_CODE.toLowerCase().includes(term)) ||
+  (row.STORE_NAME && row.STORE_NAME.toLowerCase().includes(term)) ||
+  (row.DATE && row.DATE.toLowerCase().includes(term)) ||
+  (row.REF_NO && row.REF_NO.toLowerCase().includes(term));
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery, refreshTrigger]);
+const cycleCountTotals = (summary) => ({
+  STORE_CODE: 'TOTAL',
+  REF_NO: summary.refNo,
+});
 
-  const refresh = () => setRefreshTrigger(prev => prev + 1);
+export const useCycleCount = () => useDashboardFetch(getCycleCount, cycleCountFilter, cycleCountTotals);
 
-  return { data, totals, isLoading, error, searchQuery, setSearchQuery, refresh };
+// ==========================================
+// 3. Vendor Discrepancy
+// ==========================================
+const vendorFilter = (row, term) => 
+  (row.VENDOR_NAME && row.VENDOR_NAME.toLowerCase().includes(term)) ||
+  (row.VENDOR_CODE && row.VENDOR_CODE.toLowerCase().includes(term));
+
+const vendorTotals = (summary) => ({
+  VENDOR_CODE: 'TOTAL',
+  ACTUAL_QTY: summary.actualQty?.toLocaleString('en-IN') || 0,
+  SCANNED_QTY: summary.scannedQty?.toLocaleString('en-IN') || 0,
+  DIFF_QTY: summary.differenceQty?.toLocaleString('en-IN') || 0,
+  DIFF_TILL_DATE: summary.differenceQtyTillDate?.toLocaleString('en-IN') || 0
+});
+
+export const useVendorDiscrepancy = () => useDashboardFetch(getVendorDiscrepancy, vendorFilter, vendorTotals);
+
+// ==========================================
+// 4. Store Dashboard
+// ==========================================
+const storeDashboardFilter = (row, term) => 
+  (row.STORE && row.STORE.toLowerCase().includes(term)) ||
+  (row.STORE_NAME && row.STORE_NAME.toLowerCase().includes(term)) ||
+  (row.DATE && row.DATE.toLowerCase().includes(term));
+
+const storeDashboardTotals = (summary) => ({
+  STORE: 'TOTAL',
+  HU_RECEIVED_QTY: summary.huReceivedQty?.toLocaleString('en-IN') || 0,
+  HU_VALIDATED_QTY: summary.huValidatedQty?.toLocaleString('en-IN') || 0,
+  HHT_VALIDATE_QTY: summary.hhtValidateQty?.toLocaleString('en-IN') || 0,
+  HU_WRONG_QTY: summary.huWrongQty?.toLocaleString('en-IN') || 0,
+  STORE_PENDING_QTY: ((summary.huReceivedQty || 0) - (summary.huValidatedQty || 0)).toLocaleString('en-IN')
+});
+
+export const useStoreDashboard = () => useDashboardFetch(getStoreDashboard, storeDashboardFilter, storeDashboardTotals);
+
+// ==========================================
+// 5. Sale Dashboard
+// ==========================================
+const saleDashboardFilter = (row, term) => 
+  (row.STORE && row.STORE.toLowerCase().includes(term)) ||
+  (row.STORE_NAME && row.STORE_NAME.toLowerCase().includes(term)) ||
+  (row.DATE && row.DATE.toLowerCase().includes(term));
+
+const saleDashboardTotals = (summary) => ({
+  STORE: 'TOTAL',
+  TOTAL_DPOS_SALE: summary.totalDposSale?.toLocaleString('en-IN') || 0,
+  TOTAL_RFID_CHECKOUT: summary.totalRfidCheckout?.toLocaleString('en-IN') || 0,
+  RFID_CHECKOUT_MATCHING_WITH_DPOS_SALE: summary.totalRfidCheckoutMatch?.toLocaleString('en-IN') || 0,
+  RFID_CHECKOUT_NOT_MATCHING_WITH_DPOS_SALE: summary.totalRfidCheckoutNotMatch?.toLocaleString('en-IN') || 0,
+  TOTAL_MANUAL_SALE: summary.totalManualSale?.toLocaleString('en-IN') || 0,
+  TOTAL_VOID: summary.totalVoid?.toLocaleString('en-IN') || 0
+});
+
+export const useSaleDashboard = () => useDashboardFetch(getSaleDashboard, saleDashboardFilter, saleDashboardTotals);
+
+// ==========================================
+// 6. Void Dashboard
+// ==========================================
+const voidDashboardFilter = (row, term) => 
+  (row.STORE && row.STORE.toLowerCase().includes(term)) ||
+  (row.STORE_NAME && row.STORE_NAME.toLowerCase().includes(term)) ||
+  (row.DATE && row.DATE.toLowerCase().includes(term));
+
+const voidDashboardTotals = (summary) => ({
+  STORE: 'TOTAL',
+  VOID_QTY: summary.returnQty?.toLocaleString('en-IN') || 0,
+  ENCODE_QTY: summary.returnEncodedQty?.toLocaleString('en-IN') || 0,
+  DIFFERENCE_QTY: summary.pendingQty?.toLocaleString('en-IN') || 0
+});
+
+export const useVoidDashboard = () => useDashboardFetch(getVoidDashboard, voidDashboardFilter, voidDashboardTotals);
+
+// ==========================================
+// 7. Return Dashboard
+// ==========================================
+const returnDashboardFilter = (row, term) => 
+  (row.Store_Code && row.Store_Code.toLowerCase().includes(term)) ||
+  (row.STORE_NAME && row.STORE_NAME.toLowerCase().includes(term)) ||
+  (row.DATE && row.DATE.toLowerCase().includes(term));
+
+const returnDashboardTotals = (summary) => ({
+  Store_Code: 'TOTAL',
+  RETURN_QTY: summary.returnQty?.toLocaleString('en-IN') || 0,
+  ENCODE_QTY: summary.returnEncodedQty?.toLocaleString('en-IN') || 0,
+  DIFFERENCE_QTY: summary.pendingQty?.toLocaleString('en-IN') || 0
+});
+
+export const useReturnDashboard = () => useDashboardFetch(getReturnDashboard, returnDashboardFilter, returnDashboardTotals);
+
+// ==========================================
+// 8. DC Validation
+// ==========================================
+const dcValidationFilter = (row, term) => 
+  (row.STORE_NAME && row.STORE_NAME.toLowerCase().includes(term)) ||
+  (row.Reciving_Plant && row.Reciving_Plant.toLowerCase().includes(term));
+
+const dcValidationTotals = (summary) => ({
+  recordCount: summary.recordCount || 0,
+  PROCESSED_HU: summary.processedHu || 0,
+  UNPROCESSED_HU: summary.unprocessedHu || 0,
+  PROCESSED_ARTICLE_QTY: summary.articleQty || 0
+});
+
+export const useDcValidation = () => {
+  // Hardcoded to user 26 for now, as was originally. Will fix in Phase 3.
+  const apiCall = useCallback((_sq, signal) => getDcValidation(1, 100, 26, signal), []);
+  return useDashboardFetch(apiCall, dcValidationFilter, dcValidationTotals);
 };
 
+// ==========================================
+// 9. Tag Management Charts (NOT REFACTORED)
+// ==========================================
 export const useTagCharts = () => {
   const [locationData, setLocationData] = useState([]);
   const [locationTotal, setLocationTotal] = useState(0);
@@ -182,13 +227,16 @@ export const useTagCharts = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchTagCharts = async () => {
       setIsLoading(true);
       try {
         const [locData, cycData] = await Promise.all([
-          getTagLocation(),
-          getTagCycleCount()
+          getTagLocation(controller.signal),
+          getTagCycleCount(controller.signal)
         ]);
+
+        if (controller.signal.aborted) return;
 
         const locTotal = locData.summary?.recordCount || 0;
         const storeVal = locData.summary?.storeCount || 0;
@@ -215,239 +263,25 @@ export const useTagCharts = () => {
           setCycleData(chartData);
         }
       } catch (err) {
+        if (err.name === 'AbortError') return;
         console.error("Error fetching tag management charts:", err);
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchTagCharts();
+    return () => controller.abort();
   }, []);
 
   return { locationData, locationTotal, cycleData, cycleTotal, avgRecycle, isLoading };
 };
 
-export const useStoreDashboard = () => {
-  const [data, setData] = useState([]);
-  const [totals, setTotals] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await getStoreDashboard(searchQuery);
-        
-        let items = response.items || [];
-        if (searchQuery.trim()) {
-          const term = searchQuery.toLowerCase();
-          items = items.filter(row =>
-            (row.STORE && row.STORE.toLowerCase().includes(term)) ||
-            (row.STORE_NAME && row.STORE_NAME.toLowerCase().includes(term)) ||
-            (row.DATE && row.DATE.toLowerCase().includes(term))
-          );
-        }
-        setData(items);
-
-        if (response.summary) {
-          setTotals({
-            STORE: 'TOTAL',
-            HU_RECEIVED_QTY: response.summary.huReceivedQty?.toLocaleString('en-IN') || 0,
-            HU_VALIDATED_QTY: response.summary.huValidatedQty?.toLocaleString('en-IN') || 0,
-            HHT_VALIDATE_QTY: response.summary.hhtValidateQty?.toLocaleString('en-IN') || 0,
-            HU_WRONG_QTY: response.summary.huWrongQty?.toLocaleString('en-IN') || 0,
-            STORE_PENDING_QTY: ((response.summary.huReceivedQty || 0) - (response.summary.huValidatedQty || 0)).toLocaleString('en-IN')
-          });
-        }
-      } catch (err) {
-        console.error("Error fetching store dashboard data:", err);
-        setError("Unable to load store validation data.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    const delayDebounceFn = setTimeout(() => {
-      fetchData();
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery, refreshTrigger]);
-
-  const refresh = () => setRefreshTrigger(prev => prev + 1);
-
-  return { data, totals, isLoading, error, searchQuery, setSearchQuery, refresh };
-};
-
-export const useSaleDashboard = () => {
-  const [data, setData] = useState([]);
-  const [totals, setTotals] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await getSaleDashboard(searchQuery);
-        
-        let items = response.items || [];
-        if (searchQuery.trim()) {
-          const term = searchQuery.toLowerCase();
-          items = items.filter(row =>
-            (row.STORE && row.STORE.toLowerCase().includes(term)) ||
-            (row.STORE_NAME && row.STORE_NAME.toLowerCase().includes(term)) ||
-            (row.DATE && row.DATE.toLowerCase().includes(term))
-          );
-        }
-        setData(items);
-
-        if (response.summary) {
-          setTotals({
-            STORE: 'TOTAL',
-            TOTAL_DPOS_SALE: response.summary.totalDposSale?.toLocaleString('en-IN') || 0,
-            TOTAL_RFID_CHECKOUT: response.summary.totalRfidCheckout?.toLocaleString('en-IN') || 0,
-            RFID_CHECKOUT_MATCHING_WITH_DPOS_SALE: response.summary.totalRfidCheckoutMatch?.toLocaleString('en-IN') || 0,
-            RFID_CHECKOUT_NOT_MATCHING_WITH_DPOS_SALE: response.summary.totalRfidCheckoutNotMatch?.toLocaleString('en-IN') || 0,
-            TOTAL_MANUAL_SALE: response.summary.totalManualSale?.toLocaleString('en-IN') || 0,
-            TOTAL_VOID: response.summary.totalVoid?.toLocaleString('en-IN') || 0
-          });
-        }
-      } catch (err) {
-        console.error("Error fetching sale dashboard data:", err);
-        setError("Unable to load sale dashboard data.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    const delayDebounceFn = setTimeout(() => {
-      fetchData();
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery, refreshTrigger]);
-
-  const refresh = () => setRefreshTrigger(prev => prev + 1);
-
-  return { data, totals, isLoading, error, searchQuery, setSearchQuery, refresh };
-};
-
-export const useVoidDashboard = () => {
-  const [data, setData] = useState([]);
-  const [totals, setTotals] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await getVoidDashboard(searchQuery);
-        
-        let items = response.items || [];
-        if (searchQuery.trim()) {
-          const term = searchQuery.toLowerCase();
-          items = items.filter(row =>
-            (row.STORE && row.STORE.toLowerCase().includes(term)) ||
-            (row.STORE_NAME && row.STORE_NAME.toLowerCase().includes(term)) ||
-            (row.DATE && row.DATE.toLowerCase().includes(term))
-          );
-        }
-        setData(items);
-
-        if (response.summary) {
-          setTotals({
-            STORE: 'TOTAL',
-            VOID_QTY: response.summary.returnQty?.toLocaleString('en-IN') || 0,
-            ENCODE_QTY: response.summary.returnEncodedQty?.toLocaleString('en-IN') || 0,
-            DIFFERENCE_QTY: response.summary.pendingQty?.toLocaleString('en-IN') || 0
-          });
-        }
-      } catch (err) {
-        console.error("Error fetching void dashboard data:", err);
-        setError("Unable to load void dashboard data.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    const delayDebounceFn = setTimeout(() => {
-      fetchData();
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery, refreshTrigger]);
-
-  const refresh = () => setRefreshTrigger(prev => prev + 1);
-
-  return { data, totals, isLoading, error, searchQuery, setSearchQuery, refresh };
-};
-
-export const useReturnDashboard = () => {
-  const [data, setData] = useState([]);
-  const [totals, setTotals] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await getReturnDashboard(searchQuery);
-        
-        let items = response.items || [];
-        if (searchQuery.trim()) {
-          const term = searchQuery.toLowerCase();
-          items = items.filter(row =>
-            (row.Store_Code && row.Store_Code.toLowerCase().includes(term)) ||
-            (row.STORE_NAME && row.STORE_NAME.toLowerCase().includes(term)) ||
-            (row.DATE && row.DATE.toLowerCase().includes(term))
-          );
-        }
-        setData(items);
-
-        if (response.summary) {
-          setTotals({
-            Store_Code: 'TOTAL',
-            RETURN_QTY: response.summary.returnQty?.toLocaleString('en-IN') || 0,
-            ENCODE_QTY: response.summary.returnEncodedQty?.toLocaleString('en-IN') || 0,
-            DIFFERENCE_QTY: response.summary.pendingQty?.toLocaleString('en-IN') || 0
-          });
-        }
-      } catch (err) {
-        console.error("Error fetching return dashboard data:", err);
-        setError("Unable to load return dashboard data.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    const delayDebounceFn = setTimeout(() => {
-      fetchData();
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery, refreshTrigger]);
-
-  const refresh = () => setRefreshTrigger(prev => prev + 1);
-
-  return { data, totals, isLoading, error, searchQuery, setSearchQuery, refresh };
-};
-
+// ==========================================
+// 10. Warehouse Encoding (NOT REFACTORED)
+// ==========================================
 export const useWarehouseEncoding = () => {
   const [data, setData] = useState([]);
   const [chartData, setChartData] = useState([]);
@@ -460,11 +294,13 @@ export const useWarehouseEncoding = () => {
   const [toDate, setToDate] = useState(today);
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchData = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await getWarehouseEncoding(fromDate, toDate);
+        const response = await getWarehouseEncoding(fromDate, toDate, controller.signal);
+        if (controller.signal.aborted) return;
         
         // Transform the summary object into an array for both table and chart
         if (response.summary) {
@@ -508,71 +344,19 @@ export const useWarehouseEncoding = () => {
         }
 
       } catch (err) {
+        if (err.name === 'AbortError') return;
         console.error("Error fetching warehouse encoding data:", err);
         setError("Unable to load warehouse encoding data.");
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchData();
+    return () => controller.abort();
   }, [fromDate, toDate]);
 
   return { data, chartData, isLoading, error, fromDate, setFromDate, toDate, setToDate };
 };
-
-export const useDcValidation = () => {
-  const [data, setData] = useState([]);
-  const [totals, setTotals] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await getDcValidation(1, 100, 26);
-        let items = response.items || [];
-        
-        if (searchQuery) {
-          const lowerQuery = searchQuery.toLowerCase();
-          items = items.filter(item => 
-            (item.STORE_NAME && item.STORE_NAME.toLowerCase().includes(lowerQuery)) ||
-            (item.Reciving_Plant && item.Reciving_Plant.toLowerCase().includes(lowerQuery))
-          );
-        }
-        
-        setData(items);
-        if (response.summary) {
-          setTotals({
-            recordCount: response.summary.recordCount || 0,
-            PROCESSED_HU: response.summary.processedHu || 0,
-            UNPROCESSED_HU: response.summary.unprocessedHu || 0,
-            PROCESSED_ARTICLE_QTY: response.summary.articleQty || 0
-          });
-        }
-      } catch (err) {
-        console.error("Error fetching DC validation data:", err);
-        setError("Unable to load DC validation data.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    const delayDebounceFn = setTimeout(() => {
-      fetchData();
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery, refreshTrigger]);
-
-  const refresh = () => setRefreshTrigger(prev => prev + 1);
-
-  return { data, totals, isLoading, error, searchQuery, setSearchQuery, refresh };
-};
-
-
-

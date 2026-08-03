@@ -7,72 +7,74 @@ import NotFoundPage from './pages/NotFound/NotFoundPage';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import DevelopmentInProgressPage from './pages/DevelopmentInProgress/DevelopmentInProgressPage';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import './App.css';
 
 export default function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          
-          <Route 
-            path="/dashboard" 
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            } 
-          />
-          
-          <Route 
-            path="/reports/live-stock" 
-            element={
-              <ProtectedRoute>
-                <LiveStockReportPage />
-              </ProtectedRoute>
-            } 
-          />
+      <ErrorBoundary>
+        <Router>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              } 
+            />
+            
+            <Route 
+              path="/reports/live-stock" 
+              element={
+                <ProtectedRoute>
+                  <LiveStockReportPage />
+                </ProtectedRoute>
+              } 
+            />
 
-          <Route 
-            path="/stores" 
-            element={
-              <ProtectedRoute>
-                <DevelopmentInProgressPage title="Store Reports" />
-              </ProtectedRoute>
-            } 
-          />
+            <Route 
+              path="/stores" 
+              element={
+                <ProtectedRoute>
+                  <DevelopmentInProgressPage title="Store Reports" />
+                </ProtectedRoute>
+              } 
+            />
 
-          <Route 
-            path="/tags" 
-            element={
-              <ProtectedRoute>
-                <DevelopmentInProgressPage title="Tag Management" />
-              </ProtectedRoute>
-            } 
-          />
+            <Route 
+              path="/tags" 
+              element={
+                <ProtectedRoute>
+                  <DevelopmentInProgressPage title="Tag Management" />
+                </ProtectedRoute>
+              } 
+            />
 
-          <Route 
-            path="/settings" 
-            element={
-              <ProtectedRoute>
-                <DevelopmentInProgressPage title="Settings" />
-              </ProtectedRoute>
-            } 
-          />
+            <Route 
+              path="/settings" 
+              element={
+                <ProtectedRoute>
+                  <DevelopmentInProgressPage title="Settings" />
+                </ProtectedRoute>
+              } 
+            />
 
-          <Route 
-            path="/" 
-            element={<Navigate to="/dashboard" replace />} 
-          />
-          
-          <Route 
-            path="*" 
-            element={<NotFoundPage />} 
-            // element={<Navigate to="/dashboard" replace />}
-          />
-        </Routes>
-      </Router>
+            <Route 
+              path="/" 
+              element={<Navigate to="/dashboard" replace />} 
+            />
+            
+            <Route 
+              path="*" 
+              element={<NotFoundPage />} 
+            />
+          </Routes>
+        </Router>
+      </ErrorBoundary>
     </AuthProvider>
   );
 }

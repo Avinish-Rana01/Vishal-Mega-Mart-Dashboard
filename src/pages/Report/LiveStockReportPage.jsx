@@ -5,10 +5,10 @@ import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import ReportDataTableCard from '../../components/common/ReportDataTableCard';
 import SearchableDropdown from '../../components/common/SearchableDropdown';
+import { getReportStores, searchReportArticles, getReportLiveStock } from '../../services/stockService';
 import './LiveStockReport.css';
 
 export default function LiveStockReportPage() {
-  const [activeNav, setActiveNav] = useState('Report');
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -25,20 +25,17 @@ export default function LiveStockReportPage() {
 
   // Fetch Store Dropdown Options
   React.useEffect(() => {
+    const controller = new AbortController();
     const fetchStores = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/report/stores?userId=26&fromDate=2026-07-01&toDate=2026-07-31`, {
-          headers: { 'Accept': 'application/json' }
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setStoreOptions(data);
-        }
+        const data = await getReportStores('2026-07-01', '2026-07-31', controller.signal);
+        setStoreOptions(data);
       } catch (err) {
-        console.error("Failed to fetch stores", err);
+        if (err.name !== 'AbortError') console.error("Failed to fetch stores", err);
       }
     };
     fetchStores();
+    return () => controller.abort();
   }, []);
 
   const [pageIndex, setPageIndex] = useState(1);
@@ -52,41 +49,34 @@ export default function LiveStockReportPage() {
 
   // Fetch Article Options based on search term
   React.useEffect(() => {
+    const controller = new AbortController();
     const delayDebounceFn = setTimeout(async () => {
       setIsArticleSearching(true);
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/report/articles/search?searchTerm=${encodeURIComponent(articleSearchTerm)}&storeCode=${encodeURIComponent(selectedStore)}&fromDate=2026-07-01&toDate=2026-07-31`, {
-          headers: { 'Accept': 'application/json' }
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setArticleOptions(data);
-        }
+        const data = await searchReportArticles(articleSearchTerm, selectedStore, selectedDate, selectedDate, controller.signal);
+        setArticleOptions(data);
       } catch (err) {
-        console.error("Failed to fetch articles", err);
+        if (err.name !== 'AbortError') console.error("Failed to fetch articles", err);
       } finally {
-        setIsArticleSearching(false);
+        if (!controller.signal.aborted) setIsArticleSearching(false);
       }
     }, 300);
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [articleSearchTerm, selectedStore]);
+    return () => {
+      clearTimeout(delayDebounceFn);
+      controller.abort();
+    };
+  }, [articleSearchTerm, selectedStore, selectedDate]);
 
   React.useEffect(() => {
+    const controller = new AbortController();
     const fetchReport = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        let queryUrl = `${import.meta.env.VITE_API_BASE_URL}/api/report/live-stock?pageIndex=${pageIndex}&pageSize=${pageSize}&storeName=${encodeURIComponent(selectedStore)}&stockDate=${encodeURIComponent(selectedDate)}&sortColumn=STOCK_DATE&sortDirection=asc`;
-        if (selectedArticle) {
-          queryUrl += `&articleNo=${encodeURIComponent(selectedArticle)}`;
-        }
+        const result = await getReportLiveStock(selectedStore, selectedDate, selectedArticle, pageIndex, pageSize, controller.signal);
         
-        const response = await fetch(queryUrl, {
-          headers: { 'Accept': 'application/json' }
-        });
-        if (!response.ok) throw new Error(`Failed to fetch report data`);
-        const result = await response.json();
+        if (controller.signal.aborted) return;
         
         // Map the new API fields to the table columns expected
         const mappedData = (result.data || []).map((item) => ({
@@ -108,22 +98,27 @@ export default function LiveStockReportPage() {
           });
         }
       } catch (err) {
+        if (err.name === 'AbortError') return;
         console.error("Error fetching live stock report:", err);
         setError("Unable to load report data.");
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) setIsLoading(false);
       }
     };
     fetchReport();
+    return () => controller.abort();
   }, [selectedStore, selectedDate, pageIndex, pageSize, selectedArticle]);
+
+  const numRenderer = (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span>;
+  const linkRenderer = (val) => <span className="vmm-link-num">{val}</span>;
 
   const columns = [
     { key: 'srNo', label: 'SR.NO' },
     { key: 'stockDate', label: 'STOCK DATE' },
-    { key: 'articleNo', label: 'ARTICLE NO', render: (val) => <span className="vmm-link-num">{val}</span> },
-    { key: 'sapStock', label: 'SAP STOCK', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
-    { key: 'rfidStock', label: 'RFID STOCK', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
-    { key: 'diff', label: 'DIFFERENCE', render: (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> }
+    { key: 'articleNo', label: 'ARTICLE NO', render: linkRenderer },
+    { key: 'sapStock', label: 'SAP STOCK', render: numRenderer },
+    { key: 'rfidStock', label: 'RFID STOCK', render: numRenderer },
+    { key: 'diff', label: 'DIFFERENCE', render: numRenderer }
   ];
 
   return (
@@ -187,7 +182,7 @@ export default function LiveStockReportPage() {
 
           {/* Stats Header */}
           <div className="report-stats-header">
-            <div className="store-info">SELECTED STORE : {selectedStore} - UTTAM NAGAR 2</div>
+            <div className="store-info">SELECTED STORE : {selectedStore}{storeOptions.find(s => s.value === selectedStore)?.text ? ` - ${storeOptions.find(s => s.value === selectedStore).text}` : ''}</div>
             <div className="date-info">STOCK DATE : {selectedDate}</div>
           </div>
 
