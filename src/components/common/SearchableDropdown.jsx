@@ -12,6 +12,7 @@ export default function SearchableDropdown({
   labelKey = 'text',
   valueKey = 'value',
   searchPlaceholder = 'Search...',
+  closeOnSelect = true,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -150,7 +151,7 @@ export default function SearchableDropdown({
               {isLoading ? (
                 <div className="custom-select-option-loading" role="status" aria-live="polite">Searching...</div>
               ) : displayOptions.length > 0 ? (
-                displayOptions.map(opt => {
+                displayOptions.slice(0, 50).map(opt => {
                   const isSelected = opt[valueKey] === value;
                   return (
                     <div 
@@ -161,13 +162,13 @@ export default function SearchableDropdown({
                       tabIndex={0}
                       onClick={() => {
                         onChange(opt[valueKey], opt);
-                        setIsOpen(false);
+                        if (closeOnSelect) setIsOpen(false);
                       }}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' || e.key === ' ') {
                           e.preventDefault();
                           onChange(opt[valueKey], opt);
-                          setIsOpen(false);
+                          if (closeOnSelect) setIsOpen(false);
                         }
                       }}
                     >

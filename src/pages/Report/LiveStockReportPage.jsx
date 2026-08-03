@@ -44,6 +44,7 @@ export default function LiveStockReportPage() {
   // Article Autocomplete State
   const [articleSearchTerm, setArticleSearchTerm] = useState('');
   const [articleOptions, setArticleOptions] = useState([]);
+  const [initialArticles, setInitialArticles] = useState([]);
   const [isArticleSearching, setIsArticleSearching] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState('');
 
@@ -89,6 +90,11 @@ export default function LiveStockReportPage() {
         }));
         
         setArticleData(mappedData);
+
+        if (!selectedArticle) {
+          setInitialArticles(Array.from(new Set(mappedData.map(a => a.articleNo))).filter(Boolean).map(a => ({ id: a, text: a })));
+        }
+
         if (result.summary) {
           setReportSummary({
             sapQty: result.summary.sapStockCount,
@@ -146,7 +152,12 @@ export default function LiveStockReportPage() {
                 <label>Store Code</label>
                 <SearchableDropdown
                   value={selectedStore}
-                  onChange={(val) => setSelectedStore(val)}
+                  onChange={(val) => {
+                    setSelectedStore(val);
+                    setSelectedArticle('');
+                    setArticleSearchTerm('');
+                    setPageIndex(1);
+                  }}
                   options={storeOptions}
                   placeholder="Select Store Code"
                 />
@@ -163,19 +174,29 @@ export default function LiveStockReportPage() {
                   value={selectedArticle}
                   onChange={(val) => {
                     setSelectedArticle(val);
-                    setArticleSearchTerm(val);
+                    setPageIndex(1);
                   }}
-                  options={articleOptions}
+                  options={articleSearchTerm ? articleOptions : initialArticles}
                   placeholder="Select Article No"
                   searchPlaceholder="Search Article No"
                   isAsync={true}
                   onSearchChange={setArticleSearchTerm}
                   isLoading={isArticleSearching}
+                  valueKey="id"
+                  closeOnSelect={false}
                 />
               </div>
               <div className="search-buttons">
-                <button className="btn-search">Search</button>
-                <button className="btn-clear">Clear</button>
+                <button 
+                  className="btn-clear"
+                  onClick={() => {
+                    setSelectedArticle('');
+                    setArticleSearchTerm('');
+                    setPageIndex(1);
+                  }}
+                >
+                  Clear
+                </button>
               </div>
             </div>
           </div>
@@ -241,7 +262,7 @@ export default function LiveStockReportPage() {
           </div>
 
           {/* Data Table */}
-          <div style={{ padding: '0 20px', marginBottom: '40px' }}>
+          <div style={{ padding: '0 15px', paddingBottom: '10px' }}>
             <ReportDataTableCard 
               columns={columns} 
               data={articleData} 

@@ -65,7 +65,7 @@
 
 .report-search-card {
   background: #ffffff;
-  margin: 15px 15px 10px 15px;
+  margin: 10px 15px 5px 15px;
   border-radius: 12px;
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 0 3px rgba(0,0,0,0.02);
   border: 1px solid rgba(226, 232, 240, 0.8);
@@ -81,7 +81,7 @@
 .report-search-header {
   background: linear-gradient(to right, #1F4E79, #2F6DA3, #3C7DB8);
   color: white;
-  padding: 6px 20px;
+  padding: 4px 20px;
   font-size: 11px;
   font-weight: 700;
   text-align: right;
@@ -93,7 +93,7 @@
   display: flex;
   align-items: center;
   gap: 15px;
-  padding: 10px 20px 15px 20px;
+  padding: 8px 20px 10px 20px;
 }
 
 .search-field {
@@ -105,7 +105,7 @@
 .search-field label {
   font-size: 12px;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   color: #64748b;
 }
 
@@ -116,7 +116,7 @@
   border-radius: 13px;
   background: #f8fafc;
   overflow: hidden;
-  height: 38px;
+  height: 34px;
   transition: all 0.2s ease;
 }
 
@@ -154,7 +154,7 @@
   border-radius: 13px;
   background: #f8fafc;
   width: 100%;
-  height: 38px;
+  height: 34px;
   font-size: 13px;
   color: #334155;
   outline: none;
@@ -177,7 +177,7 @@
   display: flex;
   gap: 10px;
   align-items: flex-end;
-  margin-top: 22px;
+  margin-top: 18px;
 }
 
 .btn-search {
@@ -185,7 +185,7 @@
   color: white;
   border: none;
   padding: 0 25px;
-  height: 38px;
+  height: 34px;
   border-radius: 13px;
   cursor: pointer;
   font-weight: 600;
@@ -204,7 +204,7 @@
   color: white;
   border: none;
   padding: 0 25px;
-  height: 38px;
+  height: 34px;
   border-radius: 13px;
   cursor: pointer;
   font-weight: 600;
@@ -221,7 +221,7 @@
 .report-stats-header {
   display: flex;
   justify-content: space-between;
-  padding: 8px 20px;
+  padding: 4px 20px;
   font-weight: 700;
   font-size: 13px;
   color: #334155;
@@ -233,7 +233,7 @@
 .report-curved-cards {
   display: flex;
   gap: 15px;
-  margin: 10px 15px;
+  margin: 5px 15px;
 }
 
 .curve-card {
@@ -243,7 +243,7 @@
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 0 3px rgba(0,0,0,0.02);
   position: relative;
   overflow: hidden;
-  min-height: 105px;
+  min-height: 80px;
   display: flex;
   flex-direction: column;
   border: 1px solid rgba(226, 232, 240, 0.8);
@@ -264,7 +264,7 @@
 .card-top {
   display: flex;
   justify-content: space-between;
-  padding: 15px 20px;
+  padding: 10px 20px;
   z-index: 1;
 }
 
