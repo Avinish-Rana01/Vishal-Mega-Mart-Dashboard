@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import LoginPage from './pages/Login/LoginPage';
 import DashboardPage from './pages/Dashboard/DashboardPage';
 import LiveStockReportPage from './pages/Report/LiveStockReportPage';
+import GrcReportPage from './pages/Report/GrcReportPage';
 import NotFoundPage from './pages/NotFound/NotFoundPage';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
@@ -32,6 +33,15 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <LiveStockReportPage />
+                </ProtectedRoute>
+              } 
+            />
+
+            <Route 
+              path="/reports/grc" 
+              element={
+                <ProtectedRoute>
+                  <GrcReportPage />
                 </ProtectedRoute>
               } 
             />

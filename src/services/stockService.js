@@ -160,3 +160,22 @@ export const getReportLiveStock = async (storeCode, stockDate, articleNo, pageIn
   if (!response.ok) throw new Error(`Failed to fetch report live stock: ${response.statusText}`);
   return response.json();
 };
+
+export const searchGrcHuNumbers = async (searchTerm, grcStatus = '1', storeCode = '', fromDate = '', toDate = '', signal) => {
+  const term = encodeURIComponent(searchTerm || '');
+  const url = `${API_BASE}/api/grc-report/hu-numbers/search?grcStatus=${grcStatus}&searchTerm=${term}&storeCode=${storeCode}&fromDate=${fromDate}&toDate=${toDate}`;
+  const response = await fetch(url, { headers: getHeaders(), signal });
+  if (!response.ok) throw new Error(`Failed to search HU numbers: ${response.statusText}`);
+  return response.json();
+};
+
+export const getGrcDetails = async (pageIndex, pageSize, grcStatus = '1', storeName = '', huNo = '', fromDate = '', toDate = '', signal) => {
+  let url = `${API_BASE}/api/grc-report/details?pageIndex=${pageIndex}&pageSize=${pageSize}&grcStatus=${grcStatus}&storeName=${encodeURIComponent(storeName)}&fromDate=${fromDate}&toDate=${toDate}`;
+  if (huNo) {
+    url += `&huNo=${encodeURIComponent(huNo)}`;
+  }
+  const response = await fetch(url, { headers: getHeaders(), signal });
+  if (!response.ok) throw new Error(`Failed to fetch GRC details: ${response.statusText}`);
+  return response.json();
+};
+
