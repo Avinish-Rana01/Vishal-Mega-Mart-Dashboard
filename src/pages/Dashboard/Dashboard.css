@@ -621,11 +621,69 @@ div.dt-container .dt-paging .dt-paging-button.disabled:hover {
   color: #16a34a;
   font-weight: 600;
   text-decoration: underline;
+  text-decoration-color: transparent;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .vmm-link-num:hover {
+  text-decoration-color: currentColor;
   color: #15803d;
+}
+
+.vmm-store-tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.vmm-store-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: -38px;
+  left: 0; /* Align left instead of center */
+  transform: translateY(10px);
+  background-color: #ffffff;
+  color: #1e293b;
+  text-align: center;
+  padding: 6px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border: 1px solid #cbd5e1;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 999;
+  pointer-events: none;
+}
+
+.vmm-store-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 15px; /* Shift arrow to align with the text start */
+  border-width: 6px;
+  border-style: solid;
+  border-color: #ffffff transparent transparent transparent;
+}
+
+/* A slightly larger shadow for the tooltip arrow border */
+.vmm-store-tooltip::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 14px;
+  border-width: 7px;
+  border-style: solid;
+  border-color: #cbd5e1 transparent transparent transparent;
+  z-index: -1;
+}
+
+.vmm-store-tooltip-wrapper:hover .vmm-store-tooltip {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .vmm-btn-action {

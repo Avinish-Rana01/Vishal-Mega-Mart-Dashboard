@@ -6,13 +6,33 @@ export const numRendererGreen = (val) => <span className="vmm-link-num" style={{
 export const numRendererRed = (val) => <span className="vmm-link-num" style={{color: '#dc2626'}}>{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span>;
 export const linkRenderer = (val) => <span className="vmm-link-num">{val}</span>;
 
+export const dateRenderer = (val) => {
+  if (!val) return '';
+  return typeof val === 'string' ? val.split(' ')[0] : val;
+};
+
+export const storeRenderer = (val, row) => {
+  const storeName = row?.STORE_NAME || row?.Store_Name || row?.STORE_Name || '';
+  if (storeName && storeName.trim() !== '') {
+    return (
+      <div className="vmm-store-tooltip-wrapper">
+        <span className="vmm-link-num">{val}</span>
+        <div className="vmm-store-tooltip">
+          {val} - {storeName}
+        </div>
+      </div>
+    );
+  }
+  return <span className="vmm-link-num">{val}</span>;
+};
+
 // Columns for the Live Stock Table Headers based on API response
 export const liveStockColumns = [
-  { key: 'STORE_CODE', label: 'STORE', render: linkRenderer },
+  { key: 'STORE_CODE', label: 'STORE', render: storeRenderer },
   { key: 'SAP_STOCK', label: 'SAP STOCK QTY', render: numRenderer },
   { key: 'RFID_STOCK', label: 'RFID STOCK QTY', render: numRenderer },
   { key: 'DIFFERENCE', label: 'DIFFERENCE QTY', render: numRenderer },
-  { key: 'DATE', label: 'SYNC DATE' },
+  { key: 'DATE', label: 'SYNC DATE', render: dateRenderer },
   {
     key: 'PERCENTAGE',
     label: 'COVERAGE(%)',
@@ -34,15 +54,13 @@ export const liveStockColumns = [
   }
 ];
 
-// Columns for Cycle Count Dashboard
 export const cycleCountColumns = [
-  { key: 'DATE', label: 'DATE' },
-  { key: 'STORE_CODE', label: 'STORE', render: linkRenderer },
-  { key: 'STORE_NAME', label: 'STORE NAME' },
+  { key: 'STORE_CODE', label: 'STORE', render: storeRenderer },
   { key: 'CYCLE_COUNT_TYPE', label: 'TYPE' },
   { key: 'REF_NO', label: 'REF NO', render: linkRenderer },
-  { key: 'Start_DateTime', label: 'START TIME' },
-  { key: 'END_DateTime', label: 'END TIME' },
+  { key: 'DATE', label: 'DATE', render: dateRenderer },
+  { key: 'Start_DateTime', label: 'START TIME', render: dateRenderer },
+  { key: 'END_DateTime', label: 'END TIME', render: dateRenderer },
   { key: 'Time_Taken', label: 'TIME TAKEN' }
 ];
 
@@ -58,9 +76,8 @@ export const vendorDiscrepancyColumns = [
 
 // Columns for Store Validation Dashboard
 export const storeDashboardColumns = [
-  { key: 'DATE', label: 'DATE' },
-  { key: 'STORE', label: 'STORE', render: linkRenderer },
-  { key: 'STORE_NAME', label: 'STORE NAME' },
+  { key: 'STORE', label: 'STORE', render: storeRenderer },
+  { key: 'DATE', label: 'DATE', render: dateRenderer },
   { key: 'HU_RECEIVED_QTY', label: 'HU RECEIVED', render: numRenderer },
   { key: 'HU_VALIDATED_QTY', label: 'HU VALIDATED', render: numRenderer },
   { key: 'HHT_VALIDATE_QTY', label: 'HHT VALIDATE', render: numRenderer },
@@ -70,9 +87,8 @@ export const storeDashboardColumns = [
 
 // Columns for Sale Dashboard
 export const saleDashboardColumns = [
-  { key: 'DATE', label: 'DATE' },
-  { key: 'STORE', label: 'STORE', render: linkRenderer },
-  { key: 'STORE_NAME', label: 'STORE NAME' },
+  { key: 'STORE', label: 'STORE', render: storeRenderer },
+  { key: 'DATE', label: 'DATE', render: dateRenderer },
   { key: 'TOTAL_DPOS_SALE', label: 'DPOS SALE', render: numRenderer },
   { key: 'TOTAL_RFID_CHECKOUT', label: 'RFID CHECKOUT', render: numRenderer },
   { key: 'RFID_CHECKOUT_MATCHING_WITH_DPOS_SALE', label: 'MATCHING', render: numRendererGreen },
@@ -83,8 +99,7 @@ export const saleDashboardColumns = [
 
 // Columns for Void Dashboard
 export const voidDashboardColumns = [
-  { key: 'STORE', label: 'STORE', render: linkRenderer },
-  { key: 'STORE_NAME', label: 'STORE NAME' },
+  { key: 'STORE', label: 'STORE', render: storeRenderer },
   { key: 'VOID_QTY', label: 'VOID QTY', render: numRenderer },
   { key: 'ENCODE_QTY', label: 'ENCODE QTY', render: numRenderer },
   { key: 'DIFFERENCE_QTY', label: 'DIFFERENCE', render: numRendererRed }
@@ -92,9 +107,7 @@ export const voidDashboardColumns = [
 
 // Columns for Return Dashboard
 export const returnDashboardColumns = [
-  { key: 'DATE', label: 'DATE' },
-  { key: 'Store_Code', label: 'STORE', render: linkRenderer },
-  { key: 'STORE_NAME', label: 'STORE NAME' },
+  { key: 'Store_Code', label: 'STORE', render: storeRenderer },
   { key: 'RETURN_QTY', label: 'RETURN QTY', render: numRenderer },
   { key: 'ENCODE_QTY', label: 'ENCODE QTY', render: numRenderer },
   { key: 'DIFFERENCE_QTY', label: 'DIFFERENCE', render: numRendererRed }

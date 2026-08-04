@@ -187,7 +187,7 @@ table.dataTable.no-footer {
 
 .ls-table th,
 table.dataTable.ls-table th {
-  background-color: #e5e7eb;
+  background-color: #dcdcdcc7;
   border: 1px solid #d1d5db;
   padding: 8px 10px !important;
   font-weight: 600;

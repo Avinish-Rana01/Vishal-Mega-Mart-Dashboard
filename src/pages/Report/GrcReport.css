@@ -186,7 +186,7 @@
 }
 
 .btn-search {
-  background: #0ea5e9;
+  background: linear-gradient(to right, #1F4E79, #2F6DA3, #3C7DB8)#0ea5e9;
   color: white;
   border: none;
   padding: 0 25px;
@@ -198,7 +198,7 @@
 }
 
 .btn-search:hover {
-  background: #0284c7;
+  background: linear-gradient(to right, #4285c5, #2F6DA3, #224c72);
   transition: all 0.3s ease;
   transform: translateY(-2px);
 }
@@ -345,4 +345,14 @@
 
 .report-table-container {
   margin: 10px 15px;
+}
+.vmm-btn-view-details{
+    color: #16a34a !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
 }
