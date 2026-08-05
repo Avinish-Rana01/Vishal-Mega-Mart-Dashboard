@@ -118,7 +118,7 @@
   align-items: center;
   border: 1px solid #cbd5e1;
   border-radius: 13px;
-  background: #f8fafc;
+  background: #f9f9f9;
   overflow: hidden;
   height: 34px;
   transition: all 0.2s ease;
@@ -255,6 +255,7 @@
   display: flex;
   gap: 15px;
   margin: 10px 15px;
+  padding-top: 12px;
 }
 
 .curve-card {

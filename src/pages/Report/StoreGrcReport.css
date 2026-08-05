@@ -1,0 +1,39 @@
+/* Inherit base styles from LiveStockReport.css but override the cards grid */
+@import './LiveStockReport.css';
+
+.grc-report-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr) !important; /* 5 columns instead of 3 */
+  gap: 20px;
+  margin-bottom: 20px;
+  /* padding: 0 15px; */
+}
+
+@media (max-width: 1200px) {
+  .grc-report-cards {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .grc-report-cards {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .grc-report-cards {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Adjust search body to have 3 columns instead of 4 */
+.report-search-body {
+  grid-template-columns: repeat(3, 1fr) !important;
+}
+
+@media (max-width: 768px) {
+  .report-search-body {
+    grid-template-columns: 1fr !important;
+  }
+}

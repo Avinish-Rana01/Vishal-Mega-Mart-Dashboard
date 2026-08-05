@@ -13,7 +13,7 @@ export default function BaseDataTable({
   data = [],
   totals = null,
   isLoading = false,
-  skeletonRowsCount = 3,
+  skeletonRowsCount = 4,
   onRowClick = null,
   striped = true,
   enablePagination = false,

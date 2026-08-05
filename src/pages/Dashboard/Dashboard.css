@@ -256,7 +256,7 @@
 .vmm-dashboard-body {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 24px;
+  /* padding: 16px 24px; */
   background-color: #e9ecef;
 }
 
@@ -492,7 +492,7 @@ table.dataTable thead th.dt-ordering-desc .dt-column-title::after {
 
   /* Firefox */
   scrollbar-width: thin;
-  scrollbar-color: #195e8a transparent;
+  /* scrollbar-color: #195e8a transparent; */
 }
 
 /* Chrome, Edge, and Safari */

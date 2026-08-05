@@ -91,9 +91,10 @@ export default function LiveStockReportPage() {
         
         setArticleData(mappedData);
 
-        if (!selectedArticle) {
-          setInitialArticles(Array.from(new Set(mappedData.map(a => a.articleNo))).filter(Boolean).map(a => ({ id: a, text: a })));
-        }
+        // We no longer rely on initialArticles from the table
+        // if (!selectedArticle) {
+        //   setInitialArticles(Array.from(new Set(mappedData.map(a => a.articleNo))).filter(Boolean).map(a => ({ id: a, text: a })));
+        // }
 
         if (result.summary) {
           setReportSummary({
@@ -165,7 +166,11 @@ export default function LiveStockReportPage() {
               <div className="search-field">
                 <label>Stock Date</label>
                 <div className="input-group">
-                  <input type="text" value={selectedDate} readOnly />
+                  <input 
+                    type="date" 
+                    value={selectedDate} 
+                    onChange={(e) => setSelectedDate(e.target.value)} 
+                  />
                 </div>
               </div>
               <div className="search-field">
@@ -176,7 +181,7 @@ export default function LiveStockReportPage() {
                     setSelectedArticle(val);
                     setPageIndex(1);
                   }}
-                  options={articleSearchTerm ? articleOptions : initialArticles}
+                  options={articleOptions}
                   placeholder="Select Article No"
                   searchPlaceholder="Search Article No"
                   isAsync={true}

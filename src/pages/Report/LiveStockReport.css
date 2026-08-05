@@ -114,9 +114,9 @@
   align-items: center;
   border: 1px solid #cbd5e1;
   border-radius: 13px;
-  background: #f8fafc;
+  background: #f9f9f9;
   overflow: hidden;
-  height: 34px;
+  height: 40px;
   transition: all 0.2s ease;
 }
 

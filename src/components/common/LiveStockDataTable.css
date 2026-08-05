@@ -58,7 +58,7 @@
   font-size: 13px;
   font-weight: 500;
   color: #1e293b;
-  background-color: #ffffff;
+  background-color: #f9f9f9;
   cursor: pointer;
   min-width: 60px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -233,7 +233,7 @@ table.dataTable.ls-table th {
 }
 
 .ls-table tbody tr:nth-child(odd) {
-  background-color: #f9fafb;
+  background-color: #f7f7f7;
 }
 
 .ls-table tbody tr:hover {

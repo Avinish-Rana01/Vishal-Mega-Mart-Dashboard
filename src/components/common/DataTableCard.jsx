@@ -21,7 +21,7 @@ export default function DataTableCard({
   toolbarLeft = null,
   searchPlaceholder = 'Search Records',
   fullWidth = false,
-  skeletonRowsCount = 3,
+  skeletonRowsCount = 4,
   onRowClick = null,
   striped = true,
   enablePagination = false,

@@ -4,6 +4,7 @@ import LoginPage from './pages/Login/LoginPage';
 import DashboardPage from './pages/Dashboard/DashboardPage';
 import LiveStockReportPage from './pages/Report/LiveStockReportPage';
 import GrcReportPage from './pages/Report/GrcReportPage';
+import StoreGrcReportPage from './pages/Report/StoreGrcReportPage';
 import NotFoundPage from './pages/NotFound/NotFoundPage';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
@@ -42,6 +43,15 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <GrcReportPage />
+                </ProtectedRoute>
+              } 
+            />
+
+            <Route 
+              path="/reports/store-grc" 
+              element={
+                <ProtectedRoute>
+                  <StoreGrcReportPage />
                 </ProtectedRoute>
               } 
             />

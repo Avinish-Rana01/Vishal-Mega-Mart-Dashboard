@@ -179,3 +179,12 @@ export const getGrcDetails = async (pageIndex, pageSize, grcStatus = '1', storeN
   return response.json();
 };
 
+export const getStoreGrcReport = async (storeCode, fromDate, toDate, pageIndex = API_DEFAULTS.PAGE_INDEX, pageSize = API_DEFAULTS.PAGE_SIZE, signal) => {
+  const store = encodeURIComponent(storeCode || '');
+  const response = await fetch(`${API_BASE}/api/stock/store-grc-report?storeCode=${store}&fromDate=${fromDate}&toDate=${toDate}&pageIndex=${pageIndex}&pageSize=${pageSize}`, {
+    headers: getHeaders(),
+    signal
+  });
+  if (!response.ok) throw new Error(`Failed to fetch store GRC report data: ${response.statusText}`);
+  return response.json();
+};

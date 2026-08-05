@@ -29,6 +29,27 @@ export default function StoreValidationSection() {
 
   // Override specific columns to be clickable with their respective grcStatus mappings
   const columns = storeDashboardColumns.map(col => {
+    if (col.key === 'STORE') {
+      return { 
+        ...col, 
+        render: (val, row) => (
+          <span 
+            className="vmm-link-num" 
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate('/reports/store-grc', { 
+                state: { 
+                  store: val,
+                  rowDate: row.DATE || row.Date || row.GRC_DATE || row.Grc_Date || row.date
+                } 
+              });
+            }}
+          >
+            {val}
+          </span>
+        ) 
+      };
+    }
     if (col.key === 'HU_RECEIVED_QTY') {
       return { ...col, render: (val, row) => <span className="vmm-link-num" onClick={(e) => handleCellClick(row, '4', e)}>{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> };
     }

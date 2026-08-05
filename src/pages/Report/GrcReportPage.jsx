@@ -113,9 +113,10 @@ export default function GrcReportPage() {
         
         setGrcData(mappedData);
 
-        if (!selectedHu) {
-          setInitialHuNumbers(Array.from(new Set(mappedData.map(a => a.huNumber))).filter(Boolean).map(a => ({ id: a, text: a })));
-        }
+        // We no longer rely on initialHuNumbers from the table
+        // if (!selectedHu) {
+        //   setInitialHuNumbers(Array.from(new Set(mappedData.map(a => a.huNumber))).filter(Boolean).map(a => ({ id: a, text: a })));
+        // }
 
         setTotalRecords(result.totalRecords || 0);
 
@@ -198,10 +199,9 @@ export default function GrcReportPage() {
                 <label>From Date</label>
                 <div className="input-group">
                   <input 
-                    type="text" 
+                    type="date" 
                     value={fromDate} 
                     onChange={(e) => setFromDate(e.target.value)} 
-                    readOnly 
                   />
                 </div>
               </div>
@@ -209,10 +209,9 @@ export default function GrcReportPage() {
                 <label>To Date</label>
                 <div className="input-group">
                   <input 
-                    type="text" 
+                    type="date" 
                     value={toDate} 
                     onChange={(e) => setToDate(e.target.value)} 
-                    readOnly 
                   />
                 </div>
               </div>
@@ -224,7 +223,7 @@ export default function GrcReportPage() {
                     setSelectedHu(val);
                     setPageIndex(1);
                   }}
-                  options={huSearchTerm ? huOptions : initialHuNumbers}
+                  options={huOptions}
                   placeholder="Select HU Number"
                   searchPlaceholder="Search HU Number"
                   isAsync={true}
