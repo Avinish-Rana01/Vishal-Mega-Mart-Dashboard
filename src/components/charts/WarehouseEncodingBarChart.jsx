@@ -47,6 +47,9 @@ export default memo(function WarehouseEncodingBarChart({
     title: {
       text: null
     },
+    legend: {
+      enabled: false
+    },
     xAxis: {
       categories: categories,
       crosshair: true,

@@ -22,7 +22,7 @@ export default function TagManagementSection() {
       <div className="vmm-card-header">
         <span className="vmm-card-title">TAG MANAGEMENT</span>
         <div className="vmm-card-meta">
-          <span className="vmm-meta-btn">{dayName}</span>
+          <span className="vmm-meta-btn1">{dayName}</span>
           <span className="vmm-meta-btn">{dateString}</span>
         </div>
       </div>

@@ -34,7 +34,7 @@ export default function DataTableCard({
       <div className="vmm-card-header">
         <span className="vmm-card-title">{title}</span>
         <div className="vmm-card-meta">
-          <span className="vmm-meta-btn">{day}</span>
+          <span className="vmm-meta-btn1">{day}</span>
           <span className="vmm-meta-btn">{date}</span>
           {onRefresh && (
             <button

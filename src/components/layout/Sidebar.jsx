@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { Home, Building2, Tag, Settings } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHouse, faBuilding, faTag, faGear } from '@fortawesome/free-solid-svg-icons';
 
 export default function Sidebar() {
   return (
@@ -14,28 +15,28 @@ export default function Sidebar() {
           className={({ isActive }) => `vmm-nav-item ${isActive ? 'active' : ''}`}
           title="Dashboard Home"
         >
-          <Home size={20} />
+          <FontAwesomeIcon icon={faHouse} style={{ fontSize: '20px' }} />
         </NavLink>
         <NavLink
           to="/stores"
           className={({ isActive }) => `vmm-nav-item ${isActive ? 'active' : ''}`}
           title="Store Reports"
         >
-          <Building2 size={20} />
+          <FontAwesomeIcon icon={faBuilding} style={{ fontSize: '20px' }} />
         </NavLink>
         <NavLink
           to="/tags"
           className={({ isActive }) => `vmm-nav-item ${isActive ? 'active' : ''}`}
           title="Tag Management"
         >
-          <Tag size={20} />
+          <FontAwesomeIcon icon={faTag} style={{ fontSize: '20px' }} />
         </NavLink>
         <NavLink
           to="/settings"
           className={({ isActive }) => `vmm-nav-item ${isActive ? 'active' : ''}`}
           title="Settings"
         >
-          <Settings size={20} />
+          <FontAwesomeIcon icon={faGear} style={{ fontSize: '20px' }} />
         </NavLink>
       </nav>
     </aside>

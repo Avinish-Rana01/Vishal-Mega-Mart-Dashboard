@@ -90,8 +90,15 @@
 }
 
 @keyframes dropdownSlideIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .custom-select-option {
@@ -172,7 +179,7 @@
   box-sizing: border-box !important;
 }
 
-.ls-table, 
+.ls-table,
 table.dataTable.ls-table,
 table.dataTable.no-footer {
   width: 100% !important;
@@ -188,8 +195,8 @@ table.dataTable.no-footer {
 .ls-table th,
 table.dataTable.ls-table th {
   background-color: #dcdcdcc7;
-  border: 1px solid #d1d5db;
-  padding: 8px 10px !important;
+  border: 1px solid #bebebe;
+  padding: 4px 6px !important;
   font-weight: 600;
   color: #374151;
   cursor: pointer;
@@ -213,18 +220,19 @@ table.dataTable.ls-table th {
 }
 
 .ls-table th .sort-arrows span.active {
-  color: #ef4444; /* Red arrow in the image for active sort */
+  color: #ef4444;
+  /* Red arrow in the image for active sort */
   font-weight: bold;
 }
 
 .ls-table td {
-  border: 1px solid #d1d5db;
-  padding: 6px 10px;
+  border: 1px solid #bebebe;
+  padding: 4px 6px !important;
   color: #4b5563;
   text-align: center !important;
 }
 
-.ls-table tbody tr:nth-child(even) {
+.ls-table tbody tr:nth-child(odd) {
   background-color: #f9fafb;
 }
 
