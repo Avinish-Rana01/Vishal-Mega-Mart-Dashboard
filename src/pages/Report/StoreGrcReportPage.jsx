@@ -24,11 +24,13 @@ export default function StoreGrcReportPage() {
   let defaultToDate, defaultFromDate;
 
   if (rowDate) {
-    let passedDate = new Date(rowDate);
+    // The API might send "2026-07-19 12:00 AM Sunday". Extract just the date part.
+    const dateOnlyStr = String(rowDate).split(' ')[0];
+    let passedDate = new Date(dateOnlyStr);
     
     // If it failed to parse natively, try to parse DD-MM-YYYY or DD-MMM-YYYY manually
     if (isNaN(passedDate)) {
-      const parts = String(rowDate).split(/[-/ T]/);
+      const parts = dateOnlyStr.split(/[-/]/);
       if (parts.length >= 3 && parts[0].length === 2 && parts[2].length === 4) {
         let monthStr = parts[1];
         if (isNaN(monthStr)) {

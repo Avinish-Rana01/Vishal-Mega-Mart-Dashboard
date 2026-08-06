@@ -267,7 +267,7 @@ export default function LiveStockReportPage() {
           </div>
 
           {/* Data Table */}
-          <div style={{ padding: '0 15px', paddingBottom: '10px' }}>
+          <div className="livestock-report-table-wrapper" style={{ padding: '0 15px', paddingBottom: '10px', color: 'black' }}>
             <ReportDataTableCard 
               columns={columns} 
               data={articleData} 
