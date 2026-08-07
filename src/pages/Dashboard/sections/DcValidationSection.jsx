@@ -23,7 +23,7 @@ export default function DcValidationSection() {
       error={error}
       onRefresh={refresh}
       onSearch={setSearchQuery}
-      toolbarLeft={<button className="vmm-btn-primary" style={{ padding: '6px 14px', fontSize: '13px', fontWeight: '600', borderRadius: '4px' }}>HU Summary</button>}
+      toolbarLeft={<button className="vmm-btn-primary vmm-btn-hu-summary">HU Summary</button>}
       enablePagination={true}
       pageSize={3}
     />

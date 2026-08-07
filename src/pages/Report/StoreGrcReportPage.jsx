@@ -189,7 +189,7 @@ export default function StoreGrcReportPage() {
             <div className="report-search-header">
               <span>NOTE : FIELDS MARKED WITH (*) ARE REQUIRED</span>
             </div>
-            <div className="report-search-body" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+            <div className="report-search-body report-search-body-grid">
               <div className="search-field">
                 <label>Store Code *</label>
                 <SearchableDropdown
@@ -232,18 +232,7 @@ export default function StoreGrcReportPage() {
           </div>
 
           {/* Selected Info Bar */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '12px 15px',
-            margin: '0 15px 15px 15px',
-            borderTop: '1px dotted #94a3b8',
-            borderBottom: '1px dotted #94a3b8',
-            fontSize: '13px',
-            fontWeight: '600',
-            color: '#1e293b',
-            textTransform: 'uppercase'
-          }}>
+          <div className="report-selected-info-bar">
             <div>
               SELECTED STORE : { reportSummary?.storeName || selectedStore || 'None' }
             </div>
@@ -333,7 +322,7 @@ export default function StoreGrcReportPage() {
           </div>
 
           {/* Data Table */}
-          <div style={{ padding: '0 15px', paddingBottom: '10px' }}>
+          <div className="report-table-wrapper">
             <ReportDataTableCard 
               columns={columns} 
               data={tableData} 

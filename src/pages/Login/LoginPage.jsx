@@ -159,10 +159,7 @@ export default function LoginPage() {
           </form>
 
           {/* Left/Right Background Image Banner */}
-          <div
-            className="login100-more"
-            style={{ backgroundImage: "url('/assets/images/SignIn_page_background_image.png')" }}
-          ></div>
+          <div className="login100-more"></div>
         </div>
       </div>
     </div>

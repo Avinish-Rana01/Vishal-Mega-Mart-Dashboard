@@ -210,18 +210,7 @@ export default function LiveStockReportPage() {
           </div>
 
           {/* Selected Info Bar */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '12px 15px',
-            margin: '0 15px 15px 15px',
-            borderTop: '1px dotted #94a3b8',
-            borderBottom: '1px dotted #94a3b8',
-            fontSize: '13px',
-            fontWeight: '600',
-            color: '#1e293b',
-            textTransform: 'uppercase'
-          }}>
+          <div className="report-selected-info-bar">
             <div>
               {console.log(reportSummary)}
               SELECTED STORE : { reportSummary?.storeName || selectedStore }
@@ -286,7 +275,7 @@ export default function LiveStockReportPage() {
           </div>
 
           {/* Data Table */}
-          <div className="livestock-report-table-wrapper" style={{ padding: '0 15px', paddingBottom: '10px', color: 'black' }}>
+          <div className="livestock-report-table-wrapper report-table-wrapper">
             <ReportDataTableCard 
               columns={columns} 
               data={articleData} 

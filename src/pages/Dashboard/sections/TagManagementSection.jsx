@@ -26,7 +26,7 @@ export default function TagManagementSection() {
           <span className="vmm-meta-btn">{dateString}</span>
         </div>
       </div>
-      <div className="vmm-card-body" style={{ background: '#f8fafc', padding: '12px 16px' }}>
+      <div className="vmm-card-body vmm-card-body-tag">
         <div className="vmm-tag-actions">
           <button className="vmm-btn-primary">View Summary</button>
         </div>

@@ -2,8 +2,8 @@ import React from 'react';
 
 // Common Renderers
 export const numRenderer = (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span>;
-export const numRendererGreen = (val) => <span className="vmm-link-num" style={{color: '#15803d'}}>{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span>;
-export const numRendererRed = (val) => <span className="vmm-link-num" style={{color: '#dc2626'}}>{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span>;
+export const numRendererGreen = (val) => <span className="vmm-link-num text-green">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span>;
+export const numRendererRed = (val) => <span className="vmm-link-num text-red">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span>;
 export const linkRenderer = (val) => <span className="vmm-link-num">{val}</span>;
 
 export const dateRenderer = (val) => {

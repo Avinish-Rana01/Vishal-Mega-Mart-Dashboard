@@ -16,8 +16,8 @@ export default function CycleCountModal({ modalData, onClose }) {
         </div>
         <div className="vmm-modal-body">
           <div className="vmm-modal-meta-row">
-            <div>STORE: <span style={{ color: '#2563eb', textTransform: 'uppercase' }}>{modalData.store}</span></div>
-            <div>CYCLE COUNT TYPE: <span style={{ color: '#2563eb', textTransform: 'uppercase' }}>{modalData.type}</span></div>
+            <div>STORE: <span className="text-blue-uppercase">{modalData.store}</span></div>
+            <div>CYCLE COUNT TYPE: <span className="text-blue-uppercase">{modalData.type}</span></div>
             <div>DATE: <span>{modalData.date}</span></div>
             <div>TIME: <span>{modalData.startedOn} - {modalData.endedOn}</span></div>
           </div>
@@ -75,8 +75,8 @@ export default function CycleCountModal({ modalData, onClose }) {
             </div>
           </div>
 
-          <div style={{ marginTop: 12 }}>
-            <h4 style={{ fontSize: 13, marginBottom: 8, color: '#0f172a' }}>Article Breakdown</h4>
+          <div className="mt-12">
+            <h4 className="breakdown-title">Article Breakdown</h4>
             <table className="vmm-table">
               <thead>
                 <tr>
@@ -102,7 +102,7 @@ export default function CycleCountModal({ modalData, onClose }) {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" style={{ textAlign: 'center', padding: '20px', color: '#64748b' }}>
+                    <td colSpan="5" className="empty-table-msg">
                       No article breakdown available.
                     </td>
                   </tr>
