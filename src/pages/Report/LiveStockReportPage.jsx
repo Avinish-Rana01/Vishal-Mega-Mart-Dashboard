@@ -122,6 +122,14 @@ export default function LiveStockReportPage() {
   const numRenderer = (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span>;
   const linkRenderer = (val) => <span className="vmm-link-num">{val}</span>;
 
+  const getSelectedStoreName = () => {
+    if (reportSummary?.storeName) return reportSummary.storeName;
+    if (!selectedStore) return 'None';
+    const options = Array.isArray(storeOptions) ? storeOptions : [];
+    const opt = options.find(o => o?.STORE === selectedStore || o?.value === selectedStore);
+    return opt?.STORE_NAME || opt?.label || selectedStore;
+  };
+
   const columns = [
     { key: 'srNo', label: 'SR.NO' },
     { key: 'stockDate', label: 'STOCK DATE' },
@@ -159,6 +167,7 @@ export default function LiveStockReportPage() {
                   onChange={(val) => {
                     setSelectedStore(val);
                     setSelectedArticle('');
+                    console.log("storeOptions",storeOptions);
                     setArticleSearchTerm('');
                     setPageIndex(1);
                   }}
@@ -212,8 +221,7 @@ export default function LiveStockReportPage() {
           {/* Selected Info Bar */}
           <div className="report-selected-info-bar">
             <div>
-              {console.log(reportSummary)}
-              SELECTED STORE : { reportSummary?.storeName || selectedStore }
+              SELECTED STORE : { getSelectedStoreName() }
             </div>
             <div>
               STOCK DATE : {selectedDate}

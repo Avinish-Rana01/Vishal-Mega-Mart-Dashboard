@@ -160,6 +160,14 @@ export default function StoreGrcReportPage() {
     return () => controller.abort();
   }, [selectedStore, fromDate, toDate, pageIndex, pageSize]);
 
+  const getSelectedStoreName = () => {
+    if (reportSummary?.storeName) return reportSummary.storeName;
+    if (!selectedStore) return 'None';
+    const options = Array.isArray(storeOptions) ? storeOptions : [];
+    const opt = options.find(o => o?.STORE === selectedStore || o?.value === selectedStore);
+    return opt?.STORE_NAME || opt?.label || selectedStore;
+  };
+
   const numRenderer = (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span>;
 
   const columns = [
@@ -234,7 +242,7 @@ export default function StoreGrcReportPage() {
           {/* Selected Info Bar */}
           <div className="report-selected-info-bar">
             <div>
-              SELECTED STORE : { reportSummary?.storeName || selectedStore || 'None' }
+              SELECTED STORE : { getSelectedStoreName() }
             </div>
             <div>
               FROM DATE : {fromDate} | TO DATE : {toDate}
