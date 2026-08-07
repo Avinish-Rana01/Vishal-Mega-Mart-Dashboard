@@ -15,21 +15,25 @@ export const AuthProvider = ({ children }) => {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Initialize auth state from local storage on mount
   useEffect(() => {
     const storedUser = localStorage.getItem('vmm_user');
     if (storedUser) {
       setIsLoggedIn(true);
-      setLoggedInUser(storedUser);
+      try {
+        const parsed = JSON.parse(storedUser);
+        setLoggedInUser(parsed.userName || parsed.username || parsed.name || 'User');
+      } catch (e) {
+        setLoggedInUser(storedUser);
+      }
     }
     setLoading(false);
   }, []);
 
-  const login = (user) => {
-    const username = user || 'Admin User';
+  const login = (userData) => {
+    const username = userData?.userName || userData?.username || (typeof userData === 'string' ? userData : 'Admin');
     setLoggedInUser(username);
     setIsLoggedIn(true);
-    localStorage.setItem('vmm_user', username);
+    localStorage.setItem('vmm_user', typeof userData === 'string' ? userData : JSON.stringify(userData));
   };
 
   const logout = () => {

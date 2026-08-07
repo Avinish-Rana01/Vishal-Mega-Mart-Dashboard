@@ -145,7 +145,7 @@ export default function StoreGrcReportPage() {
             storeValidatedQty: result.summary.hhtValidateQty,
             pendingQty: pending,
             wrongHuQty: result.summary.wrongHuQty,
-            storeName: result.items && result.items.length > 0 ? result.items[0].STORE_NAME : null
+            storeName: result.summary.storeName || (result.items && result.items.length > 0 ? result.items[0].STORE_NAME : null)
           });
         }
       } catch (err) {

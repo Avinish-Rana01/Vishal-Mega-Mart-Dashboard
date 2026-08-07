@@ -104,7 +104,7 @@ export default function LiveStockReportPage() {
             rfidQty: result.summary.rfidQty || result.summary.rfidStockCount,
             diffQty: result.summary.diffQty || result.summary.differenceCount,
             totalRecords: result.summary.totalCount || result.summary.totalRecords,
-            storeName: itemsArray.length > 0 ? itemsArray[0].STORE_NAME : null
+            storeName: result.summary.storeName || (itemsArray.length > 0 ? itemsArray[0].STORE_NAME : null)
           });
         }
       } catch (err) {

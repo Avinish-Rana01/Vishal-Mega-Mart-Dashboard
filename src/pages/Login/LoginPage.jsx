@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { APP_INFO } from '../../config/constants';
+import { loginUser } from '../../services/authService';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('Admin');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState({ username: '', password: '' });
+  const [errors, setErrors] = useState({ username: '', password: '', form: '' });
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,7 +26,7 @@ export default function LoginPage() {
 
   const validateForm = () => {
     let valid = true;
-    const newErrors = { username: '', password: '' };
+    const newErrors = { username: '', password: '', form: '' };
 
     if (!username.trim()) {
       newErrors.username = 'Please Enter User Name';
@@ -44,16 +45,23 @@ export default function LoginPage() {
     setErrors((prev) => ({ ...prev, [field]: '' }));
   };
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      login(username);
+    setErrors((prev) => ({ ...prev, form: '' }));
+
+    try {
+      const response = await loginUser(username, password);
+      login(response);
       navigate(from, { replace: true });
-    }, 800);
+    } catch (err) {
+      console.error('Login failed', err);
+      setErrors((prev) => ({ ...prev, form: 'Invalid username or password. Please try again.' }));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -131,6 +139,11 @@ export default function LoginPage() {
             </div>
 
             {/* Submit Button */}
+            {errors.form && (
+              <div className="p-b-15 text-center" style={{ color: '#dc2626', fontSize: '13px', fontWeight: '500' }}>
+                {errors.form}
+              </div>
+            )}
             <div className="container-login100-form-btn">
               <button
                 type="submit"
