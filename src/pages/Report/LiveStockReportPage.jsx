@@ -80,13 +80,14 @@ export default function LiveStockReportPage() {
         if (controller.signal.aborted) return;
         
         // Map the new API fields to the table columns expected
-        const mappedData = (result.data || []).map((item) => ({
+        const itemsArray = result.items || result.data || [];
+        const mappedData = itemsArray.map((item) => ({
           srNo: item.RowNumber,
-          stockDate: item.STOCK_DATE ? item.STOCK_DATE.split('T')[0] : '',
+          stockDate: (item.STOCK_DATE || item.DATE) ? (item.STOCK_DATE || item.DATE).split('T')[0] : '',
           articleNo: item.ARTICLE,
           sapStock: item.SAP_STOCK,
           rfidStock: item.RFID_STOCK,
-          diff: item.DIFF
+          diff: item.DIFFERENCE || item.DIFF
         }));
         
         setArticleData(mappedData);
@@ -97,11 +98,13 @@ export default function LiveStockReportPage() {
         // }
 
         if (result.summary) {
+          const itemsArray = result.items || result.data || [];
           setReportSummary({
-            sapQty: result.summary.sapStockCount,
-            rfidQty: result.summary.rfidStockCount,
-            diffQty: result.summary.differenceCount,
-            totalRecords: result.summary.totalRecords
+            sapQty: result.summary.sapQty || result.summary.sapStockCount,
+            rfidQty: result.summary.rfidQty || result.summary.rfidStockCount,
+            diffQty: result.summary.diffQty || result.summary.differenceCount,
+            totalRecords: result.summary.totalCount || result.summary.totalRecords,
+            storeName: itemsArray.length > 0 ? itemsArray[0].STORE_NAME : null
           });
         }
       } catch (err) {
@@ -206,10 +209,26 @@ export default function LiveStockReportPage() {
             </div>
           </div>
 
-          {/* Stats Header */}
-          <div className="report-stats-header">
-            <div className="store-info">SELECTED STORE : {selectedStore}{storeOptions.find(s => s.value === selectedStore)?.text ? ` - ${storeOptions.find(s => s.value === selectedStore).text}` : ''}</div>
-            <div className="date-info">STOCK DATE : {selectedDate}</div>
+          {/* Selected Info Bar */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: '12px 15px',
+            margin: '0 15px 15px 15px',
+            borderTop: '1px dotted #94a3b8',
+            borderBottom: '1px dotted #94a3b8',
+            fontSize: '13px',
+            fontWeight: '600',
+            color: '#1e293b',
+            textTransform: 'uppercase'
+          }}>
+            <div>
+              {console.log(reportSummary)}
+              SELECTED STORE : { reportSummary?.storeName || selectedStore }
+            </div>
+            <div>
+              STOCK DATE : {selectedDate}
+            </div>
           </div>
 
           {/* Curved Cards */}

@@ -5,6 +5,7 @@ import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import ReportDataTableCard from '../../components/common/ReportDataTableCard';
 import SearchableDropdown from '../../components/common/SearchableDropdown';
+import CurvedCard from '../../components/common/CurvedCard';
 import { getReportStores, getStoreGrcReport } from '../../services/stockService';
 import './StoreGrcReport.css'; // We will create this or use LiveStockReport.css
 
@@ -71,6 +72,27 @@ export default function StoreGrcReportPage() {
 
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [totalRecords, setTotalRecords] = useState(0);
+
+  const [cardGradients, setCardGradients] = useState([
+    ['#fff', '#fff'], ['#fff', '#fff'], ['#fff', '#fff'], ['#fff', '#fff'], ['#fff', '#fff']
+  ]);
+
+  // Generate 5 random distinct gradients on initial load
+  useEffect(() => {
+    const baseHue = Math.floor(Math.random() * 360);
+    const gradients = [0, 1, 2, 3, 4]
+      .map(i => {
+        const hue = Math.floor((baseHue + i * (360 / 5)) % 360);
+        // Create a beautiful gradient by shifting the hue slightly and dropping the lightness
+        return [
+          `hsl(${hue}, 80%, 75%)`, 
+          `hsl(${(hue + 30) % 360}, 85%, 55%)`
+        ];
+      })
+      .sort(() => Math.random() - 0.5); // Shuffle them
+    setCardGradients(gradients);
+  }, []);
 
   // Fetch Store Dropdown Options
   useEffect(() => {
@@ -109,6 +131,7 @@ export default function StoreGrcReportPage() {
         }));
         
         setTableData(mappedData);
+        setTotalRecords(result.summary?.totalCount || result.totalRecords || 0);
 
         if (result.summary) {
           // Calculate pending if not provided directly in summary
@@ -118,11 +141,11 @@ export default function StoreGrcReportPage() {
 
           setReportSummary({
             huReceivedQty: result.summary.huReceivedQty,
-            whValidatedQty: result.summary.huValidatedQty,
+            whValidatedQty: result.summary.whValidatedQty,
             storeValidatedQty: result.summary.hhtValidateQty,
             pendingQty: pending,
             wrongHuQty: result.summary.wrongHuQty,
-            totalRecords: result.summary.totalCount || result.totalRecords
+            storeName: result.items && result.items.length > 0 ? result.items[0].STORE_NAME : null
           });
         }
       } catch (err) {
@@ -208,52 +231,105 @@ export default function StoreGrcReportPage() {
             </div>
           </div>
 
+          {/* Selected Info Bar */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: '12px 15px',
+            margin: '0 15px 15px 15px',
+            borderTop: '1px dotted #94a3b8',
+            borderBottom: '1px dotted #94a3b8',
+            fontSize: '13px',
+            fontWeight: '600',
+            color: '#1e293b',
+            textTransform: 'uppercase'
+          }}>
+            <div>
+              SELECTED STORE : { reportSummary?.storeName || selectedStore || 'None' }
+            </div>
+            <div>
+              FROM DATE : {fromDate} | TO DATE : {toDate}
+            </div>
+          </div>
+
           {/* Curved Cards */}
           <div className="report-curved-cards grc-report-cards">
-            <div className="curve-card card-sap">
-              <div className="card-top">
-                <div className="card-content">
-                  <p>HU RECEIVED QTY</p>
-                  <h3>{reportSummary?.huReceivedQty?.toLocaleString('en-IN') || '0'}</h3>
-                </div>
-              </div>
-            </div>
+            <CurvedCard 
+              title="HU RECEIVED QTY" 
+              value={reportSummary?.huReceivedQty?.toLocaleString('en-IN') || '0'} 
+              waveColor={cardGradients[0]}
+              icon={
+                <svg width="20" height="20" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M60,160 Q40,160 45,130 Q50,70 100,70 Q150,70 155,130 Q160,160 140,160 Z" fill="black" stroke="black" strokeWidth="2"></path>
+                  <path d="M85,70 L75,40 Q100,30 125,40 L115,70 Z" fill="black" stroke="black" strokeWidth="2"></path>
+                  <rect x="82" y="65" width="36" height="8" rx="4" fill="black" stroke="black" strokeWidth="1"></rect>
+                  <text x="100" y="130" fontFamily="Arial" fontSize="35" fill="white" textAnchor="middle" fontWeight="bold">$</text>
+                  <path d="M70,100 Q80,105 90,100" fill="none"></path>
+                </svg>
+              }
+            />
 
-            <div className="curve-card card-rfid" style={{ backgroundColor: '#ffffffff' }}>
-              <div className="card-top">
-                <div className="card-content">
-                  <p>WH VALIDATED QTY</p>
-                  <h3>{reportSummary?.whValidatedQty?.toLocaleString('en-IN') || '0'}</h3>
-                </div>
-              </div>
-            </div>
+            <CurvedCard 
+              title="WH VALIDATED QTY" 
+              value={reportSummary?.whValidatedQty?.toLocaleString('en-IN') || '0'} 
+              waveColor={cardGradients[1]}
+              icon={
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 21H21" stroke="#334155" strokeWidth="2" strokeLinecap="round"></path>
+                  <path d="M4 21V11H20V21" stroke="#334155" strokeWidth="2" strokeLinejoin="round"></path>
+                  <path d="M3 7L4 11H20L21 7H3Z" fill="#334155" stroke="#334155" strokeWidth="2" strokeLinejoin="round"></path>
+                  <path d="M3 7L12 3L21 7" stroke="#334155" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
+                  <rect x="10" y="15" width="4" height="6" stroke="#334155" strokeWidth="2" strokeLinejoin="round"></rect>
+                  <rect x="6" y="14" width="2" height="3" rx="0.5" fill="#334155" stroke="#334155" strokeWidth="1"></rect>
+                  <rect x="16" y="14" width="2" height="3" rx="0.5" fill="#334155" stroke="#334155" strokeWidth="1"></rect>
+                </svg>
+              }
+            />
 
-            <div className="curve-card card-rfid" style={{ backgroundColor: '#ffffffff' }}>
-              <div className="card-top">
-                <div className="card-content">
-                  <p>STORE VALIDATED QTY</p>
-                  <h3>{reportSummary?.storeValidatedQty?.toLocaleString('en-IN') || '0'}</h3>
-                </div>
-              </div>
-            </div>
+            <CurvedCard 
+              title="STORE VALIDATED QTY" 
+              value={reportSummary?.storeValidatedQty?.toLocaleString('en-IN') || '0'} 
+              waveColor={cardGradients[2]}
+              icon={
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 21H21" stroke="#334155" strokeWidth="2" strokeLinecap="round"></path>
+                  <path d="M4 21V11H20V21" stroke="#334155" strokeWidth="2" strokeLinejoin="round"></path>
+                  <path d="M3 7L4 11H20L21 7H3Z" fill="#334155" stroke="#334155" strokeWidth="2" strokeLinejoin="round"></path>
+                  <path d="M3 7L12 3L21 7" stroke="#334155" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
+                  <rect x="10" y="15" width="4" height="6" stroke="#334155" strokeWidth="2" strokeLinejoin="round"></rect>
+                  <rect x="6" y="14" width="2" height="3" rx="0.5" fill="#334155" stroke="#334155" strokeWidth="1"></rect>
+                  <rect x="16" y="14" width="2" height="3" rx="0.5" fill="#334155" stroke="#334155" strokeWidth="1"></rect>
+                </svg>
+              }
+            />
 
-            <div className="curve-card card-diff" style={{ backgroundColor: '#ffffffff' }}>
-              <div className="card-top">
-                <div className="card-content">
-                  <p>PENDING FOR VALIDATION</p>
-                  <h3>{reportSummary?.pendingQty?.toLocaleString('en-IN') || '0'}</h3>
-                </div>
-              </div>
-            </div>
+            <CurvedCard 
+              title="PENDING FOR VALIDATION" 
+              value={reportSummary?.pendingQty?.toLocaleString('en-IN') || '0'} 
+              waveColor={cardGradients[3]}
+              icon={
+                <svg width="20" height="20" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M60,160 Q40,160 45,130 Q50,70 100,70 Q150,70 155,130 Q160,160 140,160 Z" fill="#000000" stroke="#000000" strokeWidth="3"></path>
+                  <path d="M85,70 L75,40 Q100,20 125,40 L115,70 Z" fill="#000000" stroke="#000000" strokeWidth="3"></path>
+                  <rect x="82" y="65" width="36" height="8" rx="4" fill="#000000"></rect>
+                  <circle cx="100" cy="120" r="28" fill="white" stroke="#000000" strokeWidth="4"></circle>
+                  <line x1="100" y1="120" x2="100" y2="105" stroke="#000000" strokeWidth="4" strokeLinecap="round"></line>
+                  <line x1="100" y1="120" x2="112" y2="128" stroke="#000000" strokeWidth="4" strokeLinecap="round"></line>
+                </svg>
+              }
+            />
 
-            <div className="curve-card card-diff" style={{ backgroundColor: '#ffffffff' }}>
-              <div className="card-top">
-                <div className="card-content">
-                  <p>WRONG HU QTY</p>
-                  <h3>{reportSummary?.wrongHuQty?.toLocaleString('en-IN') || '0'}</h3>
-                </div>
-              </div>
-            </div>
+            <CurvedCard 
+              title="WRONG HU QTY" 
+              value={reportSummary?.wrongHuQty?.toLocaleString('en-IN') || '0'} 
+              waveColor={cardGradients[4]}
+              icon={
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="black" strokeWidth="2"></circle>
+                  <path d="M9 9L15 15M15 9L9 15" stroke="black" strokeWidth="2" strokeLinecap="round"></path>
+                </svg>
+              }
+            />
           </div>
 
           {/* Data Table */}
