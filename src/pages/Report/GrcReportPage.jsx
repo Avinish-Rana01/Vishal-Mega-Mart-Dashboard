@@ -5,6 +5,7 @@ import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import ReportDataTableCard from '../../components/common/ReportDataTableCard';
 import SearchableDropdown from '../../components/common/SearchableDropdown';
+import CurvedCard from '../../components/common/CurvedCard';
 import { getReportStores, searchGrcHuNumbers, getGrcDetails } from '../../services/stockService';
 import './GrcReport.css';
 
@@ -29,6 +30,25 @@ export default function GrcReportPage() {
   const [toDate, setToDate] = useState(initialToDate);
   const [grcStatus, setGrcStatus] = useState(initialGrcStatus);
   const [storeOptions, setStoreOptions] = useState([]);
+
+  const [cardGradients, setCardGradients] = useState([
+    ['#fff', '#fff'], ['#fff', '#fff'], ['#fff', '#fff'], ['#fff', '#fff'], ['#fff', '#fff']
+  ]);
+
+  // Generate 5 random distinct gradients on initial load
+  React.useEffect(() => {
+    const baseHue = Math.floor(Math.random() * 360);
+    const gradients = [0, 1, 2, 3, 4]
+      .map(i => {
+        const hue = Math.floor((baseHue + i * (360 / 5)) % 360);
+        return [
+          `hsl(${hue}, 80%, 75%)`, 
+          `hsl(${(hue + 30) % 360}, 85%, 55%)`
+        ];
+      })
+      .sort(() => Math.random() - 0.5); // Shuffle them
+    setCardGradients(gradients);
+  }, []);
 
   // Ensure state updates if we navigate with new state
   React.useEffect(() => {
@@ -258,41 +278,34 @@ export default function GrcReportPage() {
             <div className="date-info">FROM DATE : {fromDate} | TO DATE : {toDate}</div>
           </div>
 
-          {/* Curved Cards */}
           <div className="report-curved-cards">
-            <div className="curve-card card-purple">
-              <div className="card-top">
-                <div className="card-content">
-                  <p>GRC STATUS</p>
-                  <h3>{getGrcStatusText()}</h3>
-                </div>
-                <div className="card-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
-                    <path d="M3 6h18"></path>
-                    <path d="M16 10a4 4 0 0 1-8 0"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
+            <CurvedCard 
+              title="GRC STATUS" 
+              value={getGrcStatusText()} 
+              waveColor={cardGradients[0]}
+              icon={
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                  <path d="M3 6h18"></path>
+                  <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+              }
+            />
 
-            <div className="curve-card card-blue">
-              <div className="card-top">
-                <div className="card-content">
-                  <p>HU COUNT</p>
-                  <h3>{totalRecords.toLocaleString('en-IN')}</h3>
-                </div>
-                <div className="card-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                    <polyline points="10 9 9 9 8 9"></polyline>
-                  </svg>
-                </div>
-              </div>
-            </div>
+            <CurvedCard 
+              title="HU COUNT" 
+              value={totalRecords.toLocaleString('en-IN')} 
+              waveColor={cardGradients[1]}
+              icon={
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+              }
+            />
           </div>
 
           {/* Data Table */}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 export default function CurvedCard({ title, value, waveColor = ['#f472b6', '#db2777'], icon }) {
   // Ensure we have an array for gradient, fallback to same color if string passed
@@ -6,12 +6,52 @@ export default function CurvedCard({ title, value, waveColor = ['#f472b6', '#db2
   // We need a unique ID for the SVG gradient so they don't clash on the page
   const gradientId = `wave-grad-${title.replace(/[^a-zA-Z0-9]/g, '')}`;
 
+  // Generate a smooth random wave path on mount using summed sine waves
+  const wavePath = useMemo(() => {
+    const numWaves = 3;
+    const waves = [];
+    
+    // Generate parameters for 3 sine waves tuned for 1440px width
+    for (let i = 0; i < numWaves; i++) {
+      waves.push({
+        // Higher amplitude for more prominent peaks and valleys (30 to 70px)
+        amplitude: Math.random() * 40 + 10, 
+        // Higher frequency for more waves across the 1440 width (1-3 full waves)
+        frequency: Math.random() * 0.008 + 0.005, 
+        phase: Math.random() * Math.PI * 2 // Random starting phase
+      });
+    }
+
+    let path = '';
+    const width = 1440;
+    
+    // Draw the wave horizontally in 20px increments for a smooth curve
+    for (let x = 0; x <= width; x += 20) {
+      let y = 190; // Base baseline height on the card (out of 320 max)
+      
+      // Sum the sine waves
+      for (let i = 0; i < waves.length; i++) {
+        y += Math.sin(waves[i].frequency * x + waves[i].phase) * waves[i].amplitude;
+      }
+      
+      if (x === 0) {
+        path += `M0,${y} `;
+      } else {
+        path += `L${x},${y} `;
+      }
+    }
+
+    // Ensure the wave fills down to the bottom of the card
+    path += `L${width},320 L0,320 Z`;
+    return path;
+  }, []);
+
   return (
     <div className="curve-card" style={{ backgroundColor: '#ffffff', borderTop: 'none' }}>
-      <div className="card-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div className="card-top">
         <div className="card-content">
-          <p style={{ color: 'black' }}>{title}</p>
-          <h3 style={{ color: 'black', background: 'none', WebkitTextFillColor: 'black' }}>{value}</h3>
+          <p>{title}</p>
+          <h3>{value}</h3>
         </div>
         
         {/* Dynamic Circular Icon */}
@@ -47,7 +87,7 @@ export default function CurvedCard({ title, value, waveColor = ['#f472b6', '#db2
               <stop offset="100%" stopColor={colors[1]} />
             </linearGradient>
           </defs>
-          <path fill={`url(#${gradientId})`} fillOpacity="1" d="M0,192L48,202.7C96,213,192,235,288,218.7C384,203,480,149,576,144C672,139,768,181,864,202.7C960,224,1056,224,1152,192C1248,160,1344,96,1392,64L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          <path fill={`url(#${gradientId})`} fillOpacity="1" d={wavePath}></path>
         </svg>
       </div>
       <style>{`

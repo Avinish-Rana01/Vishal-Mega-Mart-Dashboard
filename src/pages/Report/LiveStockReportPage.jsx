@@ -5,6 +5,7 @@ import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import ReportDataTableCard from '../../components/common/ReportDataTableCard';
 import SearchableDropdown from '../../components/common/SearchableDropdown';
+import CurvedCard from '../../components/common/CurvedCard';
 import { getReportStores, searchReportArticles, getReportLiveStock } from '../../services/stockService';
 import './LiveStockReport.css';
 
@@ -22,6 +23,25 @@ export default function LiveStockReportPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [reportSummary, setReportSummary] = useState(null);
+
+  const [cardGradients, setCardGradients] = useState([
+    ['#fff', '#fff'], ['#fff', '#fff'], ['#fff', '#fff'], ['#fff', '#fff'], ['#fff', '#fff']
+  ]);
+
+  // Generate 5 random distinct gradients on initial load
+  React.useEffect(() => {
+    const baseHue = Math.floor(Math.random() * 360);
+    const gradients = [0, 1, 2, 3, 4]
+      .map(i => {
+        const hue = Math.floor((baseHue + i * (360 / 5)) % 360);
+        return [
+          `hsl(${hue}, 80%, 75%)`, 
+          `hsl(${(hue + 30) % 360}, 85%, 55%)`
+        ];
+      })
+      .sort(() => Math.random() - 0.5); // Shuffle them
+    setCardGradients(gradients);
+  }, []);
 
   // Fetch Store Dropdown Options
   React.useEffect(() => {
@@ -228,58 +248,50 @@ export default function LiveStockReportPage() {
             </div>
           </div>
 
-          {/* Curved Cards */}
           <div className="report-curved-cards">
-            <div className="curve-card card-sap">
-              <div className="card-top">
-                <div className="card-content">
-                  <p>SAP STOCK COUNT</p>
-                  <h3>{reportSummary?.sapQty?.toLocaleString('en-IN') || '1,03,803'}</h3>
-                </div>
-                <div className="card-icon sap-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    {/* Top Clip */}
-                    <rect x="9" y="3" width="6" height="4" rx="1" />
-                    {/* Main Document Body */}
-                    <path d="M9 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" />
-                    <path d="M15 3h2a2 2 0 0 1 2 2v4" />
-                    {/* Side Tabs */}
-                    <path d="M5 8h2" />
-                    <path d="M17 8h2" />
-                    {/* Document Lines */}
-                    <path d="M9 11h6" />
-                    <path d="M9 15h3" />
-                    {/* Magnifying Glass */}
-                    <circle cx="16" cy="16" r="4" fill="#ffffff" />
-                    <path d="M18.8 18.8L22 22" />
-                  </svg>
-                </div>
-              </div>
-            </div>
+            <CurvedCard 
+              title="SAP STOCK COUNT" 
+              value={reportSummary?.sapQty?.toLocaleString('en-IN') || '1,03,803'} 
+              waveColor={cardGradients[0]}
+              icon={
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="9" y="3" width="6" height="4" rx="1" />
+                  <path d="M9 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" />
+                  <path d="M15 3h2a2 2 0 0 1 2 2v4" />
+                  <path d="M5 8h2" />
+                  <path d="M17 8h2" />
+                  <path d="M9 11h6" />
+                  <path d="M9 15h3" />
+                  <circle cx="16" cy="16" r="4" fill="#ffffff" />
+                  <path d="M18.8 18.8L22 22" />
+                </svg>
+              }
+            />
 
-            <div className="curve-card card-rfid">
-              <div className="card-top">
-                <div className="card-content">
-                  <p>RFID STOCK COUNT</p>
-                  <h3>{reportSummary?.rfidQty?.toLocaleString('en-IN') || '76,983'}</h3>
-                </div>
-                <div className="card-icon rfid-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
-                </div>
-              </div>
-            </div>
+            <CurvedCard 
+              title="RFID STOCK COUNT" 
+              value={reportSummary?.rfidQty?.toLocaleString('en-IN') || '76,983'} 
+              waveColor={cardGradients[1]}
+              icon={
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                  <path d="m3.3 7 8.7 5 8.7-5"/>
+                  <path d="M12 22V12"/>
+                </svg>
+              }
+            />
 
-            <div className="curve-card card-diff">
-              <div className="card-top">
-                <div className="card-content">
-                  <p>DIFFERENCE COUNT</p>
-                  <h3>{reportSummary?.diffQty?.toLocaleString('en-IN') || '26,820'}</h3>
-                </div>
-                <div className="card-icon diff-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>
-                </div>
-              </div>
-            </div>
+            <CurvedCard 
+              title="DIFFERENCE COUNT" 
+              value={reportSummary?.diffQty?.toLocaleString('en-IN') || '26,820'} 
+              waveColor={cardGradients[2]}
+              icon={
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M8 12h8"/>
+                </svg>
+              }
+            />
           </div>
 
           {/* Data Table */}
