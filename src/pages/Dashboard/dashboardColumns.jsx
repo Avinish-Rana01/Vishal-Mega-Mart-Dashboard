@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Link } from 'react-router-dom';
 // Common Renderers
 export const numRenderer = (val) => <span className="vmm-link-num">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span>;
 export const numRendererGreen = (val) => <span className="vmm-link-num text-green">{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span>;
@@ -54,10 +54,51 @@ export const liveStockColumns = [
   }
 ];
 
-export const cycleCountColumns = [
-  { key: 'STORE_CODE', label: 'STORE', render: storeRenderer },
+export const cycleCountStoreRenderer = (val, row) => {
+  const storeName = row?.STORE_NAME || row?.Store_Name || row?.STORE_Name || '';
+  const date = row?.DATE ? (typeof row.DATE === 'string' ? row.DATE.split(' ')[0] : row.DATE) : new Date().toISOString().split('T')[0];
+  
+  const linkContent = (
+    <Link 
+      to="/reports/cycle-count" 
+      state={{ storeCode: val, date: date }}
+      className="vmm-link-num text-blue"
+      style={{ textDecoration: 'underline', fontWeight: 'bold' }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      {val}
+    </Link>
+  );
+
+  if (storeName && storeName.trim() !== '') {
+    return (
+      <div className="vmm-store-tooltip-wrapper">
+        {linkContent}
+        <div className="vmm-store-tooltip">
+          {val} - {storeName}
+        </div>
+      </div>
+    );
+  }
+  return linkContent;
+};
+
+export const getCycleCountColumns = (onRefClick) => [
+  { key: 'STORE_CODE', label: 'STORE', render: cycleCountStoreRenderer },
   { key: 'CYCLE_COUNT_TYPE', label: 'TYPE' },
-  { key: 'REF_NO', label: 'REF NO', render: linkRenderer },
+  { key: 'REF_NO', label: 'REF NO', render: (val, row) => (
+      <span 
+        className="vmm-link-num text-blue" 
+        style={{ cursor: 'pointer', textDecoration: 'underline' }} 
+        onClick={(e) => {
+          e.stopPropagation();
+          onRefClick(row);
+        }}
+      >
+        {val}
+      </span>
+    ) 
+  },
   { key: 'DATE', label: 'DATE', render: dateRenderer },
   { key: 'Start_DateTime', label: 'START TIME', render: dateRenderer },
   { key: 'END_DateTime', label: 'END TIME', render: dateRenderer },

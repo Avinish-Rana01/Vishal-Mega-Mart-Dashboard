@@ -158,8 +158,8 @@ export default function ReportDataTableCard({
         searching={false}
         lengthChange={false}
         domConfig='<"top">rt<"clear">'
-        containerClassName="ls-table-container"
-        tableClassName="ls-table"
+        containerClassName="vmm-table-container"
+        tableClassName="vmm-table"
       />
       
       <div className="ls-toolbar-bottom">

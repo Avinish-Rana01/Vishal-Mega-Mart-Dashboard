@@ -9,6 +9,7 @@
   color: #374151;
   width: 100%;
   box-sizing: border-box;
+  /* margin: 10PX; */
 }
 
 /* Top Toolbar */
@@ -153,91 +154,6 @@
 .ls-search-box input:focus {
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-/* Table Styles */
-.ls-table-container {
-  overflow-x: auto;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  margin-bottom: 12px;
-  width: 100%;
-  box-sizing: border-box;
-  position: relative;
-}
-
-/* Force override DataTables default spacing which shifts the table */
-.ls-table-container .dt-container,
-.ls-table-container .dataTables_wrapper,
-.ls-table-container .dt-layout-row,
-.ls-table-container .dt-layout-cell,
-.ls-table-container .top,
-.ls-table-container .bottom {
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-.ls-table,
-table.dataTable.ls-table,
-table.dataTable.no-footer {
-  width: 100% !important;
-  border-collapse: collapse !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  font-size: 13px;
-  text-align: center;
-  box-sizing: border-box !important;
-  table-layout: auto !important;
-}
-
-.ls-table th,
-table.dataTable.ls-table th {
-  background-color: #dcdcdcc7;
-  border: 1px solid #bebebe;
-  padding: 4px 6px !important;
-  font-weight: 600;
-  color: #374151;
-  cursor: pointer;
-  user-select: none;
-  white-space: nowrap;
-  box-sizing: border-box !important;
-  text-align: center !important;
-}
-
-.ls-table th .sort-arrows {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 4px;
-  font-size: 14px;
-}
-
-.ls-table th .sort-arrows span {
-  padding: 0 2px;
-  color: #6b7280;
-}
-
-.ls-table th .sort-arrows span.active {
-  color: #ef4444;
-  /* Red arrow in the image for active sort */
-  font-weight: bold;
-}
-
-.ls-table td {
-  border: 1px solid #bebebe;
-  padding: 4px 6px !important;
-  color: #4b5563;
-  text-align: center !important;
-}
-
-.ls-table tbody tr:nth-child(odd) {
-  background-color: #f7f7f7;
-}
-
-.ls-table tbody tr:hover {
-  background-color: #f3f4f6;
 }
 
 /* Bottom Toolbar (Pagination) */
