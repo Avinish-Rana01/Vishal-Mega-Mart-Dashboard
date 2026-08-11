@@ -114,8 +114,8 @@ export const getDcValidation = async (pageIndex = API_DEFAULTS.PAGE_INDEX, pageS
 // Report APIs
 // ==============================================================
 
-export const getReportStores = async (fromDate, toDate, signal) => {
-  const response = await axios.get(`${API_BASE}/api/report/stores?userId=${API_DEFAULTS.USER_ID}&fromDate=${fromDate}&toDate=${toDate}`, {
+export const getReportStores = async (signal) => {
+  const response = await axios.get(`${API_BASE}/api/report/stores?userId=${API_DEFAULTS.USER_ID}`, {
     headers: getHeaders(),
     signal
   });
@@ -174,7 +174,7 @@ export const getStoreGrcReport = async (storeCode, fromDate, toDate, pageIndex =
 };
 
 export const getBindStores = async (fromDate, toDate, signal) => {
-  const response = await axios.get(`${API_BASE}/api/stock/bind-store?userId=${API_DEFAULTS.USER_ID}&fromDate=${fromDate || ''}&toDate=${toDate || ''}`, {
+  const response = await axios.get(`${API_BASE}/api/report/stores?userId=${API_DEFAULTS.USER_ID}`, {
     headers: getHeaders(),
     signal
   });

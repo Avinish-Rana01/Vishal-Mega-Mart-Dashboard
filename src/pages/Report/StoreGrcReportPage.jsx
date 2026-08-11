@@ -99,7 +99,7 @@ export default function StoreGrcReportPage() {
     const controller = new AbortController();
     const fetchStores = async () => {
       try {
-        const data = await getReportStores('2026-07-01', '2026-07-31', controller.signal);
+        const data = await getReportStores(controller.signal);
         setStoreOptions(data);
       } catch (err) {
         if (err.name !== 'AbortError') console.error("Failed to fetch stores", err);

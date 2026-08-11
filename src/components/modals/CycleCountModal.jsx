@@ -49,14 +49,25 @@ export default function CycleCountModal({ modalData, onClose }) {
   
   const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Case-insensitive lookup helper
+  const getVal = (obj, key) => {
+    if (!obj) return undefined;
+    const lowerKey = key.toLowerCase();
+    const foundKey = Object.keys(obj).find(k => k.toLowerCase() === lowerKey);
+    return foundKey ? obj[foundKey] : undefined;
+  };
 
   // The modalData contains context from the row clicked
-  const storeCode = modalData.STORE_CODE;
+  const storeCode = getVal(modalData, 'STORE_CODE') || getVal(modalData, 'STORE');
+  
   // Format dates appropriately
-  const fromDate = modalData.DATE ? String(modalData.DATE).split('T')[0].split(' ')[0] : '';
-  const toDate = modalData.DATE ? String(modalData.DATE).split('T')[0].split(' ')[0] : '';
-  const refNo = modalData.Ref_ID || modalData.RefNo || modalData.REF_NO;
+  const dateVal = getVal(modalData, 'DATE') || getVal(modalData, 'Start_DateTime');
+  const fromDate = dateVal ? String(dateVal).split('T')[0].split(' ')[0] : '';
+  const toDate = dateVal ? String(dateVal).split('T')[0].split(' ')[0] : '';
+  
+  const refNo = getVal(modalData, 'Ref_ID') || getVal(modalData, 'RefNo') || getVal(modalData, 'REF_NO');
 
   const fetchDetails = useCallback(async (signal) => {
     setIsLoading(true);
@@ -72,7 +83,9 @@ export default function CycleCountModal({ modalData, onClose }) {
         console.error("Failed to fetch details", err);
       }
     } finally {
-      setIsLoading(false);
+      if (!signal.aborted) {
+        setIsLoading(false);
+      }
     }
   }, [pageIndex, pageSize, storeCode, fromDate, toDate, refNo]);
 
@@ -84,9 +97,9 @@ export default function CycleCountModal({ modalData, onClose }) {
 
   const metaInfo = [
     { label: 'STORE', value: storeCode || 'N/A', valueColor: '#004cff' },
-    { label: 'CYCLE COUNT TYPE', value: modalData.CYCLE_COUNT_TYPE || 'ARTICLE LEVEL', valueColor: '#004cff' },
-    { label: 'DATE', value: fromDate || (modalData.DATE ? String(modalData.DATE).split('T')[0].split(' ')[0] : 'N/A') },
-    { label: 'CYCLE COUNT TIME', value: modalData.Time_Taken || 'N/A' }
+    { label: 'CYCLE COUNT TYPE', value: getVal(modalData, 'CYCLE_COUNT_TYPE') || 'ARTICLE LEVEL', valueColor: '#004cff' },
+    { label: 'DATE', value: fromDate || 'N/A' },
+    { label: 'CYCLE COUNT TIME', value: getVal(modalData, 'Time_Taken') || 'N/A' }
   ];
 
   const safeNum = (val) => (val !== undefined && val !== null ? val : 0).toLocaleString('en-IN');

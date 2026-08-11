@@ -840,6 +840,7 @@ div.dt-container .dt-paging .dt-paging-button.disabled:hover {
   border-radius: 12px;
   width: 96%;
   /* max-width: 900px; */
+  min-height: 75vh;
   max-height: 85vh;
   margin-bottom: 16vh;
   display: flex;
