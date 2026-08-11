@@ -98,12 +98,12 @@ export default function CycleCountReportPage() {
 
   const columns = [
     { 
-      key: 'srNo', 
+      key: 'RowNumber', 
       label: 'SR.NO', 
-      render: (val, row, idx) => (pageIndex - 1) * pageSize + idx + 1 
+      render: (val, row, idx) => val || ((pageIndex - 1) * pageSize + idx + 1)
     },
     { key: 'DATE', label: 'DATE', render: dateRenderer },
-    { key: 'REF_NO', label: 'REFERENCE NO', render: (val, row) => (
+    { key: 'Ref_ID', label: 'REFERENCE NO', render: (val, row) => (
         <span 
           className="vmm-link-num text-blue" 
           style={{ cursor: 'pointer', textDecoration: 'underline', fontWeight: 'bold' }} 
@@ -112,17 +112,17 @@ export default function CycleCountReportPage() {
             handleRefClick(row);
           }}
         >
-          {val || row.RefNo || row.REF_NO}
+          {val}
         </span>
       ) 
     },
     { key: 'CYCLE_COUNT_TYPE', label: 'CYCLE COUNT TYPE' },
-    { key: 'NO_OF_ARTICLES', label: 'NO OF ARTICLES', render: (val, row) => numRenderer(val || row.QTY || row.Qty || 0) },
-    { key: 'SYSTEM_STOCK', label: 'SYSTEM STOCK', render: (val, row) => numRenderer(val || row.Ttl_Act_QTY || row.Ttl_Act_Qty || 0) },
-    { key: 'SCANNED_QTY', label: 'SCANNED QTY', render: (val, row) => numRenderer(val || row.Sum_Scanned_Qty || row.ScannedQty || 0) },
-    { key: 'NET_DIFFERENCE', label: 'NET DIFFERENCE', render: (val, row) => numRenderer(val || row.DIFFQTY || row.DiffQty || 0) },
-    { key: 'SHORT_QTY', label: 'SHORT QTY', render: (val, row) => numRenderer(val || row.SHORT_QTY || row.Short_Qty || 0) },
-    { key: 'EXCESS_QTY', label: 'EXCESS QTY', render: (val, row) => numRenderer(val || row.Excess_Qty || row.ExcessQty || 0) },
+    { key: 'NO_OF_ARTICLE', label: 'NO OF ARTICLES', render: numRenderer },
+    { key: 'SYSTEM_STOCK', label: 'SYSTEM STOCK', render: numRenderer },
+    { key: 'SCANNED_QTY', label: 'SCANNED QTY', render: numRenderer },
+    { key: 'NET_DIFF', label: 'NET DIFFERENCE', render: numRenderer },
+    { key: 'SHORT_QTY', label: 'SHORT QTY', render: numRenderer },
+    { key: 'EXCESS_QTY', label: 'EXCESS QTY', render: numRenderer },
     { key: 'Start_DateTime', label: 'STARTED ON', render: dateRenderer },
     { key: 'END_DateTime', label: 'ENDED ON', render: dateRenderer },
     { key: 'Time_Taken', label: 'TIME TAKEN' }
@@ -195,19 +195,21 @@ export default function CycleCountReportPage() {
           )}
 
           {/* Data Table */}
-          <ReportDataTableCard 
-            columns={columns}
-            data={reportData}
-            isLoading={isLoading}
-            error={error}
-            pageIndex={pageIndex}
-            onPageChange={setPageIndex}
-            pageSize={pageSize}
-            onPageSizeChange={setPageSize}
-            totalRecords={totalRecords}
-            onSearch={setSearchTerm}
-            searchPlaceholder="Search Records"
-          />
+          <div className="report-table-wrapper">
+            <ReportDataTableCard 
+              columns={columns}
+              data={reportData}
+              isLoading={isLoading}
+              error={error}
+              pageIndex={pageIndex}
+              onPageChange={setPageIndex}
+              pageSize={pageSize}
+              onPageSizeChange={setPageSize}
+              totalRecords={totalRecords}
+              onSearch={setSearchTerm}
+              searchPlaceholder="Search Records"
+            />
+          </div>
 
         </main>
         <Footer />

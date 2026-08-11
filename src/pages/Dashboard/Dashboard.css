@@ -259,6 +259,7 @@
 .vmm-dashboard-body {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   /* padding: 16px 24px; */
   background-color: #e9ecef;
 }
@@ -445,13 +446,15 @@
   animation: vmmShimmer 1.5s infinite linear;
   border-radius: 4px;
   display: inline-block;
-  height: 12px;
+  height: 10.2px;
   vertical-align: middle;
 }
 
 .vmm-skeleton-row td {
-  padding: 8px 8px !important;
+  padding: 4px 6px !important;
+  border: 1px solid #bebebe;
   text-align: center !important;
+  box-sizing: border-box !important;
 }
 
 .vmm-skeleton-table .dt-column-order::before,
@@ -503,7 +506,7 @@ table.dataTable thead th.dt-ordering-desc .dt-column-title::after {
 .vmm-table-container {
   overflow-x: auto;
   width: 100%;
-  min-height: 160px;
+  /* min-height: 160px; */
   /* border: 1px solid #000000; */
 
   /* Firefox */
@@ -636,7 +639,7 @@ div.dt-container .bottom {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid #e2e8f0;
+  /* border-top: 1px solid #e2e8f0; */
   margin-top: 8px;
   padding-top: 10px;
 }
@@ -823,7 +826,7 @@ div.dt-container .dt-paging .dt-paging-button.disabled:hover {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(15, 23, 42, 0.6);
+  background-color: rgba(2, 3, 5, 0.555);
   backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
@@ -835,9 +838,10 @@ div.dt-container .dt-paging .dt-paging-button.disabled:hover {
 .vmm-modal-content {
   background: #ffffff;
   border-radius: 12px;
-  width: 90%;
-  max-width: 900px;
+  width: 96%;
+  /* max-width: 900px; */
   max-height: 85vh;
+  margin-bottom: 16vh;
   display: flex;
   flex-direction: column;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
@@ -850,7 +854,7 @@ div.dt-container .dt-paging .dt-paging-button.disabled:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f8fafc;
+  background: #c8c8c9;
 }
 
 .vmm-modal-title {

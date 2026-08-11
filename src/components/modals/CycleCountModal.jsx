@@ -1,55 +1,103 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Shirt, Layers, ScanLine, TrendingUp, TrendingDown, ArrowDownSquare } from 'lucide-react';
 import DetailsModal from '../common/DetailsModal';
-
-const mockArticleData = [
-  { sr: 1, ref: '20260718054400', ecode: 'D8', mc: '111010005', mcText: 'MU_CAS SH_F/S_CHECK', article: '1110066191004', desc: 'DRIFTWOOD MEN SHIRT REGULAR BROWN XL', barcode: '10224978', sys: 1, scanned: 0, variance: -1, startDt: 'NA', startTime: 'NA', endDt: 'NA', endTime: 'NA' },
-  { sr: 2, ref: '20260718054400', ecode: 'D8', mc: '111010005', mcText: 'MU_CAS SH_F/S_CHECK', article: '1110067129001', desc: 'VIVEZA MEN SHIRT SLIM BLACK S', barcode: '10227628', sys: 1, scanned: 0, variance: -1, startDt: 'NA', startTime: 'NA', endDt: 'NA', endTime: 'NA' },
-  { sr: 3, ref: '20260718054400', ecode: 'D8', mc: '111010005', mcText: 'MU_CAS SH_F/S_CHECK', article: '1110065832003', desc: 'DRIFTWOOD MEN SHIRT REGULAR M BLUE L', barcode: '10223907', sys: 3, scanned: 3, variance: 0, startDt: '2026-07-18', startTime: '17:48:27', endDt: '2026-07-18', endTime: '17:48:27' },
-  { sr: 4, ref: '20260718054400', ecode: 'D8', mc: '111010005', mcText: 'MU_CAS SH_F/S_CHECK', article: '1110065832004', desc: 'DRIFTWOOD MEN SHIRT REGULAR M BLUE XL', barcode: '10223908', sys: 1, scanned: 1, variance: 0, startDt: '2026-07-18', startTime: '17:48:32', endDt: '2026-07-18', endTime: '17:48:32' },
-  { sr: 5, ref: '20260718054400', ecode: 'D8', mc: '111010005', mcText: 'MU_CAS SH_F/S_CHECK', article: '1110066386005', desc: 'DRIFTWOOD MEN SHIRT REGULAR WHITE XXL', barcode: '10225436', sys: 1, scanned: 1, variance: 0, startDt: '2026-07-18', startTime: '17:48:34', endDt: '2026-07-18', endTime: '17:48:34' },
-  { sr: 6, ref: '20260718054400', ecode: 'D8', mc: '111010005', mcText: 'MU_CAS SH_F/S_CHECK', article: '1110065845005', desc: 'DRIFTWOOD MEN SHIRT REGULAR L GREY XXL', barcode: '10223939', sys: 1, scanned: 1, variance: 0, startDt: '2026-07-18', startTime: '17:48:34', endDt: '2026-07-18', endTime: '17:48:34' },
-  { sr: 7, ref: '20260718054400', ecode: 'D8', mc: '111010005', mcText: 'MU_CAS SH_F/S_CHECK', article: '1110066191003', desc: 'DRIFTWOOD MEN SHIRT REGULAR BROWN L', barcode: '10224977', sys: 1, scanned: 1, variance: 0, startDt: '2026-07-18', startTime: '17:48:36', endDt: '2026-07-18', endTime: '17:48:36' },
-  { sr: 8, ref: '20260718054400', ecode: 'D8', mc: '111010005', mcText: 'MU_CAS SH_F/S_CHECK', article: '1110066191002', desc: 'DRIFTWOOD MEN SHIRT REGULAR BROWN M', barcode: '10224976', sys: 1, scanned: 1, variance: 0, startDt: '2026-07-18', startTime: '17:48:36', endDt: '2026-07-18', endTime: '17:48:36' },
-  { sr: 9, ref: '20260718054400', ecode: 'D8', mc: '111010005', mcText: 'MU_CAS SH_F/S_CHECK', article: '1110065832002', desc: 'DRIFTWOOD MEN SHIRT REGULAR M BLUE M', barcode: '10223906', sys: 4, scanned: 4, variance: 0, startDt: '2026-07-18', startTime: '17:48:26', endDt: '2026-07-18', endTime: '17:48:26' },
-  { sr: 10, ref: '20260718054400', ecode: 'D8', mc: '111010005', mcText: 'MU_CAS SH_F/S_CHECK', article: '1110066718002', desc: 'DRIFTWOOD MEN SHIRT REGULAR M BLUE M', barcode: '10226408', sys: 1, scanned: 1, variance: 0, startDt: '2026-07-18', startTime: '17:48:40', endDt: '2026-07-18', endTime: '17:48:40' }
-];
+import { getCycleCountDetails } from '../../services/stockService';
 
 const modalColumns = [
-  { key: 'sr', label: 'SR.NO' },
-  { key: 'ref', label: 'REFERENCE NO' },
-  { key: 'ecode', label: 'ECODE' },
-  { key: 'mc', label: 'MC' },
-  { key: 'mcText', label: 'MC TEXT' },
-  { key: 'article', label: 'ARTICLE' },
-  { key: 'desc', label: 'ARTICLE DESCRIPTION' },
-  { key: 'barcode', label: 'BARCODE' },
-  { key: 'sys', label: 'SYSTEM STOCK' },
-  { key: 'scanned', label: 'SCANNED QTY' },
-  { key: 'variance', label: 'VARIANCE', render: (val) => <span style={{color: val < 0 ? '#dc2626' : (val > 0 ? '#16a34a' : 'inherit'), fontWeight: val !== 0 ? 'bold' : 'normal'}}>{val}</span> },
-  { key: 'startDt', label: 'START DATE' },
-  { key: 'startTime', label: 'START TIME' },
-  { key: 'endDt', label: 'END DATE' },
-  { key: 'endTime', label: 'END TIME' }
+  { key: 'RowNumber', label: 'SR.NO' },
+  { key: 'Ref_ID', label: 'REFERENCE NO' },
+  { key: 'ECODE', label: 'ECODE' },
+  { key: 'MC', label: 'MC' },
+  { key: 'MC_TEXT', label: 'MC TEXT' },
+  { key: 'ARTICLE', label: 'ARTICLE' },
+  { key: 'ARTICLE_DESC', label: 'ARTICLE DESCRIPTION' },
+  { key: 'EAN', label: 'BARCODE' },
+  { key: 'Actual_Qty', label: 'SYSTEM STOCK' },
+  { key: 'Scanned_Qty', label: 'SCANNED QTY' },
+  { key: 'Variance', label: 'VARIANCE', render: (val) => {
+      const v = Number(val || 0);
+      return <span style={{color: v < 0 ? '#dc2626' : (v > 0 ? '#16a34a' : 'inherit'), fontWeight: v !== 0 ? 'bold' : 'normal'}}>{v}</span>;
+  }},
+  { key: 'START_DATE', label: 'START DATE', render: (val) => {
+    let d = val || '';
+    if (d && typeof d === 'string' && d.includes('T')) return d.split('T')[0];
+    return d;
+  }},
+  { key: 'START_TIME', label: 'START TIME', render: (val) => {
+    let t = val || '';
+    if (t && typeof t === 'string' && t.includes('.')) return t.split('.')[0];
+    return t;
+  }},
+  { key: 'END_DATE', label: 'END DATE', render: (val) => {
+    let d = val || '';
+    if (d && typeof d === 'string' && d.includes('T')) return d.split('T')[0];
+    return d;
+  }},
+  { key: 'END_TIME', label: 'END TIME', render: (val) => {
+    let t = val || '';
+    if (t && typeof t === 'string' && t.includes('.')) return t.split('.')[0];
+    return t;
+  }}
 ];
 
 export default function CycleCountModal({ modalData, onClose }) {
   if (!modalData) return null;
 
+  const [tableData, setTableData] = useState([]);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [summaryData, setSummaryData] = useState(null);
+  
+  const [pageIndex, setPageIndex] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // The modalData contains context from the row clicked
+  const storeCode = modalData.STORE_CODE;
+  // Format dates appropriately
+  const fromDate = modalData.DATE ? String(modalData.DATE).split('T')[0].split(' ')[0] : '';
+  const toDate = modalData.DATE ? String(modalData.DATE).split('T')[0].split(' ')[0] : '';
+  const refNo = modalData.Ref_ID || modalData.RefNo || modalData.REF_NO;
+
+  const fetchDetails = useCallback(async (signal) => {
+    setIsLoading(true);
+    try {
+      const result = await getCycleCountDetails(pageIndex, pageSize, '', storeCode, fromDate, toDate, refNo, signal);
+      setTableData(result?.items || result?.Items || []);
+      
+      const summary = result?.summary || result?.Summary || {};
+      setTotalRecords(summary.recordCount || summary.RecordCount || summary.Total_Records || (result?.items?.length || 0));
+      setSummaryData(summary);
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        console.error("Failed to fetch details", err);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [pageIndex, pageSize, storeCode, fromDate, toDate, refNo]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchDetails(controller.signal);
+    return () => controller.abort();
+  }, [fetchDetails]);
+
   const metaInfo = [
-    { label: 'STORE', value: modalData.STORE_CODE || 'HD44 - UTTAM NAGAR 2', valueColor: '#004cff' },
+    { label: 'STORE', value: storeCode || 'N/A', valueColor: '#004cff' },
     { label: 'CYCLE COUNT TYPE', value: modalData.CYCLE_COUNT_TYPE || 'ARTICLE LEVEL', valueColor: '#004cff' },
-    { label: 'DATE', value: modalData.DATE ? String(modalData.DATE).split(' ')[0] : '2026-07-18' },
-    { label: 'CYCLE COUNT TIME', value: modalData.Time_Taken || '00:54:13' }
+    { label: 'DATE', value: fromDate || (modalData.DATE ? String(modalData.DATE).split('T')[0].split(' ')[0] : 'N/A') },
+    { label: 'CYCLE COUNT TIME', value: modalData.Time_Taken || 'N/A' }
   ];
 
+  const safeNum = (val) => (val !== undefined && val !== null ? val : 0).toLocaleString('en-IN');
+
   const summaryCards = [
-    { title: "NO OF ARTICLES", value: "95", waveColor: ['#fecaca', '#f87171'], icon: <Shirt size={20} /> },
-    { title: "SYSTEM STOCK", value: "448", waveColor: ['#fbcfe8', '#f472b6'], icon: <Layers size={20} /> },
-    { title: "SCANNED QTY", value: "436", waveColor: ['#bbf7d0', '#4ade80'], icon: <ScanLine size={20} /> },
-    { title: "NET DIFFERENCE", value: "-12", waveColor: ['#fecaca', '#f87171'], icon: <TrendingDown size={20} /> },
-    { title: "SHORT QTY", value: "-12", waveColor: ['#d9f99d', '#a3e635'], icon: <ArrowDownSquare size={20} /> },
-    { title: "EXCESS QTY", value: "0", waveColor: ['#bfdbfe', '#60a5fa'], icon: <TrendingUp size={20} /> }
+    { title: "NO OF ARTICLES", value: summaryData ? safeNum(summaryData.totalCount || summaryData.TotalCount) : "0", waveColor: ['#fecaca', '#f87171'], icon: <Shirt size={20} /> },
+    { title: "SYSTEM STOCK", value: summaryData ? safeNum(summaryData.actualQty || summaryData.ActualQty) : "0", waveColor: ['#fbcfe8', '#f472b6'], icon: <Layers size={20} /> },
+    { title: "SCANNED QTY", value: summaryData ? safeNum(summaryData.scannedQty || summaryData.ScannedQty) : "0", waveColor: ['#bbf7d0', '#4ade80'], icon: <ScanLine size={20} /> },
+    { title: "NET DIFFERENCE", value: summaryData ? safeNum(summaryData.diffQty || summaryData.DiffQty) : "0", waveColor: ['#fecaca', '#f87171'], icon: <TrendingDown size={20} /> },
+    { title: "SHORT QTY", value: summaryData ? safeNum(summaryData.shortQty || summaryData.ShortQty) : "0", waveColor: ['#d9f99d', '#a3e635'], icon: <ArrowDownSquare size={20} /> },
+    { title: "EXCESS QTY", value: summaryData ? safeNum(summaryData.excessQty || summaryData.ExcessQty) : "0", waveColor: ['#bfdbfe', '#60a5fa'], icon: <TrendingUp size={20} /> }
   ];
 
   return (
@@ -59,8 +107,13 @@ export default function CycleCountModal({ modalData, onClose }) {
       metaInfo={metaInfo}
       summaryCards={summaryCards}
       tableColumns={modalColumns}
-      tableData={mockArticleData}
-      totalRecords={mockArticleData.length}
+      tableData={tableData}
+      totalRecords={totalRecords}
+      isLoading={isLoading}
+      pageIndex={pageIndex}
+      onPageChange={setPageIndex}
+      pageSize={pageSize}
+      onPageSizeChange={setPageSize}
     />
   );
 }
