@@ -130,12 +130,10 @@ export const storeDashboardColumns = [
 export const saleDashboardColumns = [
   { key: 'STORE', label: 'STORE', render: storeRenderer },
   { key: 'DATE', label: 'DATE', render: dateRenderer },
-  { key: 'TOTAL_DPOS_SALE', label: 'DPOS SALE', render: numRenderer },
-  { key: 'TOTAL_RFID_CHECKOUT', label: 'RFID CHECKOUT', render: numRenderer },
-  { key: 'RFID_CHECKOUT_MATCHING_WITH_DPOS_SALE', label: 'MATCHING', render: numRendererGreen },
-  { key: 'RFID_CHECKOUT_NOT_MATCHING_WITH_DPOS_SALE', label: 'NOT MATCHING', render: numRendererRed },
-  { key: 'TOTAL_MANUAL_SALE', label: 'MANUAL SALE', render: numRenderer },
-  { key: 'TOTAL_VOID', label: 'VOID', render: numRenderer }
+  { key: 'TOTAL_DPOS_SALE', label: 'TOTAL SALE QTY', render: numRenderer },
+  { key: 'TOTAL_RFID_CHECKOUT', label: 'TOTAL RFID CHECKOUT QTY', render: numRenderer },
+  { key: 'TOTAL_TAFFETA_SALE', label: 'TOTAL TAFFETA SALE QTY', render: numRenderer },
+  { key: 'TOTAL_MANUAL_SALE', label: 'TOTAL MANUAL SALE QTY', render: numRenderer }
 ];
 
 // Columns for Void Dashboard

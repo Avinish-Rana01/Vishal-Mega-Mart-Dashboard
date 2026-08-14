@@ -39,10 +39,11 @@ export default memo(function WarehouseEncodingBarChart({
   const totalEncoding = seriesData.reduce((sum, val) => sum + val, 0);
 
   const options = {
+    colors: ['#ef4444', '#a3e635', '#0ea5e9', '#ec4899', '#f59e0b', '#8b5cf6', '#14b8a6', '#f43f5e', '#84cc16', '#06b6d4', '#d946ef', '#64748b'],
     chart: {
       type: 'column',
       backgroundColor: 'transparent',
-      height: 200
+      height: 140
     },
     title: {
       text: null
@@ -66,6 +67,7 @@ export default memo(function WarehouseEncodingBarChart({
     },
     yAxis: {
       min: 0,
+      maxPadding: 0.2,
       title: {
         text: 'EPC Count',
         style: {
@@ -91,16 +93,21 @@ export default memo(function WarehouseEncodingBarChart({
     },
     plotOptions: {
       column: {
-        pointPadding: 0.2,
+        pointPadding: 0.05,
+        groupPadding: 0.1,
         borderWidth: 0,
         borderRadius: 2,
-        color: '#3b82f6',
+        colorByPoint: true,
         dataLabels: {
           enabled: true,
+          inside: false,
+          crop: false,
+          overflow: 'allow',
           style: {
             fontSize: '11px',
             fontWeight: '600',
-            color: '#1e293b'
+            color: '#1e293b',
+            textOutline: 'none'
           }
         }
       }
@@ -120,7 +127,7 @@ export default memo(function WarehouseEncodingBarChart({
   const dateString = now.toISOString().split('T')[0];
 
   return (
-    <div ref={containerRef} className="vmm-card vmm-flex-col" style={{ width: '100%', border: '1px solid #cbd5e1', borderRadius: '8px', overflow: 'hidden' }}>
+    <div ref={containerRef} className="vmm-card vmm-flex-col" style={{ width: '100%', border: '1px solid #cbd5e1', borderRadius: '19px', overflow: 'hidden' }}>
       <div className="vmm-table-header" style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#2f669a' }}>
         <h3 style={{ margin: 0, fontSize: '15px', fontWeight: '600', color: '#fff', textTransform: 'uppercase' }}>{title}</h3>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -139,15 +146,15 @@ export default memo(function WarehouseEncodingBarChart({
         </div>
       </div>
 
-      <div className="vmm-chart-container" style={{ padding: '0 16px 16px 16px', background: '#fff', minHeight: '200px' }}>
+      <div className="vmm-chart-container" style={{ padding: '0 16px 16px 16px', background: '#fff', minHeight: '140px' }}>
         {hasBeenVisible ? (
           <HighchartsReact
             highcharts={Highcharts}
             options={options}
-            containerProps={{ style: { height: '200px', width: '100%' } }}
+            containerProps={{ style: { height: '140px', width: '100%' } }}
           />
         ) : (
-          <div className="vmm-shimmer" style={{ width: '100%', height: '200px', borderRadius: '6px' }}></div>
+          <div className="vmm-shimmer" style={{ width: '100%', height: '140px', borderRadius: '6px' }}></div>
         )}
       </div>
     </div>

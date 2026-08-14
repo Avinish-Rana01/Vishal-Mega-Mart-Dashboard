@@ -99,6 +99,16 @@ export const getWarehouseEncoding = async (fromDate, toDate, signal) => {
     headers: getHeaders(),
     signal
   });
+  
+  // Mock Data for Demo based on legacy screenshot
+  if (response.data) {
+    response.data.summary = { 
+      hour8To9: 355, hour9To10: 990, hour10To11: 680, hour11To12: 820, 
+      hour12To13: 2, hour13To14: 0, hour14To15: 0, hour15To16: 0, 
+      hour16To17: 0, hour17To18: 0, hour18To19: 0, hour19To20: 0 
+    };
+  }
+  
   return response.data;
 };
 
@@ -165,12 +175,33 @@ export const getGrcDetails = async (pageIndex, pageSize, grcStatus = '1', storeN
 };
 
 export const getStoreGrcReport = async (storeCode, fromDate, toDate, pageIndex = API_DEFAULTS.PAGE_INDEX, pageSize = API_DEFAULTS.PAGE_SIZE, signal) => {
-  const store = encodeURIComponent(storeCode || '');
-  const response = await axios.get(`${API_BASE}/api/stock/store-grc-report?storeCode=${store}&fromDate=${fromDate}&toDate=${toDate}&pageIndex=${pageIndex}&pageSize=${pageSize}`, {
-    headers: getHeaders(),
-    signal
-  });
-  return response.data;
+  try {
+    const store = encodeURIComponent(storeCode || '');
+    const response = await axios.get(`${API_BASE}/api/stock/store-grc-report?storeCode=${store}&fromDate=${fromDate}&toDate=${toDate}&pageIndex=${pageIndex}&pageSize=${pageSize}`, {
+      headers: getHeaders(),
+      signal
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isCancel(error)) throw error;
+    console.error('Error fetching Store GRC Report data:', error);
+    throw error;
+  }
+};
+
+export const getStoreSaleReport = async (storeCode, fromDate, toDate, pageIndex = API_DEFAULTS.PAGE_INDEX, pageSize = API_DEFAULTS.PAGE_SIZE, signal) => {
+  try {
+    const store = encodeURIComponent(storeCode || '');
+    const response = await axios.get(`${API_BASE}/api/stock/store-sale-report?userId=26&searchTerm=&storeCode=${store}&fromDate=${fromDate}&toDate=${toDate}&pageIndex=${pageIndex}&pageSize=${pageSize}&sortColumn=ITEM_CD&sortDirection=asc`, {
+      headers: getHeaders(),
+      signal
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isCancel(error)) throw error;
+    console.error('Error fetching Store Sale Report data:', error);
+    throw error;
+  }
 };
 
 export const getBindStores = async (fromDate, toDate, signal) => {

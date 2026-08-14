@@ -5,6 +5,7 @@ import DashboardPage from './pages/Dashboard/DashboardPage';
 import LiveStockReportPage from './pages/Report/LiveStockReportPage';
 import GrcReportPage from './pages/Report/GrcReportPage';
 import StoreGrcReportPage from './pages/Report/StoreGrcReportPage';
+import SaleReportPage from './pages/Report/SaleReportPage';
 import CycleCountReportPage from './pages/Report/CycleCountReportPage';
 import NotFoundPage from './pages/NotFound/NotFoundPage';
 import ProtectedRoute from './components/common/ProtectedRoute';
@@ -53,6 +54,15 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <StoreGrcReportPage />
+                </ProtectedRoute>
+              } 
+            />
+
+            <Route 
+              path="/reports/sale" 
+              element={
+                <ProtectedRoute>
+                  <SaleReportPage />
                 </ProtectedRoute>
               } 
             />

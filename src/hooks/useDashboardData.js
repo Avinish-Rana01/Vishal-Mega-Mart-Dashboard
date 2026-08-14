@@ -152,12 +152,10 @@ const saleDashboardFilter = (row, term) =>
 
 const saleDashboardTotals = (summary) => ({
   STORE: 'TOTAL',
-  TOTAL_DPOS_SALE: summary.totalDposSale?.toLocaleString('en-IN') || 0,
-  TOTAL_RFID_CHECKOUT: summary.totalRfidCheckout?.toLocaleString('en-IN') || 0,
-  RFID_CHECKOUT_MATCHING_WITH_DPOS_SALE: summary.totalRfidCheckoutMatch?.toLocaleString('en-IN') || 0,
-  RFID_CHECKOUT_NOT_MATCHING_WITH_DPOS_SALE: summary.totalRfidCheckoutNotMatch?.toLocaleString('en-IN') || 0,
-  TOTAL_MANUAL_SALE: summary.totalManualSale?.toLocaleString('en-IN') || 0,
-  TOTAL_VOID: summary.totalVoid?.toLocaleString('en-IN') || 0
+  TOTAL_DPOS_SALE: summary.totalDposSale != null ? summary.totalDposSale.toLocaleString('en-IN') : 0,
+  TOTAL_RFID_CHECKOUT: summary.totalRfidCheckout != null ? summary.totalRfidCheckout.toLocaleString('en-IN') : 0,
+  TOTAL_TAFFETA_SALE: summary.totalTaffetaSale != null ? summary.totalTaffetaSale.toLocaleString('en-IN') : 0,
+  TOTAL_MANUAL_SALE: summary.totalManualSale != null ? summary.totalManualSale.toLocaleString('en-IN') : 0
 });
 
 export const useSaleDashboard = () => useDashboardFetch(getSaleDashboard, saleDashboardFilter, saleDashboardTotals);
