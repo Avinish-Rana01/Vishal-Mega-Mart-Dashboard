@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useDashboardEvents } from '../contexts/DashboardEventContext';
 import {
   getLiveStock,
   getCycleCount,
@@ -25,12 +26,14 @@ const useDashboardFetch = (apiFn, filterFn, totalsMapper) => {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  
+  // Consume global SSE refresh trigger
+  const { globalRefreshTrigger } = useDashboardEvents() || { globalRefreshTrigger: 0 };
 
   useEffect(() => {
     const controller = new AbortController();
     
     const fetchData = async () => {
-      setIsLoading(true);
       setError(null);
       try {
         const response = await apiFn(searchQuery, controller.signal);
@@ -66,7 +69,7 @@ const useDashboardFetch = (apiFn, filterFn, totalsMapper) => {
       clearTimeout(delayDebounceFn);
       controller.abort();
     };
-  }, [searchQuery, refreshTrigger, apiFn, filterFn, totalsMapper]);
+  }, [searchQuery, refreshTrigger, globalRefreshTrigger, apiFn, filterFn, totalsMapper]);
 
   const refresh = useCallback(() => setRefreshTrigger(prev => prev + 1), []);
 

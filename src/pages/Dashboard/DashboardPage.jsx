@@ -17,28 +17,32 @@ import DcEncodingSection from './sections/DcEncodingSection';
 import TagManagementSection from './sections/TagManagementSection';
 import VendorDiscrepancySection from './sections/VendorDiscrepancySection';
 
+import { DashboardEventProvider } from '../../contexts/DashboardEventContext';
+
 export default function DashboardPage() {
   return (
-    <div className="vmm-dashboard-layout">
-      <Sidebar />
-      <div className="vmm-main-wrapper">
-        <Header />
-        <main className="vmm-dashboard-body">
-          <div className="vmm-cards-grid">
-            <LiveStockSection />
-            <CycleCountSection />
-            <StoreValidationSection />
-            <SaleDashboardSection />
-            <VoidDashboardSection />
-            <ReturnDashboardSection />
-            <DcValidationSection />
-            <DcEncodingSection />
-            <TagManagementSection />
-            <VendorDiscrepancySection />
-          </div>
-        </main>
-        <Footer />
+    <DashboardEventProvider>
+      <div className="vmm-dashboard-layout">
+        <Sidebar />
+        <div className="vmm-main-wrapper">
+          <Header />
+          <main className="vmm-dashboard-body">
+            <div className="vmm-cards-grid">
+              <LiveStockSection />
+              <CycleCountSection />
+              <StoreValidationSection />
+              <SaleDashboardSection />
+              <VoidDashboardSection />
+              <ReturnDashboardSection />
+              <DcValidationSection />
+              <DcEncodingSection />
+              <TagManagementSection />
+              <VendorDiscrepancySection />
+            </div>
+          </main>
+          <Footer />
+        </div>
       </div>
-    </div>
+    </DashboardEventProvider>
   );
 }

@@ -9,8 +9,8 @@ import './Charts.css';
 import { useIsInViewport } from '../../hooks/useIsInViewport';
 
 export default memo(function SemiCircleChartCard({
-  title = "TAG CYCLE COUNT",
-  subtitle = "Distribution of Cycle Count ranges.",
+  title = "RFID Tag Recycle Distribution",
+  subtitle = "Distribution of tags based on the number of recycle cycles.",
   data = [],
   totalLabel = "Total Tag Count",
   totalValue = "0",
@@ -23,7 +23,7 @@ export default memo(function SemiCircleChartCard({
       <div className="vmm-chart-card vmm-flex-col">
         <div className="vmm-chart-header vmm-mb-large" style={{ position: 'relative' }}>
           <h3 style={{ margin: 0, fontSize: '15px', color: '#1e293b' }}>{title}</h3>
-          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748b' }}>{subtitle}</p>
+          <p style={{ margin: '4px 0 0 0', fontSize: '8px', color: '#64748b' }}>{subtitle}</p>
         </div>
         <div className="vmm-chart-container">
           <div className="vmm-chart-graphic vmm-semi-circle-wrapper" style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', height: '150px' }}>

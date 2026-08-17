@@ -232,3 +232,45 @@ export const getCycleCountDetails = async (pageIndex = API_DEFAULTS.PAGE_INDEX, 
   });
   return response.data;
 };
+
+// ==============================================================
+// Detailed Sale Report APIs
+// ==============================================================
+
+export const getSalePosCounters = async (store, fromDate, toDate, columnName, signal) => {
+  const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stock/sale/pos-counters?store=${encodeURIComponent(store)}&fromDate=${fromDate}&toDate=${toDate}&columnName=${encodeURIComponent(columnName || '')}`, {
+    headers: getHeaders(),
+    signal
+  });
+  return response.data || [];
+};
+
+export const getSaleArticles = async (store, fromDate, toDate, pos, searchTerm, columnName, signal) => {
+  const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stock/sale/articles?store=${encodeURIComponent(store)}&fromDate=${fromDate}&toDate=${toDate}&searchTerm=${encodeURIComponent(searchTerm || '')}&pos=${encodeURIComponent(pos || '')}&columnName=${encodeURIComponent(columnName || '')}`, {
+    headers: getHeaders(),
+    signal
+  });
+  return response.data || [];
+};
+
+export const getSaleEans = async (store, fromDate, toDate, pos, article, searchTerm, columnName, signal) => {
+  const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stock/sale/eans?store=${encodeURIComponent(store)}&fromDate=${fromDate}&toDate=${toDate}&searchTerm=${encodeURIComponent(searchTerm || '')}&pos=${encodeURIComponent(pos || '')}&material=${encodeURIComponent(article || '')}&columnName=${encodeURIComponent(columnName || '')}`, {
+    headers: getHeaders(),
+    signal
+  });
+  return response.data || [];
+};
+
+export const getDetailedSaleData = async (params, signal) => {
+  const { storeName, fromDate, toDate, pageIndex, pageSize, pos, articleNo, ean, sortColumn, sortDirection, columnName } = params;
+  
+  // Base URL constructed according to the curl command format
+  let url = `${import.meta.env.VITE_API_BASE_URL}/api/stock/sale-data?userId=${API_DEFAULTS.USER_ID}&storeName=${encodeURIComponent(storeName)}&fromDate=${fromDate}&toDate=${toDate}&pageIndex=${pageIndex}&pageSize=${pageSize}&pos=${encodeURIComponent(pos || '')}&articleNo=${encodeURIComponent(articleNo || '')}&ean=${encodeURIComponent(ean || '')}&sortColumn=${sortColumn || 'ITEM_CD'}&sortDirection=${sortDirection || 'asc'}&columnName=${columnName}`;
+
+  const response = await axios.get(url, {
+    headers: getHeaders(),
+    signal
+  });
+  
+  return response.data;
+};

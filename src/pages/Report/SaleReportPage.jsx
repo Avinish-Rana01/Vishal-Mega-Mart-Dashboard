@@ -48,15 +48,18 @@ export default function SaleReportPage() {
     }
   }
 
-  if (!defaultToDate || !defaultFromDate) {
+  const { store: initialStore = 'HD44', fromDate: stateFromDate, toDate: stateToDate } = location.state || {};
+
+  if (stateFromDate && stateToDate) {
+    defaultFromDate = stateFromDate;
+    defaultToDate = stateToDate;
+  } else if (!defaultToDate || !defaultFromDate) {
     const today = new Date();
     defaultToDate = formatDate(today);
     const lastWeek = new Date(today);
     lastWeek.setDate(lastWeek.getDate() - 7);
     defaultFromDate = formatDate(lastWeek);
   }
-
-  const { store: initialStore = 'HD44' } = location.state || {};
 
   const [selectedStore, setSelectedStore] = useState(initialStore);
   const [fromDate, setFromDate] = useState(defaultFromDate);
@@ -78,31 +81,26 @@ export default function SaleReportPage() {
 
   // Generate 4 random distinct gradients on initial load
   useEffect(() => {
-    const baseHue = Math.floor(Math.random() * 360);
-    const gradients = [0, 1, 2, 3]
-      .map(i => {
-        const hue = Math.floor((baseHue + i * (360 / 4)) % 360);
-        return [
-          `hsl(${hue}, 80%, 75%)`, 
-          `hsl(${(hue + 30) % 360}, 85%, 55%)`
-        ];
-      })
-      .sort(() => Math.random() - 0.5);
-    setCardGradients(gradients);
+    const waves = [
+      ['#ff9a9e', '#fecfef'], ['#a18cd1', '#fbc2eb'], ['#84fab0', '#8fd3f4'], ['#ffecd2', '#fcb69f'],
+      ['#cfd9df', '#e2ebf0'], ['#f6d365', '#fda085'], ['#fbc2eb', '#a6c1ee'], ['#fdcbf1', '#e6dee9'],
+      ['#a1c4fd', '#c2e9fb'], ['#d4fc79', '#96e6a1'], ['#84fab0', '#8fd3f4'], ['#e0c3fc', '#8ec5fc']
+    ];
+    // randomly pick 4
+    const shuffled = waves.sort(() => 0.5 - Math.random());
+    setCardGradients(shuffled.slice(0, 4));
   }, []);
 
   // Fetch Store Dropdown Options
   useEffect(() => {
     const controller = new AbortController();
-    const fetchStores = async () => {
-      try {
-        const data = await getReportStores(controller.signal);
-        setStoreOptions(data);
-      } catch (err) {
-        if (err.name !== 'AbortError') console.error("Failed to fetch stores", err);
-      }
-    };
-    fetchStores();
+    getReportStores(controller.signal)
+      .then(data => {
+        if (!controller.signal.aborted) setStoreOptions(data);
+      })
+      .catch(err => {
+        if (err.name !== 'AbortError') console.error("Failed to load stores", err);
+      });
     return () => controller.abort();
   }, []);
 
@@ -172,15 +170,37 @@ export default function SaleReportPage() {
     return opt?.STORE_NAME || opt?.label || selectedStore;
   };
 
-  const numRenderer = (val) => <span className="vmm-link-num" style={{ color: '#28a745' }}>{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span>;
+  const renderLink = (val, row, columnName) => {
+    if (row.srNo === 'TOTAL') {
+      return <span style={{ color: '#28a745' }}>{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span>;
+    }
+    return (
+      <span 
+        className="vmm-link-num" 
+        style={{ color: '#28a745' }}
+        onClick={(e) => {
+          e.stopPropagation();
+          navigate('/reports/sale/detailed', {
+            state: {
+              store: selectedStore,
+              rowDate: row.date,
+              columnName: columnName
+            }
+          });
+        }}
+      >
+        {typeof val === 'number' ? val.toLocaleString('en-IN') : val}
+      </span>
+    );
+  };
 
   const columns = [
     { key: 'srNo', label: 'SR.NO' },
     { key: 'date', label: 'DATE' },
-    { key: 'totalSaleQty', label: 'TOTAL SALE QTY', render: numRenderer },
-    { key: 'totalRfidCheckoutQty', label: 'TOTAL RFID CHECKOUT QTY', render: numRenderer },
-    { key: 'totalTaffetaSaleQty', label: 'TOTAL TAFFETA SALE QTY', render: numRenderer },
-    { key: 'totalManualSaleQty', label: 'TOTAL MANUAL SALE QTY', render: numRenderer }
+    { key: 'totalSaleQty', label: 'TOTAL SALE QTY', render: (val, row) => renderLink(val, row, 'TOTAL_DPOS_SALE') },
+    { key: 'totalRfidCheckoutQty', label: 'TOTAL RFID CHECKOUT QTY', render: (val, row) => renderLink(val, row, 'TOTAL_RFID_CHECKOUT') },
+    { key: 'totalTaffetaSaleQty', label: 'TOTAL TAFFETA SALE QTY', render: (val) => <span style={{ color: '#28a745' }}>{typeof val === 'number' ? val.toLocaleString('en-IN') : val}</span> },
+    { key: 'totalManualSaleQty', label: 'TOTAL MANUAL SALE QTY', render: (val, row) => renderLink(val, row, 'TOTAL_MANUAL_SALE') }
   ];
 
   const tableTotals = reportSummary ? {

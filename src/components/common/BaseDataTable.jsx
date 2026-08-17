@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import DataTableLib from 'datatables.net-dt';
 
 // Safely extract the DataTable constructor
@@ -27,11 +27,11 @@ export default function BaseDataTable({
   const tableRef = useRef(null);
   const dataTableInstance = useRef(null);
 
-  // 1. Force a complete React remount of the table when data changes.
+  // 1. Force a complete React remount of the table when data changes to prevent DOM crash
   const tableKey = useMemo(() => Math.random().toString(36), [data, isLoading, enablePagination, pageSize, domConfig, searching, lengthChange]);
 
   // 2. Safe jQuery DataTables Initialization
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isLoading || !tableRef.current || data.length === 0) return;
 
     if (dataTableInstance.current) {

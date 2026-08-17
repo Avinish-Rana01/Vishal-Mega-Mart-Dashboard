@@ -15,7 +15,7 @@ export default function VoidDashboardSection() {
 
   return (
     <DataTableCard
-      title="VOID DASHBOARD"
+      title="VOID"
       columns={voidDashboardColumns}
       data={data}
       totals={totals}

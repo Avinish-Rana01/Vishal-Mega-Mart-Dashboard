@@ -10,12 +10,17 @@
 
 - **Dashboard Statistic Cards**: ALWAYS use the `CurvedCard` component (`src/components/common/CurvedCard.jsx`) for any high-level statistic or metric cards in the application. Do NOT manually hardcode HTML/CSS for these cards.
 - When implementing a `CurvedCard`, you must preserve the specific context by passing the `title`, `value`, `waveColor` (gradient array), and `icon` (SVG) props.
+- **Dropdowns**: ALWAYS use the `SearchableDropdown` component (`src/components/common/SearchableDropdown.jsx`) for any select/dropdown menus in the application. Do NOT use native HTML `<select>` elements.
+- **Store Code Selection**: Across all Report pages, whenever a "Store Code" or "Store" selection filter is required, you MUST ALWAYS use the `SearchableDropdown` component. To populate its options, you must fetch the data using the `getReportStores` function from `src/services/stockService.js`. Never use a standard text input for store selection.
 
 # Project Knowledge & Architecture Context (For New Developers & Agents)
 
 ## Current Architecture & API Patterns
 - **Frontend Fallbacks**: The React UI heavily relies on the `summary` block in API responses. For example, if 0 rows are returned, the UI expects `summary.storeName` and `summary.date` to be populated so the info bar can render the selected store's name.
 - **SQL Server Casing Bugs**: The backend C# ADO.NET mapping uses `StringComparer.OrdinalIgnoreCase` when converting `SqlDataReader` to `Dictionary<string, object?>`. This is CRITICAL because the legacy SQL stored procedures (like `SP_NEW_DASHBOARD`) often return mixed-case columns (e.g., `Store_Name` instead of `STORE_NAME`). 
+- **Pagination & Totals Mapping (DataTables)**: 
+  - **Pagination**: The backend API always returns the total number of records as `summary.recordCount`. You MUST map this specific property (not `totalCount` or `totalRecords`) to the React DataTable's `totalRecords` state to avoid breaking pagination.
+  - **Table Footers**: If you add, remove, or change columns in `dashboardColumns.jsx` for dashboard widgets, you **MUST** correspondingly update the totals mapping function (e.g., `saleDashboardTotals` in `useDashboardData.js`). If the keys in the totals object do not perfectly match the columns array, the `BaseDataTable` footer will render blank or disappear entirely.
 
 ## Planned Features: RBAC (Role-Based Access Control)
 - **Current Auth State**: `AuthController.cs` (`POST /api/auth/login`) currently validates users against `SP_Master` but **DOES NOT** issue a JWT token. Additionally, it currently blocks any user with `User_Type` of `"Store"` or `"Warehouse"`.

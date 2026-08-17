@@ -27,7 +27,7 @@ export default function CycleCountSection() {
   return (
     <>
       <DataTableCard
-        title="CYCLE COUNT DASHBOARD"
+        title="CYCLE COUNT"
         columns={columns}
         data={data}
         totals={totals}

@@ -15,7 +15,7 @@ export default function ReturnDashboardSection() {
 
   return (
     <DataTableCard
-      title="RETURN DASHBOARD"
+      title="RETURN"
       columns={returnDashboardColumns}
       data={data}
       totals={totals}

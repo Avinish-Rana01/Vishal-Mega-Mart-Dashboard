@@ -154,3 +154,10 @@
 .vmm-trend-icon {
   font-size: 16px;
 }
+
+/* Remove default black focus border on click in Highcharts */
+.highcharts-container,
+.highcharts-root,
+.highcharts-point {
+  outline: none !important;
+}

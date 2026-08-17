@@ -43,7 +43,7 @@ export default memo(function WarehouseEncodingBarChart({
     chart: {
       type: 'column',
       backgroundColor: 'transparent',
-      height: 140
+      height: 110
     },
     title: {
       text: null
@@ -98,6 +98,16 @@ export default memo(function WarehouseEncodingBarChart({
         borderWidth: 0,
         borderRadius: 2,
         colorByPoint: true,
+        states: {
+          hover: {
+            halo: null,
+            borderWidth: 0
+          },
+          select: {
+            borderWidth: 0,
+            color: null
+          }
+        },
         dataLabels: {
           enabled: true,
           inside: false,
@@ -146,15 +156,15 @@ export default memo(function WarehouseEncodingBarChart({
         </div>
       </div>
 
-      <div className="vmm-chart-container" style={{ padding: '0 16px 16px 16px', background: '#fff', minHeight: '140px' }}>
+      <div className="vmm-chart-container" style={{ padding: '0 16px 16px 16px', background: '#fff', minHeight: '110px' }}>
         {hasBeenVisible ? (
           <HighchartsReact
             highcharts={Highcharts}
             options={options}
-            containerProps={{ style: { height: '140px', width: '100%' } }}
+            containerProps={{ style: { height: '110px', width: '100%' } }}
           />
         ) : (
-          <div className="vmm-shimmer" style={{ width: '100%', height: '140px', borderRadius: '6px' }}></div>
+          <div className="vmm-shimmer" style={{ width: '100%', height: '110px', borderRadius: '6px' }}></div>
         )}
       </div>
     </div>

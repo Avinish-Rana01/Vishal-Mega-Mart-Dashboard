@@ -6,6 +6,7 @@ import LiveStockReportPage from './pages/Report/LiveStockReportPage';
 import GrcReportPage from './pages/Report/GrcReportPage';
 import StoreGrcReportPage from './pages/Report/StoreGrcReportPage';
 import SaleReportPage from './pages/Report/SaleReportPage';
+import DetailedSaleReportPage from './pages/Report/DetailedSaleReportPage';
 import CycleCountReportPage from './pages/Report/CycleCountReportPage';
 import NotFoundPage from './pages/NotFound/NotFoundPage';
 import ProtectedRoute from './components/common/ProtectedRoute';
@@ -63,6 +64,15 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <SaleReportPage />
+                </ProtectedRoute>
+              } 
+            />
+
+            <Route 
+              path="/reports/sale/detailed" 
+              element={
+                <ProtectedRoute>
+                  <DetailedSaleReportPage />
                 </ProtectedRoute>
               } 
             />

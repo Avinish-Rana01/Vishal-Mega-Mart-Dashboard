@@ -85,8 +85,8 @@ export const cycleCountStoreRenderer = (val, row) => {
 
 export const getCycleCountColumns = (onRefClick) => [
   { key: 'STORE_CODE', label: 'STORE', render: cycleCountStoreRenderer },
-  { key: 'CYCLE_COUNT_TYPE', label: 'TYPE' },
-  { key: 'REF_NO', label: 'REF NO', render: (val, row) => (
+  { key: 'CYCLE_COUNT_TYPE', label: 'CYCLE COUNT TYPE' },
+  { key: 'REF_NO', label: 'REFERENCE NO', render: (val, row) => (
       <span 
         className="vmm-link-num text-blue" 
         style={{ cursor: 'pointer', textDecoration: 'underline' }} 
@@ -100,8 +100,8 @@ export const getCycleCountColumns = (onRefClick) => [
     ) 
   },
   { key: 'DATE', label: 'DATE', render: dateRenderer },
-  { key: 'Start_DateTime', label: 'START TIME', render: dateRenderer },
-  { key: 'END_DateTime', label: 'END TIME', render: dateRenderer },
+  { key: 'Start_DateTime', label: 'START ON', render: dateRenderer },
+  { key: 'END_DateTime', label: 'ENDED ON', render: dateRenderer },
   { key: 'Time_Taken', label: 'TIME TAKEN' }
 ];
 
@@ -118,12 +118,12 @@ export const vendorDiscrepancyColumns = [
 // Columns for Store Validation Dashboard
 export const storeDashboardColumns = [
   { key: 'STORE', label: 'STORE', render: storeRenderer },
-  { key: 'DATE', label: 'DATE', render: dateRenderer },
-  { key: 'HU_RECEIVED_QTY', label: 'HU RECEIVED', render: numRenderer },
-  { key: 'HU_VALIDATED_QTY', label: 'HU VALIDATED', render: numRenderer },
-  { key: 'HHT_VALIDATE_QTY', label: 'HHT VALIDATE', render: numRenderer },
-  { key: 'STORE_PENDING_QTY', label: 'PENDING', render: numRenderer },
-  { key: 'HU_WRONG_QTY', label: 'WRONG QTY', render: numRenderer }
+  { key: 'DATE', label: 'LAST GRC DATE', render: dateRenderer },
+  { key: 'HU_RECEIVED_QTY', label: 'HU RECEIVED QTY', render: numRenderer },
+  { key: 'HU_VALIDATED_QTY', label: 'WH VALIDATED QTY', render: numRenderer },
+  { key: 'HHT_VALIDATE_QTY', label: 'STORE VALIDATED QTY', render: numRenderer },
+  { key: 'STORE_PENDING_QTY', label: 'STORE PENDING FOR VALIDATION (QTY)', render: numRenderer },
+  { key: 'HU_WRONG_QTY', label: 'WRONG HU QTY', render: numRenderer }
 ];
 
 // Columns for Sale Dashboard

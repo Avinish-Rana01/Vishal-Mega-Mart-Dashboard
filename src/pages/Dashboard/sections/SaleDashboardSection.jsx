@@ -38,12 +38,34 @@ export default function SaleDashboardSection() {
         ) 
       };
     }
+    if (['TOTAL_DPOS_SALE', 'TOTAL_RFID_CHECKOUT', 'TOTAL_MANUAL_SALE'].includes(col.key)) {
+      return {
+        ...col,
+        render: (val, row) => (
+          <span 
+            className="vmm-link-num" 
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate('/reports/sale/detailed', { 
+                state: { 
+                  store: row.STORE || row.Store || '',
+                  rowDate: row.DATE || row.Date || row.date,
+                  columnName: col.key
+                } 
+              });
+            }}
+          >
+            {typeof val === 'number' ? val.toLocaleString('en-IN') : val}
+          </span>
+        )
+      };
+    }
     return col;
   });
 
   return (
     <DataTableCard
-      title="SALE DASHBOARD"
+      title="SALE"
       columns={columns}
       data={data}
       totals={totals}
